@@ -641,20 +641,21 @@ let selectedCat = '';
 (function createBubbles() {
   const container = document.getElementById('bubbles');
   const sizes = [
-    // 4px bubble
-    `<svg viewBox="0 0 4 4" shape-rendering="crispEdges" style="image-rendering:pixelated;"><rect x="1" y="0" width="2" height="1" fill="#5ec4d4"/><rect x="0" y="1" width="1" height="2" fill="#5ec4d4"/><rect x="1" y="1" width="2" height="2" fill="#8de4f0"/><rect x="3" y="1" width="1" height="2" fill="#5ec4d4"/><rect x="1" y="3" width="2" height="1" fill="#5ec4d4"/><rect x="1" y="1" width="1" height="1" fill="#c0f0f8"/></svg>`,
-    // 6px bubble
-    `<svg viewBox="0 0 6 6" shape-rendering="crispEdges" style="image-rendering:pixelated;"><rect x="2" y="0" width="2" height="1" fill="#5ec4d4"/><rect x="1" y="1" width="1" height="1" fill="#5ec4d4"/><rect x="2" y="1" width="2" height="1" fill="#8de4f0"/><rect x="4" y="1" width="1" height="1" fill="#5ec4d4"/><rect x="0" y="2" width="1" height="2" fill="#5ec4d4"/><rect x="1" y="2" width="4" height="2" fill="#8de4f0"/><rect x="5" y="2" width="1" height="2" fill="#4aa8b8"/><rect x="1" y="2" width="1" height="1" fill="#c0f0f8"/><rect x="2" y="1" width="1" height="1" fill="#c0f0f8"/><rect x="1" y="4" width="1" height="1" fill="#4aa8b8"/><rect x="2" y="4" width="2" height="1" fill="#5ec4d4"/><rect x="4" y="4" width="1" height="1" fill="#4aa8b8"/><rect x="2" y="5" width="2" height="1" fill="#4aa8b8"/></svg>`,
-    // 3px tiny
-    `<svg viewBox="0 0 3 3" shape-rendering="crispEdges" style="image-rendering:pixelated;"><rect x="1" y="0" width="1" height="1" fill="#5ec4d4"/><rect x="0" y="1" width="1" height="1" fill="#5ec4d4"/><rect x="1" y="1" width="1" height="1" fill="#8de4f0"/><rect x="2" y="1" width="1" height="1" fill="#4aa8b8"/><rect x="1" y="2" width="1" height="1" fill="#4aa8b8"/></svg>`,
+    // 8px bubble - round
+    { vb: 8, svg: `<svg viewBox="0 0 8 8" shape-rendering="crispEdges" style="image-rendering:pixelated;"><rect x="2" y="0" width="4" height="1" fill="#5ec4d4"/><rect x="1" y="1" width="1" height="1" fill="#5ec4d4"/><rect x="2" y="1" width="4" height="1" fill="#8de4f0"/><rect x="6" y="1" width="1" height="1" fill="#5ec4d4"/><rect x="0" y="2" width="1" height="4" fill="#5ec4d4"/><rect x="1" y="2" width="6" height="4" fill="#8de4f0"/><rect x="7" y="2" width="1" height="4" fill="#4aa8b8"/><rect x="1" y="2" width="2" height="2" fill="#c0f0f8"/><rect x="1" y="6" width="1" height="1" fill="#4aa8b8"/><rect x="2" y="6" width="4" height="1" fill="#5ec4d4"/><rect x="6" y="6" width="1" height="1" fill="#4aa8b8"/><rect x="2" y="7" width="4" height="1" fill="#4aa8b8"/></svg>` },
+    // 10px bubble - larger round
+    { vb: 10, svg: `<svg viewBox="0 0 10 10" shape-rendering="crispEdges" style="image-rendering:pixelated;"><rect x="3" y="0" width="4" height="1" fill="#5ec4d4"/><rect x="2" y="1" width="1" height="1" fill="#5ec4d4"/><rect x="3" y="1" width="4" height="1" fill="#8de4f0"/><rect x="7" y="1" width="1" height="1" fill="#5ec4d4"/><rect x="1" y="2" width="1" height="1" fill="#5ec4d4"/><rect x="2" y="2" width="6" height="1" fill="#8de4f0"/><rect x="8" y="2" width="1" height="1" fill="#4aa8b8"/><rect x="0" y="3" width="1" height="4" fill="#5ec4d4"/><rect x="1" y="3" width="8" height="4" fill="#8de4f0"/><rect x="9" y="3" width="1" height="4" fill="#4aa8b8"/><rect x="1" y="3" width="3" height="2" fill="#c0f0f8"/><rect x="1" y="7" width="1" height="1" fill="#4aa8b8"/><rect x="2" y="7" width="6" height="1" fill="#5ec4d4"/><rect x="8" y="7" width="1" height="1" fill="#4aa8b8"/><rect x="2" y="8" width="1" height="1" fill="#4aa8b8"/><rect x="3" y="8" width="4" height="1" fill="#5ec4d4"/><rect x="7" y="8" width="1" height="1" fill="#4aa8b8"/><rect x="3" y="9" width="4" height="1" fill="#4aa8b8"/></svg>` },
+    // 6px bubble - small round
+    { vb: 6, svg: `<svg viewBox="0 0 6 6" shape-rendering="crispEdges" style="image-rendering:pixelated;"><rect x="1" y="0" width="4" height="1" fill="#5ec4d4"/><rect x="0" y="1" width="1" height="4" fill="#5ec4d4"/><rect x="1" y="1" width="4" height="4" fill="#8de4f0"/><rect x="5" y="1" width="1" height="4" fill="#4aa8b8"/><rect x="1" y="1" width="2" height="1" fill="#c0f0f8"/><rect x="1" y="2" width="1" height="1" fill="#c0f0f8"/><rect x="1" y="5" width="4" height="1" fill="#4aa8b8"/></svg>` },
   ];
-  for (let i = 0; i < 18; i++) {
+  for (let i = 0; i < 16; i++) {
     const b = document.createElement('div');
     b.className = 'bubble';
     const sizeIdx = Math.floor(Math.random() * sizes.length);
-    const scale = (Math.random() * 3 + 2);
-    b.innerHTML = sizes[sizeIdx];
-    b.style.width = (([3,4,6][sizeIdx]) * scale) + 'px';
+    const s = sizes[sizeIdx];
+    const scale = (Math.random() * 1.5 + 1);
+    b.innerHTML = s.svg;
+    b.style.width = (s.vb * scale) + 'px';
     b.style.height = b.style.width;
     b.style.left = Math.random() * 100 + '%';
     b.style.animationDuration = (Math.random() * 18 + 12) + 's';
