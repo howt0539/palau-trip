@@ -25,7 +25,11 @@
   .header h1 { font-size: 1.4rem; color: #5ec4d4; letter-spacing: 1px; }
   .header p { font-size: 0.78rem; color: #6b9ab8; }
 
-  /* Back button */
+  /* Top nav bar */
+  .top-nav { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .top-nav-btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; font-size: 0.75rem; color: #6b9ab8; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .top-nav-btn:hover { background: rgba(255,255,255,0.12); }
+  .top-nav-btn.active-nav { background: rgba(94,196,212,0.15); border-color: rgba(94,196,212,0.3); color: #5ec4d4; }
   .back-btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; font-size: 0.78rem; color: #8bbad0; cursor: pointer; margin-bottom: 16px; font-family: inherit; }
   .back-btn:hover { background: rgba(255,255,255,0.12); }
 
@@ -215,6 +219,26 @@
   .fish-card.seen .fish-seen-badge { display: flex; }
   .fish-progress { text-align: center; margin-bottom: 14px; font-size: 0.78rem; color: #6b9ab8; }
   .fish-progress strong { color: #5ec4d4; }
+
+  /* Overview filter */
+  .ov-filter { display: flex; gap: 6px; margin-bottom: 14px; }
+  .ov-filter-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); color: #6b9ab8; font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .ov-filter-btn.active { background: rgba(94,196,212,0.15); border-color: #5ec4d4; color: #5ec4d4; }
+
+  /* Edit modal */
+  .edit-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 999; align-items: center; justify-content: center; padding: 20px; }
+  .edit-modal.show { display: flex; }
+  .edit-modal-content { background: #0c3d5f; border-radius: 14px; padding: 20px; width: 100%; max-width: 400px; border: 1px solid rgba(255,255,255,0.15); }
+  .edit-modal-title { font-weight: 800; font-size: 0.95rem; color: #c8e6f0; margin-bottom: 14px; }
+
+  /* Emergency muted */
+  .nav-card-muted {
+    background: rgba(255,255,255,0.03); border-radius: 12px; padding: 10px 8px; text-align: center;
+    cursor: pointer; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.05); margin-top: 12px;
+  }
+  .nav-card-muted:hover { background: rgba(255,255,255,0.06); }
+  .nav-card-muted .nav-icon { font-size: 0.9rem; display: inline; }
+  .nav-card-muted .nav-label { font-weight: 600; font-size: 0.68rem; color: #4a7a94; display: inline; margin-left: 4px; }
 </style>
 </head>
 <body>
@@ -254,13 +278,11 @@
         <div class="nav-icon">📍</div>
         <div class="nav-label">行程記錄</div>
         <div class="nav-desc">記下足跡</div>
-        <div class="nav-badge" id="badge-trip" style="display:none;">0</div>
       </div>
       <div class="nav-card" onclick="goPage('expense')">
         <div class="nav-icon">💰</div>
         <div class="nav-label">記帳</div>
         <div class="nav-desc">花費總覽</div>
-        <div class="nav-badge" id="badge-expense" style="display:none;">0</div>
       </div>
       <div class="nav-card" onclick="goPage('overview')">
         <div class="nav-icon">📋</div>
@@ -278,11 +300,11 @@
         <div class="nav-desc">收集帛琉</div>
         <div class="nav-badge" id="badge-fish" style="display:none;">0</div>
       </div>
-      <div class="nav-card" onclick="goPage('emergency')">
-        <div class="nav-icon">🆘</div>
-        <div class="nav-label">緊急資訊</div>
-        <div class="nav-desc">急難救助</div>
-      </div>
+    </div>
+
+    <div class="nav-card-muted" onclick="goPage('emergency')">
+      <span class="nav-icon">🆘</span>
+      <span class="nav-label">緊急資訊 — 大使館・旅平險・急難救助</span>
     </div>
 
     <!-- Silhouettes -->
@@ -298,7 +320,12 @@
 
   <!-- ===== 行程記錄 ===== -->
   <div id="page-trip" class="page">
-    <button class="back-btn" onclick="goPage('home')">← 首頁</button>
+    <div class="top-nav">
+      <button class="top-nav-btn" onclick="goPage('home')">← 首頁</button>
+      <button class="top-nav-btn active-nav">📍 行程</button>
+      <button class="top-nav-btn" onclick="goPage('expense')">💰 記帳</button>
+      <button class="top-nav-btn" onclick="goPage('overview')">📋 總覽</button>
+    </div>
     <div class="card">
       <div class="card-title">📍 新增足跡</div>
       <div class="field">
@@ -329,7 +356,12 @@
 
   <!-- ===== 記帳 ===== -->
   <div id="page-expense" class="page">
-    <button class="back-btn" onclick="goPage('home')">← 首頁</button>
+    <div class="top-nav">
+      <button class="top-nav-btn" onclick="goPage('home')">← 首頁</button>
+      <button class="top-nav-btn" onclick="goPage('trip')">📍 行程</button>
+      <button class="top-nav-btn active-nav">💰 記帳</button>
+      <button class="top-nav-btn" onclick="goPage('overview')">📋 總覽</button>
+    </div>
     <div class="rate-display" id="rate-display-exp">匯率載入中...</div>
     <div id="exp-summary" class="summary-bar" style="display:none;">
       <div class="summary-item">
@@ -371,7 +403,7 @@
           <div class="cat-item" onclick="selectCat(this, 'transport')"><span class="cat-icon">🚗</span>交通</div>
           <div class="cat-item" onclick="selectCat(this, 'activity')"><span class="cat-icon">🤿</span>活動</div>
           <div class="cat-item" onclick="selectCat(this, 'shopping')"><span class="cat-icon">🛍️</span>購物</div>
-          <div class="cat-item" onclick="selectCat(this, 'hotel')"><span class="cat-icon">🏨</span>住宿</div>
+          <div class="cat-item" onclick="selectCat(this, 'tips')"><span class="cat-icon">💵</span>小費</div>
           <div class="cat-item" onclick="selectCat(this, 'other')"><span class="cat-icon">📌</span>其他</div>
         </div>
         <div style="display:flex;gap:8px;">
@@ -401,18 +433,27 @@
 
   <!-- ===== 行程總覽 ===== -->
   <div id="page-overview" class="page">
-    <button class="back-btn" onclick="goPage('home')">← 首頁</button>
-    <div class="header" style="margin-bottom:14px;">
-      <h1>📋 行程總覽</h1>
-      <p>你的帛琉足跡回顧</p>
+    <div class="top-nav">
+      <button class="top-nav-btn" onclick="goPage('home')">← 首頁</button>
+      <button class="top-nav-btn" onclick="goPage('trip')">📍 行程</button>
+      <button class="top-nav-btn" onclick="goPage('expense')">💰 記帳</button>
+      <button class="top-nav-btn active-nav">📋 總覽</button>
     </div>
-    <div id="overview-stats" class="overview-stats" style="display:none;"></div>
+    <div class="ov-filter">
+      <button class="ov-filter-btn active" onclick="setOverviewFilter('all', this)">全部</button>
+      <button class="ov-filter-btn" onclick="setOverviewFilter('trip', this)">📍 只看足跡</button>
+      <button class="ov-filter-btn" onclick="setOverviewFilter('expense', this)">💰 只看花費</button>
+    </div>
     <div id="overview-timeline"></div>
   </div>
 
   <!-- ===== 航班 / 住宿 ===== -->
   <div id="page-flight" class="page">
-    <button class="back-btn" onclick="goPage('home')">← 首頁</button>
+    <div class="top-nav">
+      <button class="top-nav-btn" onclick="goPage('home')">← 首頁</button>
+      <button class="top-nav-btn" onclick="goPage('expense')">💰 記帳</button>
+      <button class="top-nav-btn" onclick="goPage('overview')">📋 總覽</button>
+    </div>
     <div class="header" style="margin-bottom:14px;">
       <h1>✈️ 航班 / 住宿</h1>
       <p>輸入後自動儲存</p>
@@ -451,7 +492,11 @@
 
   <!-- ===== 生物圖鑑 ===== -->
   <div id="page-fishguide" class="page">
-    <button class="back-btn" onclick="goPage('home')">← 首頁</button>
+    <div class="top-nav">
+      <button class="top-nav-btn" onclick="goPage('home')">← 首頁</button>
+      <button class="top-nav-btn" onclick="goPage('expense')">💰 記帳</button>
+      <button class="top-nav-btn" onclick="goPage('overview')">📋 總覽</button>
+    </div>
     <div class="header" style="margin-bottom:14px;">
       <h1>🐠 帛琉生物圖鑑</h1>
       <p>點擊翻牌 ｜ 連點三下 = 我看到了！</p>
@@ -462,7 +507,11 @@
 
   <!-- ===== 緊急資訊 ===== -->
   <div id="page-emergency" class="page">
-    <button class="back-btn" onclick="goPage('home')">← 首頁</button>
+    <div class="top-nav">
+      <button class="top-nav-btn" onclick="goPage('home')">← 首頁</button>
+      <button class="top-nav-btn" onclick="goPage('expense')">💰 記帳</button>
+      <button class="top-nav-btn" onclick="goPage('overview')">📋 總覽</button>
+    </div>
     <div class="header" style="margin-bottom:14px;">
       <h1>🆘 緊急資訊</h1>
       <p>存在手機裡，有備無患</p>
@@ -502,6 +551,11 @@
 
 </div>
 
+<!-- Edit Modal -->
+<div class="edit-modal" id="edit-modal" onclick="if(event.target===this)closeEditModal()">
+  <div class="edit-modal-content" id="edit-modal-body"></div>
+</div>
+
 <!-- Lightbox -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
@@ -535,8 +589,12 @@ let selectedCat = '';
   }
 })();
 
-// ===== Page Navigation =====
+// ===== Page Navigation (hash-based) =====
 function goPage(page) {
+  location.hash = page === 'home' ? '' : page;
+  showPage(page);
+}
+function showPage(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(`page-${page}`).classList.add('active');
   window.scrollTo(0, 0);
@@ -548,15 +606,13 @@ function goPage(page) {
   if (page === 'flight') loadFlightInfo();
   if (page === 'emergency') loadEmergencyInfo();
 }
+window.addEventListener('hashchange', () => {
+  const page = location.hash.slice(1) || 'home';
+  showPage(page);
+});
 
 function updateBadges() {
-  const tripBadge = document.getElementById('badge-trip');
-  const expBadge = document.getElementById('badge-expense');
   const fishBadge = document.getElementById('badge-fish');
-  if (trips.length > 0) { tripBadge.style.display = 'inline-block'; tripBadge.textContent = trips.length; }
-  else { tripBadge.style.display = 'none'; }
-  if (expenses.length > 0) { expBadge.style.display = 'inline-block'; expBadge.textContent = expenses.length; }
-  else { expBadge.style.display = 'none'; }
   const seenCount = fishList.filter(f => (fishState[f.id] || 0) >= 3).length;
   if (seenCount > 0) { fishBadge.style.display = 'inline-block'; fishBadge.textContent = seenCount; }
   else { fishBadge.style.display = 'none'; }
@@ -654,7 +710,7 @@ const catMap = {
   transport: { icon: '🚗', name: '交通' },
   activity: { icon: '🤿', name: '活動' },
   shopping: { icon: '🛍️', name: '購物' },
-  hotel: { icon: '🏨', name: '住宿' },
+  tips: { icon: '💵', name: '小費' },
   other: { icon: '📌', name: '其他' },
 };
 
@@ -808,30 +864,31 @@ function renderTrips() {
 }
 
 // ===== Overview =====
+let overviewFilter = 'all';
+function setOverviewFilter(filter, btn) {
+  overviewFilter = filter;
+  document.querySelectorAll('.ov-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOverview();
+}
+
 function renderOverview() {
-  const statsEl = document.getElementById('overview-stats');
   const timelineEl = document.getElementById('overview-timeline');
 
   if (trips.length === 0 && expenses.length === 0) {
-    statsEl.style.display = 'none';
     timelineEl.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">還沒有任何紀錄<br>旅程開始後這裡會自動彙整</div></div>';
     return;
   }
 
-  const totalUsd = expenses.reduce((s, e) => s + e.amount, 0);
-  const days = new Set([...trips.map(t => new Date(t.time).toDateString()), ...expenses.map(e => new Date(e.time).toDateString())]).size;
-
-  statsEl.style.display = 'grid';
-  statsEl.innerHTML = `
-    <div class="overview-stat"><div class="overview-stat-value">${days}</div><div class="overview-stat-label">天</div></div>
-    <div class="overview-stat"><div class="overview-stat-value">${trips.length}</div><div class="overview-stat-label">個足跡</div></div>
-    <div class="overview-stat"><div class="overview-stat-value">$${totalUsd.toFixed(0)}</div><div class="overview-stat-label">總花費 USD</div></div>
-  `;
-
   const allEvents = [];
-  trips.forEach(t => allEvents.push({ type: 'trip', time: t.time, data: t }));
-  expenses.forEach(e => allEvents.push({ type: 'expense', time: e.time, data: e }));
+  if (overviewFilter !== 'expense') trips.forEach(t => allEvents.push({ type: 'trip', time: t.time, data: t }));
+  if (overviewFilter !== 'trip') expenses.forEach(e => allEvents.push({ type: 'expense', time: e.time, data: e }));
   allEvents.sort((a, b) => new Date(a.time) - new Date(b.time));
+
+  if (allEvents.length === 0) {
+    timelineEl.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">這個分類還沒有紀錄</div></div>';
+    return;
+  }
 
   const groups = {};
   allEvents.forEach(ev => {
@@ -849,17 +906,86 @@ function renderOverview() {
         const t = ev.data;
         const ph = t.photos && t.photos.length > 0
           ? `<div class="tl-photos">${t.photos.map(p => `<img src="${p}" onclick="openLightbox(this.src)">`).join('')}</div>` : '';
-        html += `<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">${time}</div><div class="tl-place">📍 ${escHtml(t.place)}</div>${t.note ? `<div class="tl-note">${escHtml(t.note)}</div>` : ''}${ph}</div>`;
+        html += `<div class="tl-item" oncontextmenu="return editTrip(event,${t.id})" ontouchstart="startLongPress(event,'trip',${t.id})" ontouchend="cancelLongPress()" ontouchmove="cancelLongPress()"><div class="tl-dot"></div><div class="tl-date">${time}</div><div class="tl-place">📍 ${escHtml(t.place)}</div>${t.note ? `<div class="tl-note">${escHtml(t.note)}</div>` : ''}${ph}</div>`;
       } else {
         const e = ev.data;
         const cat = catMap[e.cat] || catMap.other;
-        html += `<div class="tl-item"><div class="tl-dot" style="background:#f59e0b;box-shadow:0 0 0 2px #f59e0b;"></div><div class="tl-date">${time}</div><div class="tl-place">${cat.icon} ${escHtml(e.memo)}</div><div class="tl-note">$${e.amount.toFixed(2)}（≈ NT$${e.twd.toLocaleString()}）</div></div>`;
+        html += `<div class="tl-item" oncontextmenu="return editExpense(event,${e.id})" ontouchstart="startLongPress(event,'expense',${e.id})" ontouchend="cancelLongPress()" ontouchmove="cancelLongPress()"><div class="tl-dot" style="background:#f59e0b;box-shadow:0 0 0 2px #f59e0b;"></div><div class="tl-date">${time}</div><div class="tl-place">${cat.icon} ${escHtml(e.memo)}</div><div class="tl-note">$${e.amount.toFixed(2)}（≈ NT$${e.twd.toLocaleString()}）</div></div>`;
       }
     });
     html += '</div></div>';
   }
   timelineEl.innerHTML = html;
 }
+
+// ===== Long Press & Edit =====
+let longPressTimer = null;
+function startLongPress(e, type, id) {
+  longPressTimer = setTimeout(() => {
+    if (type === 'trip') editTrip(e, id);
+    else editExpense(e, id);
+  }, 600);
+}
+function cancelLongPress() { clearTimeout(longPressTimer); }
+
+function editTrip(e, id) {
+  e.preventDefault();
+  const t = trips.find(x => x.id === id);
+  if (!t) return false;
+  const modal = document.getElementById('edit-modal');
+  document.getElementById('edit-modal-body').innerHTML = `
+    <div class="edit-modal-title">✏️ 編輯足跡</div>
+    <div class="field"><label>地點</label><input type="text" id="edit-place" value="${escAttr(t.place)}"></div>
+    <div class="field"><label>時間</label><input type="datetime-local" id="edit-time" value="${t.time.slice(0,16)}"></div>
+    <div class="field"><label>備註</label><textarea id="edit-note">${escHtml(t.note || '')}</textarea></div>
+    <button class="btn btn-primary" onclick="saveEditTrip(${id})">儲存修改</button>
+    <button class="btn btn-danger" onclick="deleteTrip(${id});closeEditModal()" style="margin-top:8px;">刪除這筆</button>
+    <button class="btn btn-secondary" onclick="closeEditModal()" style="margin-top:8px;">取消</button>
+  `;
+  modal.classList.add('show');
+  return false;
+}
+
+function saveEditTrip(id) {
+  const t = trips.find(x => x.id === id);
+  if (!t) return;
+  const idx = trips.indexOf(t);
+  trips[idx] = { ...t, place: document.getElementById('edit-place').value, time: document.getElementById('edit-time').value, note: document.getElementById('edit-note').value };
+  localStorage.setItem('palau-trips', JSON.stringify(trips));
+  closeEditModal();
+  renderOverview();
+}
+
+function editExpense(e, id) {
+  e.preventDefault();
+  const exp = expenses.find(x => x.id === id);
+  if (!exp) return false;
+  const modal = document.getElementById('edit-modal');
+  document.getElementById('edit-modal-body').innerHTML = `
+    <div class="edit-modal-title">✏️ 編輯花費</div>
+    <div class="field"><label>金額 (USD)</label><input type="number" id="edit-amount" value="${exp.amount}" inputmode="decimal"></div>
+    <div class="field"><label>備註</label><textarea id="edit-memo">${escHtml(exp.memo || '')}</textarea></div>
+    <button class="btn btn-primary" onclick="saveEditExpense(${id})">儲存修改</button>
+    <button class="btn btn-danger" onclick="deleteExpense(${id});closeEditModal()" style="margin-top:8px;">刪除這筆</button>
+    <button class="btn btn-secondary" onclick="closeEditModal()" style="margin-top:8px;">取消</button>
+  `;
+  modal.classList.add('show');
+  return false;
+}
+
+function saveEditExpense(id) {
+  const exp = expenses.find(x => x.id === id);
+  if (!exp) return;
+  const idx = expenses.indexOf(exp);
+  const newAmount = parseFloat(document.getElementById('edit-amount').value);
+  expenses[idx] = { ...exp, amount: newAmount, twd: Math.round(newAmount * exp.rate), memo: document.getElementById('edit-memo').value };
+  localStorage.setItem('palau-expenses', JSON.stringify(expenses));
+  closeEditModal();
+  renderOverview();
+}
+
+function closeEditModal() { document.getElementById('edit-modal').classList.remove('show'); }
+function escAttr(s) { return s.replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
 
 // ===== Flight / Hotel =====
 function saveFlightInfo() {
@@ -950,7 +1076,9 @@ function escHtml(s) { const d = document.createElement('div'); d.textContent = s
 
 // ===== Init =====
 fetchRate();
-updateBadges();
+const initPage = location.hash.slice(1) || 'home';
+if (initPage !== 'home') showPage(initPage);
+else updateBadges();
 </script>
 </body>
 </html>
