@@ -222,7 +222,15 @@
     background: linear-gradient(180deg, #1a4a6a 0%, #0e3a55 40%, #0a2a42 100%);
     border-top: 1px solid rgba(100,180,220,0.15); border-bottom: 2px solid rgba(255,255,255,0.05);
   }
-  .fish-card.seen .fish-img-area { background: linear-gradient(180deg, #1a4a6a 0%, #0e3a55 40%, #0a2a42 100%); border-bottom-color: rgba(200,150,10,0.2); }
+  .fish-card.seen .fish-img-area {
+    background: linear-gradient(180deg, #7ec8e8 0%, #5ab8e0 30%, #3a98c8 60%, #2a7aaa 100%);
+    border-bottom-color: rgba(200,150,10,0.3);
+  }
+  .fish-card.seen .fish-img-area::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 20px;
+    background: linear-gradient(0deg, rgba(40,120,160,0.4) 0%, transparent 100%);
+    border-radius: 0 0 0 0;
+  }
   .fish-emoji { font-size: 3rem; display: block; filter: brightness(0) invert(0.1); transition: filter 0.3s; }
   .fish-card.revealed .fish-emoji { filter: none; }
   .fish-card.seen .fish-emoji { filter: none; }
@@ -235,7 +243,7 @@
     padding: 6px 8px; background: linear-gradient(90deg, #3a5a6a, #2a4a5a);
     border-top: 2px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.05);
   }
-  .fish-card.seen .fish-name-plate { background: linear-gradient(90deg, #6a5020, #5a4018); border-top-color: rgba(200,150,10,0.3); }
+  .fish-card.seen .fish-name-plate { background: linear-gradient(90deg, #c8960a, #a87808, #c8960a); border-top-color: rgba(255,220,100,0.4); }
   .fish-name { font-size: 0.85rem; font-weight: 800; color: #c8e6f0; letter-spacing: 2px; }
   .fish-card.seen .fish-name { color: #fff; text-shadow: 1px 1px 0 rgba(0,0,0,0.3); }
   /* Info area */
@@ -257,7 +265,6 @@
     image-rendering: pixelated;
   }
   .fish-card.seen .fish-seen-badge { display: flex; }
-  .fish-card.seen .fish-img-area { border-bottom-color: rgba(100,70,20,0.2); }
   .fish-progress { text-align: center; margin-bottom: 14px; font-size: 0.78rem; color: #6b9ab8; }
   .fish-progress strong { color: #5ec4d4; }
 
