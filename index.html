@@ -195,27 +195,65 @@
   .sil { position: absolute; bottom: 0; font-size: 2rem; animation: swim linear infinite; }
   @keyframes swim { 0% { transform: translateX(-40px); } 100% { transform: translateX(calc(100vw + 40px)); } }
 
-  /* Fish Guide */
-  .fish-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  /* Fish Guide - Dave the Diver style */
+  .fish-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .fish-card {
-    background: rgba(255,255,255,0.05); border-radius: 12px; padding: 12px 8px; text-align: center;
-    border: 2px solid rgba(255,255,255,0.08); cursor: pointer; transition: all 0.3s; position: relative;
-    user-select: none; -webkit-user-select: none;
+    background: linear-gradient(180deg, #1a3a4a 0%, #0f2a38 100%);
+    border-radius: 8px; padding: 0; text-align: center;
+    border: 3px solid #3a5a6a; cursor: pointer; transition: all 0.3s; position: relative;
+    user-select: none; -webkit-user-select: none; overflow: hidden;
+    image-rendering: pixelated;
   }
+  .fish-card.seen {
+    border-color: #d69e2e;
+    background: linear-gradient(180deg, #2a3020 0%, #1a2518 100%);
+    box-shadow: 0 0 16px rgba(214,158,46,0.3), inset 0 0 20px rgba(214,158,46,0.05);
+  }
+  /* Card top bar */
+  .fish-top { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; background: rgba(0,0,0,0.3); font-size: 0.6rem; }
+  .fish-top-left { color: #6b9ab8; font-weight: 700; letter-spacing: 0.5px; }
+  .fish-card.seen .fish-top-left { color: #d69e2e; }
+  .fish-top-right { color: #4a7a8a; font-weight: 600; }
+  .fish-card.seen .fish-top-right { color: #b7891f; }
+  /* Card image area */
+  .fish-img-area {
+    position: relative; padding: 12px 8px; min-height: 70px;
+    background: linear-gradient(180deg, rgba(94,196,212,0.06) 0%, rgba(94,196,212,0.02) 100%);
+    border-bottom: 2px solid rgba(255,255,255,0.05);
+  }
+  .fish-card.seen .fish-img-area { background: linear-gradient(180deg, rgba(214,158,46,0.08) 0%, rgba(214,158,46,0.02) 100%); border-bottom-color: rgba(214,158,46,0.15); }
+  .fish-emoji { font-size: 2.4rem; display: block; filter: brightness(0) invert(0.12); transition: filter 0.3s; }
   .fish-card.revealed .fish-emoji { filter: none; }
-  .fish-card.seen { border-color: #f59e0b; background: rgba(245,158,11,0.1); box-shadow: 0 0 12px rgba(245,158,11,0.25), inset 0 0 8px rgba(245,158,11,0.08); }
   .fish-card.seen .fish-emoji { filter: none; }
-  .fish-emoji { font-size: 2rem; display: block; margin-bottom: 4px; filter: brightness(0) invert(0.15); transition: filter 0.3s; }
-  .fish-name { font-size: 0.7rem; font-weight: 600; color: #8bbad0; }
-  .fish-card.seen .fish-name { color: #f59e0b; }
-  .fish-stars { font-size: 0.6rem; margin-top: 3px; letter-spacing: 1px; }
-  .fish-stars .star-on { color: #f59e0b; }
-  .fish-stars .star-off { color: rgba(255,255,255,0.12); }
+  /* Stars */
+  .fish-stars { margin-top: 6px; letter-spacing: 2px; font-size: 0.65rem; }
+  .fish-stars .star-on { color: #d69e2e; }
+  .fish-stars .star-off { color: rgba(255,255,255,0.1); }
+  /* Name plate */
+  .fish-name-plate {
+    padding: 5px 8px; background: linear-gradient(90deg, #3a5a6a, #2a4a5a);
+    border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .fish-card.seen .fish-name-plate { background: linear-gradient(90deg, #6b5a20, #5a4a18); }
+  .fish-name { font-size: 0.78rem; font-weight: 800; color: #c8e6f0; letter-spacing: 1px; }
+  .fish-card.seen .fish-name { color: #ecc94b; }
+  /* Info area */
+  .fish-info { padding: 6px 8px; font-size: 0.62rem; color: #6b9ab8; display: flex; justify-content: space-between; }
+  .fish-card.seen .fish-info { color: #a08830; }
+  /* Description */
+  .fish-desc { padding: 0 8px 6px; font-size: 0.58rem; color: #4a7a8a; text-align: left; line-height: 1.5; min-height: 24px; }
+  .fish-card.seen .fish-desc { color: #8a7a40; }
+  .fish-card:not(.seen) .fish-desc { color: #2a4a5a; }
+  /* Card number */
+  .fish-no { padding: 2px 8px 4px; text-align: right; font-size: 0.55rem; color: #3a5a6a; font-weight: 600; }
+  .fish-card.seen .fish-no { color: #6b5a20; }
+  /* Badge */
   .fish-seen-badge {
-    position: absolute; top: -4px; right: -4px; width: 20px; height: 20px; border-radius: 50%;
-    background: #f59e0b; color: #fff; font-size: 0.6rem; font-weight: 800;
+    position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; border-radius: 3px;
+    background: #d69e2e; color: #fff; font-size: 0.55rem; font-weight: 800;
     display: none; align-items: center; justify-content: center;
-    box-shadow: 0 2px 6px rgba(245,158,11,0.4);
+    box-shadow: 0 1px 4px rgba(214,158,46,0.5);
+    image-rendering: pixelated;
   }
   .fish-card.seen .fish-seen-badge { display: flex; }
   .fish-progress { text-align: center; margin-bottom: 14px; font-size: 0.78rem; color: #6b9ab8; }
@@ -1036,27 +1074,27 @@ function closeLightbox() { document.getElementById('lightbox').classList.remove(
 
 // ===== Fish Guide =====
 const fishList = [
-  { id: 'jellyfish', emoji: '🪼', name: '黃金水母', stars: 3, desc: '水母湖限定，無毒水母' },
-  { id: 'turtle', emoji: '🐢', name: '海龜', stars: 3, desc: '綠蠵龜、玳瑁' },
-  { id: 'clownfish', emoji: '🐠', name: '小丑魚', stars: 3, desc: '尼莫本人' },
-  { id: 'parrotfish', emoji: '🐟', name: '鸚哥魚', stars: 3, desc: '珊瑚礁常見的繽紛魚類' },
-  { id: 'butterflyfish', emoji: '🦋', name: '蝴蝶魚', stars: 3, desc: '各種花紋的珊瑚魚' },
-  { id: 'grouper', emoji: '🐡', name: '石斑魚', stars: 2, desc: '躲在珊瑚礁縫隙' },
-  { id: 'reefshark', emoji: '🦈', name: '黑鰭鯊', stars: 2, desc: '礁鯊，通常不攻擊人' },
-  { id: 'manta', emoji: '🦅', name: '魔鬼魟', stars: 2, desc: '翼展可達 3 公尺' },
-  { id: 'napoleon', emoji: '🐋', name: '拿破崙魚', stars: 2, desc: '又稱龍王鯛，帛琉明星' },
-  { id: 'lionfish', emoji: '🦔', name: '獅子魚', stars: 2, desc: '華麗但有毒的鰭刺' },
-  { id: 'nudibranch', emoji: '🐌', name: '海蛞蝓', stars: 2, desc: '海底的活寶石' },
-  { id: 'octopus', emoji: '🐙', name: '章魚', stars: 2, desc: '偽裝大師' },
-  { id: 'squid', emoji: '🦑', name: '魷魚', stars: 2, desc: '夜潛常見' },
-  { id: 'starfish', emoji: '⭐', name: '海星', stars: 3, desc: '砂地上的五角明星' },
-  { id: 'eel', emoji: '🐍', name: '海鰻', stars: 2, desc: '躲在洞裡探頭' },
-  { id: 'crab', emoji: '🦀', name: '椰子蟹', stars: 1, desc: '世界最大陸生蟹' },
-  { id: 'hammerhead', emoji: '🔨', name: '鎚頭鯊', stars: 1, desc: '藍角深水區偶遇' },
-  { id: 'dugong', emoji: '🦭', name: '儒艮', stars: 1, desc: '美人魚傳說原型' },
-  { id: 'whaleshark', emoji: '🐳', name: '鯨鯊', stars: 1, desc: '海中最大的魚' },
-  { id: 'crocodile', emoji: '🐊', name: '鹹水鱷', stars: 1, desc: '紅樹林棲息，極稀有' },
-  { id: 'dolphin', emoji: '🐬', name: '海豚', stars: 1, desc: '船程中有機會遇見' },
+  { id: 'jellyfish', emoji: '🪼', name: '黃金水母', stars: 3, size: '10cm', depth: '0-15m', desc: '水母湖限定的無毒水母，陽光下閃耀金色光芒' },
+  { id: 'turtle', emoji: '🐢', name: '海龜', stars: 3, size: '100cm', depth: '0-30m', desc: '綠蠵龜與玳瑁，常在珊瑚礁悠游覓食' },
+  { id: 'clownfish', emoji: '🐠', name: '小丑魚', stars: 3, size: '8cm', depth: '3-15m', desc: '躲在海葵觸手間的橘白條紋小魚' },
+  { id: 'parrotfish', emoji: '🐟', name: '鸚哥魚', stars: 3, size: '40cm', depth: '1-25m', desc: '用鳥嘴般的牙齒啃食珊瑚，色彩鮮豔' },
+  { id: 'butterflyfish', emoji: '🦋', name: '蝴蝶魚', stars: 3, size: '15cm', depth: '2-20m', desc: '成對出沒，身上有各種美麗花紋' },
+  { id: 'grouper', emoji: '🐡', name: '石斑魚', stars: 2, size: '60cm', depth: '5-40m', desc: '躲在珊瑚礁縫隙中的伏擊獵手' },
+  { id: 'reefshark', emoji: '🦈', name: '黑鰭鯊', stars: 2, size: '150cm', depth: '0-50m', desc: '鰭尖帶黑色標記的礁鯊，性格溫和' },
+  { id: 'manta', emoji: '🦅', name: '魔鬼魟', stars: 2, size: '300cm', depth: '5-40m', desc: '張開雙翼滑翔的巨大魟魚，極為優雅' },
+  { id: 'napoleon', emoji: '🐋', name: '拿破崙魚', stars: 2, size: '180cm', depth: '2-60m', desc: '又稱龍王鯛，額頭隆起像拿破崙帽' },
+  { id: 'lionfish', emoji: '🦔', name: '獅子魚', stars: 2, size: '25cm', depth: '2-50m', desc: '展開華麗鰭刺像獅子鬃毛，有毒勿觸' },
+  { id: 'nudibranch', emoji: '🐌', name: '海蛞蝓', stars: 2, size: '5cm', depth: '3-30m', desc: '色彩繽紛的海底活寶石，種類繁多' },
+  { id: 'octopus', emoji: '🐙', name: '章魚', stars: 2, size: '50cm', depth: '3-40m', desc: '擁有高智商的偽裝大師，八腕靈活' },
+  { id: 'squid', emoji: '🦑', name: '魷魚', stars: 2, size: '30cm', depth: '5-200m', desc: '夜潛時常見，會被燈光吸引靠近' },
+  { id: 'starfish', emoji: '⭐', name: '海星', stars: 3, size: '20cm', depth: '1-20m', desc: '沙地上的五角明星，動作緩慢但堅韌' },
+  { id: 'eel', emoji: '🐍', name: '海鰻', stars: 2, size: '120cm', depth: '5-50m', desc: '從洞穴探出頭來的長條伏擊者' },
+  { id: 'crab', emoji: '🦀', name: '椰子蟹', stars: 1, size: '40cm', depth: '陸地', desc: '世界最大陸生節肢動物，力大無窮' },
+  { id: 'hammerhead', emoji: '🔨', name: '鎚頭鯊', stars: 1, size: '300cm', depth: '20-80m', desc: '藍角外海深水區偶遇的T型頭鯊魚' },
+  { id: 'dugong', emoji: '🦭', name: '儒艮', stars: 1, size: '300cm', depth: '2-10m', desc: '美人魚傳說的原型，以海草為食' },
+  { id: 'whaleshark', emoji: '🐳', name: '鯨鯊', stars: 1, size: '1200cm', depth: '0-100m', desc: '海中最大的魚類，性情溫馴的濾食者' },
+  { id: 'crocodile', emoji: '🐊', name: '鹹水鱷', stars: 1, size: '400cm', depth: '紅樹林', desc: '棲息於紅樹林水域，帛琉野生族群極稀有' },
+  { id: 'dolphin', emoji: '🐬', name: '海豚', stars: 1, size: '200cm', depth: '0-50m', desc: '船程中有機會遇見的海上精靈' },
 ];
 
 let fishState = JSON.parse(localStorage.getItem('palau-fish') || '{}');
@@ -1066,18 +1104,28 @@ function renderFishGuide() {
   const seenCount = fishList.filter(f => (fishState[f.id] || 0) >= 3).length;
   document.getElementById('fish-progress').innerHTML = `已發現 <strong>${seenCount}</strong> / ${fishList.length} 種`;
 
-  grid.innerHTML = fishList.map(f => {
+  grid.innerHTML = fishList.map((f, idx) => {
     const clicks = fishState[f.id] || 0;
     const seen = clicks >= 3;
     const revealed = seen || (clicks % 2 === 1);
     const starsHtml = Array.from({length: 3}, (_, i) =>
       `<span class="${i < f.stars ? 'star-on' : 'star-off'}">${i < f.stars ? '★' : '☆'}</span>`
     ).join('');
-    return `<div class="fish-card ${revealed ? 'revealed' : ''} ${seen ? 'seen' : ''}" onclick="clickFish('${f.id}')" title="${f.desc}">
-      <div class="fish-seen-badge">✓</div>
-      <span class="fish-emoji">${f.emoji}</span>
-      <div class="fish-name">${f.name}</div>
-      <div class="fish-stars">${starsHtml}</div>
+    const no = String(idx + 1).padStart(3, '0');
+    return `<div class="fish-card ${revealed ? 'revealed' : ''} ${seen ? 'seen' : ''}" onclick="clickFish('${f.id}')">
+      <div class="fish-top">
+        <span class="fish-top-left">PALAU</span>
+        <span class="fish-top-right">${'★'.repeat(f.stars)}</span>
+      </div>
+      <div class="fish-img-area">
+        <div class="fish-seen-badge">✓</div>
+        <span class="fish-emoji">${f.emoji}</span>
+        <div class="fish-stars">${starsHtml}</div>
+      </div>
+      <div class="fish-name-plate"><div class="fish-name">${seen ? f.name : (revealed ? f.name : '？？？')}</div></div>
+      <div class="fish-info"><span>📐 ${seen ? f.size : '???'}</span><span>📍 ${seen ? f.depth : '???'}</span></div>
+      <div class="fish-desc">${seen ? f.desc : (revealed ? '點擊一次以上即可收錄...' : '')}</div>
+      <div class="fish-no">No. ${no}</div>
     </div>`;
   }).join('');
 }
