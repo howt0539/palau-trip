@@ -308,16 +308,6 @@
       <span class="nav-icon">🆘</span>
       <span class="nav-label">緊急資訊 — 大使館・旅平險・急難救助</span>
     </div>
-
-    <!-- Silhouettes -->
-    <div class="silhouettes">
-      <div class="sil" style="left:0;font-size:1.8rem;animation-duration:18s;animation-delay:0s;bottom:5px;">🐢</div>
-      <div class="sil" style="left:0;font-size:1.4rem;animation-duration:22s;animation-delay:3s;bottom:20px;">🐠</div>
-      <div class="sil" style="left:0;font-size:2.2rem;animation-duration:25s;animation-delay:7s;bottom:0px;">🦈</div>
-      <div class="sil" style="left:0;font-size:1.2rem;animation-duration:15s;animation-delay:5s;bottom:30px;">🐡</div>
-      <div class="sil" style="left:0;font-size:1.6rem;animation-duration:20s;animation-delay:12s;bottom:10px;">🦑</div>
-      <div class="sil" style="left:0;font-size:2.5rem;animation-duration:30s;animation-delay:2s;bottom:0px;">🐋</div>
-    </div>
   </div>
 
   <!-- ===== 行程記錄 ===== -->
@@ -581,7 +571,7 @@ let selectedCat = '';
   for (let i = 0; i < 15; i++) {
     const b = document.createElement('div');
     b.className = 'bubble';
-    const size = Math.random() * 50 + 8;
+    const size = Math.random() * 20 + 4;
     b.style.width = size + 'px';
     b.style.height = size + 'px';
     b.style.left = Math.random() * 100 + '%';
@@ -736,6 +726,7 @@ function deleteExpense(id) {
   expenses = expenses.filter(e => e.id !== id);
   localStorage.setItem('palau-expenses', JSON.stringify(expenses));
   renderExpenses();
+  renderOverview();
 }
 
 function renderExpenses() {
@@ -836,6 +827,7 @@ function deleteTrip(id) {
   trips = trips.filter(t => t.id !== id);
   localStorage.setItem('palau-trips', JSON.stringify(trips));
   renderTrips();
+  renderOverview();
 }
 
 function renderTrips() {
