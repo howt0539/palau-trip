@@ -299,7 +299,7 @@
   <!-- ===== 首頁 ===== -->
   <div id="page-home" class="page active">
     <div class="header">
-      <h1><i data-px="wave" data-sz="24"></i> Palau 2026</h1>
+      <h1>🇵🇼 Palau 2026</h1>
       <p>帛琉旅遊手帳</p>
     </div>
 
@@ -317,7 +317,7 @@
         <div class="converted-label">約等於新台幣</div>
         <div class="converted-value" id="home-twd">NT$0</div>
       </div>
-      <button class="btn btn-confirm" id="home-record-btn" style="display:none;" onclick="homeToExpense()">💰 記錄這筆花費 →</button>
+      <button class="btn btn-confirm" id="home-record-btn" style="display:none;" onclick="homeToExpense()"><i data-px="money" data-sz="14"></i> 記錄這筆花費 →</button>
     </div>
 
     <!-- Nav buttons -->
@@ -360,9 +360,9 @@
   <div id="page-trip" class="page">
     <div class="top-nav">
       <button class="top-nav-btn" onclick="goPage('home')">← 首頁</button>
-      <button class="top-nav-btn active-nav">📍 行程</button>
-      <button class="top-nav-btn" onclick="goPage('expense')">💰 記帳</button>
-      <button class="top-nav-btn" onclick="goPage('overview')">📋 總覽</button>
+      <button class="top-nav-btn active-nav"><i data-px="pin" data-sz="14"></i> 行程</button>
+      <button class="top-nav-btn" onclick="goPage('expense')"><i data-px="money" data-sz="14"></i> 記帳</button>
+      <button class="top-nav-btn" onclick="goPage('overview')"><i data-px="list" data-sz="14"></i> 總覽</button>
     </div>
     <div class="card">
       <div class="card-title"><i data-px="pin" data-sz="18"></i> 新增足跡</div>
@@ -396,9 +396,9 @@
   <div id="page-expense" class="page">
     <div class="top-nav">
       <button class="top-nav-btn" onclick="goPage('home')">← 首頁</button>
-      <button class="top-nav-btn" onclick="goPage('trip')">📍 行程</button>
-      <button class="top-nav-btn active-nav">💰 記帳</button>
-      <button class="top-nav-btn" onclick="goPage('overview')">📋 總覽</button>
+      <button class="top-nav-btn" onclick="goPage('trip')"><i data-px="pin" data-sz="14"></i> 行程</button>
+      <button class="top-nav-btn active-nav"><i data-px="money" data-sz="14"></i> 記帳</button>
+      <button class="top-nav-btn" onclick="goPage('overview')"><i data-px="list" data-sz="14"></i> 總覽</button>
     </div>
     <div class="rate-display" id="rate-display-exp">匯率載入中...</div>
     <div id="exp-summary" class="summary-bar" style="display:none;">
@@ -435,7 +435,7 @@
         <div class="step-indicator">
           <div class="step-dot done"></div><div class="step-dot active"></div><div class="step-dot"></div>
         </div>
-        <div class="card-title">📂 選擇分類</div>
+        <div class="card-title"><i data-px="other" data-sz="16"></i> 選擇分類</div>
         <div class="cat-grid">
           <div class="cat-item" onclick="selectCat(this, 'food')"><span class="cat-icon"><i data-px="fork" data-sz="26"></i></span>餐飲</div>
           <div class="cat-item" onclick="selectCat(this, 'transport')"><span class="cat-icon"><i data-px="car" data-sz="26"></i></span>交通</div>
@@ -456,7 +456,7 @@
         <div class="step-indicator">
           <div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot active"></div>
         </div>
-        <div class="card-title">📝 備註</div>
+        <div class="card-title"><i data-px="list" data-sz="16"></i> 備註</div>
         <div class="field">
           <label>說明（選填）</label>
           <textarea id="exp-memo" placeholder="例：晚餐海鮮、浮潛費用"></textarea>
@@ -473,14 +473,14 @@
   <div id="page-overview" class="page">
     <div class="top-nav">
       <button class="top-nav-btn" onclick="goPage('home')">← 首頁</button>
-      <button class="top-nav-btn" onclick="goPage('trip')">📍 行程</button>
-      <button class="top-nav-btn" onclick="goPage('expense')">💰 記帳</button>
-      <button class="top-nav-btn active-nav">📋 總覽</button>
+      <button class="top-nav-btn" onclick="goPage('trip')"><i data-px="pin" data-sz="14"></i> 行程</button>
+      <button class="top-nav-btn" onclick="goPage('expense')"><i data-px="money" data-sz="14"></i> 記帳</button>
+      <button class="top-nav-btn active-nav"><i data-px="list" data-sz="14"></i> 總覽</button>
     </div>
     <div class="ov-filter">
       <button class="ov-filter-btn active" onclick="setOverviewFilter('all', this)">全部</button>
-      <button class="ov-filter-btn" onclick="setOverviewFilter('trip', this)">📍 只看足跡</button>
-      <button class="ov-filter-btn" onclick="setOverviewFilter('expense', this)">💰 只看花費</button>
+      <button class="ov-filter-btn" onclick="setOverviewFilter('trip', this)"><i data-px="pin" data-sz="12"></i> 只看足跡</button>
+      <button class="ov-filter-btn" onclick="setOverviewFilter('expense', this)"><i data-px="money" data-sz="12"></i> 只看花費</button>
     </div>
     <div id="overview-timeline"></div>
   </div>
@@ -489,11 +489,11 @@
   <div id="page-flight" class="page">
     <div class="top-nav">
       <button class="top-nav-btn" onclick="goPage('home')">← 首頁</button>
-      <button class="top-nav-btn" onclick="goPage('expense')">💰 記帳</button>
-      <button class="top-nav-btn" onclick="goPage('overview')">📋 總覽</button>
+      <button class="top-nav-btn" onclick="goPage('expense')"><i data-px="money" data-sz="14"></i> 記帳</button>
+      <button class="top-nav-btn" onclick="goPage('overview')"><i data-px="list" data-sz="14"></i> 總覽</button>
     </div>
     <div class="header" style="margin-bottom:14px;">
-      <h1>✈️ 航班 / 住宿</h1>
+      <h1><i data-px="plane" data-sz="22"></i> 航班 / 住宿</h1>
       <p>輸入後自動儲存</p>
     </div>
 
@@ -532,11 +532,11 @@
   <div id="page-fishguide" class="page">
     <div class="top-nav">
       <button class="top-nav-btn" onclick="goPage('home')">← 首頁</button>
-      <button class="top-nav-btn" onclick="goPage('expense')">💰 記帳</button>
-      <button class="top-nav-btn" onclick="goPage('overview')">📋 總覽</button>
+      <button class="top-nav-btn" onclick="goPage('expense')"><i data-px="money" data-sz="14"></i> 記帳</button>
+      <button class="top-nav-btn" onclick="goPage('overview')"><i data-px="list" data-sz="14"></i> 總覽</button>
     </div>
     <div class="header" style="margin-bottom:14px;">
-      <h1>🐠 帛琉生物圖鑑</h1>
+      <h1><i data-px="fish" data-sz="22"></i> 帛琉生物圖鑑</h1>
       <p>點擊翻牌 ｜ 連點三下 = 我看到了！</p>
     </div>
     <div class="fish-progress" id="fish-progress"></div>
@@ -547,11 +547,11 @@
   <div id="page-emergency" class="page">
     <div class="top-nav">
       <button class="top-nav-btn" onclick="goPage('home')">← 首頁</button>
-      <button class="top-nav-btn" onclick="goPage('expense')">💰 記帳</button>
-      <button class="top-nav-btn" onclick="goPage('overview')">📋 總覽</button>
+      <button class="top-nav-btn" onclick="goPage('expense')"><i data-px="money" data-sz="14"></i> 記帳</button>
+      <button class="top-nav-btn" onclick="goPage('overview')"><i data-px="list" data-sz="14"></i> 總覽</button>
     </div>
     <div class="header" style="margin-bottom:14px;">
-      <h1>🆘 緊急資訊</h1>
+      <h1><i data-px="sos" data-sz="22"></i> 緊急資訊</h1>
       <p>存在手機裡，有備無患</p>
     </div>
 
@@ -818,7 +818,7 @@ function renderExpenses() {
   const el = document.getElementById('exp-list');
   const summary = document.getElementById('exp-summary');
   if (expenses.length === 0) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">💰</div><div class="empty-text">還沒有記帳紀錄</div></div>';
+    el.innerHTML = '<div class="empty"><div class="empty-icon">' + px('money',40) + '</div><div class="empty-text">還沒有記帳紀錄</div></div>';
     summary.style.display = 'none'; return;
   }
   summary.style.display = 'grid';
@@ -834,7 +834,7 @@ function renderExpenses() {
     groups[d].push(e);
   });
 
-  let html = '<div class="card" style="padding:14px;"><div class="card-title">📋 完整帳目</div>';
+  let html = '<div class="card" style="padding:14px;"><div class="card-title">' + px('list',16) + ' 完整帳目</div>';
   for (const [date, items] of Object.entries(groups)) {
     html += `<div class="date-group">${date}</div>`;
     items.forEach(e => {
@@ -918,7 +918,7 @@ function deleteTrip(id) {
 function renderTrips() {
   const el = document.getElementById('trip-list');
   if (trips.length === 0) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">🗺️</div><div class="empty-text">還沒有足跡紀錄<br>開始記錄你的帛琉之旅吧！</div></div>';
+    el.innerHTML = '<div class="empty"><div class="empty-icon">' + px('pin',40) + '</div><div class="empty-text">還沒有足跡紀錄<br>開始記錄你的帛琉之旅吧！</div></div>';
     return;
   }
   const sorted = [...trips].sort((a, b) => new Date(a.time) - new Date(b.time));
@@ -955,7 +955,7 @@ function renderOverview() {
   const timelineEl = document.getElementById('overview-timeline');
 
   if (trips.length === 0 && expenses.length === 0) {
-    timelineEl.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">還沒有任何紀錄<br>旅程開始後這裡會自動彙整</div></div>';
+    timelineEl.innerHTML = '<div class="empty"><div class="empty-icon">' + px('list',40) + '</div><div class="empty-text">還沒有任何紀錄<br>旅程開始後這裡會自動彙整</div></div>';
     return;
   }
 
@@ -965,7 +965,7 @@ function renderOverview() {
   allEvents.sort((a, b) => new Date(a.time) - new Date(b.time));
 
   if (allEvents.length === 0) {
-    timelineEl.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">這個分類還沒有紀錄</div></div>';
+    timelineEl.innerHTML = '<div class="empty"><div class="empty-icon">' + px('list',40) + '</div><div class="empty-text">這個分類還沒有紀錄</div></div>';
     return;
   }
 
@@ -1124,7 +1124,7 @@ function renderFishGuide() {
     const no = String(idx + 1).padStart(3, '0');
     return `<div class="fish-card ${revealed ? 'revealed' : ''} ${seen ? 'seen' : ''}" onclick="clickFish('${f.id}')">
       <div class="fish-top">
-        <span class="fish-top-left">PALAU</span>
+        <span class="fish-top-left">🇵🇼 PALAU</span>
         <span class="fish-top-right">${'★'.repeat(f.stars)}</span>
       </div>
       <div class="fish-img-area">
