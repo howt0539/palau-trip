@@ -109,6 +109,8 @@
   .tl-photos img { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
   .tl-delete { position: absolute; right: 0; top: 4px; background: none; border: none; color: rgba(255,255,255,0.2); font-size: 0.85rem; cursor: pointer; padding: 4px; }
   .tl-delete:hover { color: #f87171; }
+  .tl-edit { position: absolute; right: 0; top: 4px; background: none; border: none; font-size: 0.72rem; cursor: pointer; padding: 4px; opacity: 0.4; transition: opacity 0.2s; }
+  .tl-edit:hover, .tl-edit:active { opacity: 1; }
 
   /* Expense list */
   .exp-item { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
@@ -906,11 +908,11 @@ function renderOverview() {
         const t = ev.data;
         const ph = t.photos && t.photos.length > 0
           ? `<div class="tl-photos">${t.photos.map(p => `<img src="${p}" onclick="openLightbox(this.src)">`).join('')}</div>` : '';
-        html += `<div class="tl-item" oncontextmenu="return editTrip(event,${t.id})" ontouchstart="startLongPress(event,'trip',${t.id})" ontouchend="cancelLongPress()" ontouchmove="cancelLongPress()"><div class="tl-dot"></div><div class="tl-date">${time}</div><div class="tl-place">📍 ${escHtml(t.place)}</div>${t.note ? `<div class="tl-note">${escHtml(t.note)}</div>` : ''}${ph}</div>`;
+        html += `<div class="tl-item"><div class="tl-dot"></div><button class="tl-edit" onclick="editTrip(event,${t.id})">✏️</button><div class="tl-date">${time}</div><div class="tl-place">📍 ${escHtml(t.place)}</div>${t.note ? `<div class="tl-note">${escHtml(t.note)}</div>` : ''}${ph}</div>`;
       } else {
         const e = ev.data;
         const cat = catMap[e.cat] || catMap.other;
-        html += `<div class="tl-item" oncontextmenu="return editExpense(event,${e.id})" ontouchstart="startLongPress(event,'expense',${e.id})" ontouchend="cancelLongPress()" ontouchmove="cancelLongPress()"><div class="tl-dot" style="background:#f59e0b;box-shadow:0 0 0 2px #f59e0b;"></div><div class="tl-date">${time}</div><div class="tl-place">${cat.icon} ${escHtml(e.memo)}</div><div class="tl-note">$${e.amount.toFixed(2)}（≈ NT$${e.twd.toLocaleString()}）</div></div>`;
+        html += `<div class="tl-item"><div class="tl-dot" style="background:#f59e0b;box-shadow:0 0 0 2px #f59e0b;"></div><button class="tl-edit" onclick="editExpense(event,${e.id})">✏️</button><div class="tl-date">${time}</div><div class="tl-place">${cat.icon} ${escHtml(e.memo)}</div><div class="tl-note">$${e.amount.toFixed(2)}（≈ NT$${e.twd.toLocaleString()}）</div></div>`;
       }
     });
     html += '</div></div>';
@@ -918,16 +920,7 @@ function renderOverview() {
   timelineEl.innerHTML = html;
 }
 
-// ===== Long Press & Edit =====
-let longPressTimer = null;
-function startLongPress(e, type, id) {
-  longPressTimer = setTimeout(() => {
-    if (type === 'trip') editTrip(e, id);
-    else editExpense(e, id);
-  }, 600);
-}
-function cancelLongPress() { clearTimeout(longPressTimer); }
-
+// ===== Edit =====
 function editTrip(e, id) {
   e.preventDefault();
   const t = trips.find(x => x.id === id);
