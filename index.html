@@ -675,26 +675,19 @@ let selectedCat = '';
 })();
 
 // ===== Page Navigation (hash-based) =====
-let leftHome = false;
+let currentPage = 'home';
 function goPage(page) {
+  if (page === currentPage) return;
   const hash = page === 'home' ? location.pathname : '#' + page;
-  if (page === 'home') {
-    history.replaceState(null, '', hash);
-    leftHome = false;
-  } else if (!leftHome) {
-    history.pushState(null, '', hash);
-    leftHome = true;
-  } else {
-    history.replaceState(null, '', hash);
-  }
+  history.pushState({ page }, '', hash);
   showPage(page);
 }
 window.addEventListener('popstate', () => {
   const page = location.hash.slice(1) || 'home';
-  leftHome = page !== 'home';
   showPage(page);
 });
 function showPage(page) {
+  currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(`page-${page}`).classList.add('active');
   window.scrollTo(0, 0);
