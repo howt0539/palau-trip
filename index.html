@@ -646,8 +646,9 @@ let photos = [null, null];
 let selectedCat = '';
 
 // ===== Bubbles (pixel) =====
-(function createBubbles() {
+function createBubbles() {
   const container = document.getElementById('bubbles');
+  container.innerHTML = '';
   const sizes = [
     // 8px bubble - round
     { vb: 8, svg: `<svg viewBox="0 0 8 8" shape-rendering="crispEdges" style="image-rendering:pixelated;"><rect x="2" y="0" width="4" height="1" fill="#5ec4d4"/><rect x="1" y="1" width="1" height="1" fill="#5ec4d4"/><rect x="2" y="1" width="4" height="1" fill="#8de4f0"/><rect x="6" y="1" width="1" height="1" fill="#5ec4d4"/><rect x="0" y="2" width="1" height="4" fill="#5ec4d4"/><rect x="1" y="2" width="6" height="4" fill="#8de4f0"/><rect x="7" y="2" width="1" height="4" fill="#4aa8b8"/><rect x="1" y="2" width="2" height="2" fill="#c0f0f8"/><rect x="1" y="6" width="1" height="1" fill="#4aa8b8"/><rect x="2" y="6" width="4" height="1" fill="#5ec4d4"/><rect x="6" y="6" width="1" height="1" fill="#4aa8b8"/><rect x="2" y="7" width="4" height="1" fill="#4aa8b8"/></svg>` },
@@ -672,7 +673,8 @@ let selectedCat = '';
     b.querySelector('svg').style.height = '100%';
     container.appendChild(b);
   }
-})();
+}
+createBubbles();
 
 // ===== Page Navigation (hash-based) =====
 let currentPage = 'home';
@@ -699,15 +701,9 @@ window.addEventListener('popstate', () => {
   inSubPage = page !== 'home';
   showPage(page);
 });
-// iOS Safari 暫停動畫修復：回到頁面時重啟泡泡
+// iOS Safari 暫停動畫修復：回到頁面時重建泡泡
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
-    document.querySelectorAll('.bubble').forEach(b => {
-      b.style.animationPlayState = 'paused';
-      void b.offsetHeight;
-      b.style.animationPlayState = 'running';
-    });
-  }
+  if (document.visibilityState === 'visible') createBubbles();
 });
 function showPage(page) {
   currentPage = page;
