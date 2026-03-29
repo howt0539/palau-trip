@@ -189,8 +189,10 @@
   .bubble {
     position: absolute; bottom: -20px; animation: rise linear infinite;
     image-rendering: pixelated; opacity: 0.5;
+    will-change: transform, opacity;
+    contain: layout style;
   }
-  @keyframes rise { 0% { transform: translateY(0); opacity: 0; } 5% { opacity: 0.5; } 50% { opacity: 0.7; } 90% { opacity: 0.2; } 100% { transform: translateY(-110vh); opacity: 0; } }
+  @keyframes rise { 0% { translate: 0 0; opacity: 0; } 5% { opacity: 0.5; } 50% { opacity: 0.7; } 90% { opacity: 0.2; } 100% { translate: 0 -110vh; opacity: 0; } }
   .container { position: relative; z-index: 1; }
 
   /* Silhouettes */
