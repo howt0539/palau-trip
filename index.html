@@ -676,14 +676,27 @@ let selectedCat = '';
 
 // ===== Page Navigation (hash-based) =====
 let currentPage = 'home';
+let inSubPage = false;
 function goPage(page) {
   if (page === currentPage) return;
   const hash = page === 'home' ? location.pathname : '#' + page;
-  history.pushState({ page }, '', hash);
+  if (page === 'home' && inSubPage) {
+    // 子頁面 → 首頁：回上一層
+    history.back();
+    return;
+  } else if (page !== 'home' && !inSubPage) {
+    // 首頁 → 子頁面：進入下一層
+    history.pushState(null, '', hash);
+    inSubPage = true;
+  } else {
+    // 子頁面 → 子頁面：同一層，替換
+    history.replaceState(null, '', hash);
+  }
   showPage(page);
 }
 window.addEventListener('popstate', () => {
   const page = location.hash.slice(1) || 'home';
+  inSubPage = page !== 'home';
   showPage(page);
 });
 function showPage(page) {
