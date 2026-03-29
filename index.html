@@ -679,7 +679,7 @@ let selectedCat = '';
 
 // ===== Page Navigation (hash-based) =====
 function goPage(page) {
-  location.hash = page === 'home' ? '' : page;
+  history.replaceState(null, '', page === 'home' ? location.pathname : '#' + page);
   showPage(page);
 }
 function showPage(page) {
