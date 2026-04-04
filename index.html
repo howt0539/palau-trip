@@ -61,7 +61,8 @@
   /* Top tab bar */
   .tab-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-around; align-items: flex-end; background: rgba(5,27,46,0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid rgba(94,196,212,0.15); padding: 6px 0; padding-top: max(6px, env(safe-area-inset-top)); }
   .tab-item { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0; min-width: 48px; min-height: 44px; cursor: pointer; -webkit-tap-highlight-color: transparent; background: none; border: none; font-family: inherit; }
-  .tab-icon { width: 24px; height: 24px; opacity: 0.45; transition: opacity 0.2s; image-rendering: pixelated; }
+  .tab-icon { width: 24px; height: 24px; opacity: 0.45; transition: opacity 0.2s; image-rendering: pixelated; display: flex; align-items: center; justify-content: center; }
+  .tab-icon img { width: 20px; height: 20px; object-fit: contain; image-rendering: pixelated; }
   .tab-label { font-size: 0.6rem; color: var(--text-muted); transition: color 0.2s; letter-spacing: 0.02em; }
   .tab-item.active .tab-icon { opacity: 1; }
   .tab-item.active .tab-label { color: var(--accent); }
@@ -102,7 +103,8 @@
     min-height: 44px;
   }
   .nav-card:hover { background: var(--surface-hover); transform: translateY(-2px); }
-  .nav-card .nav-icon { margin-bottom: 4px; }
+  .nav-card .nav-icon { height: 48px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+  .nav-card .nav-icon img { width: 40px; height: 40px; object-fit: contain; image-rendering: pixelated; }
   .nav-card .nav-label { font-weight: 700; font-size: 0.72rem; color: var(--text-secondary); }
   .nav-card .nav-desc { font-size: 0.62rem; color: var(--text-muted); margin-top: 2px; }
   .nav-card .nav-badge { display: inline-block; background: var(--accent-dark); color: #fff; font-size: 0.6rem; font-weight: 700; padding: 1px 6px; border-radius: var(--radius-md); margin-top: 4px; }
@@ -158,6 +160,8 @@
   .exp-amounts { text-align: right; }
   .exp-usd { font-weight: 700; font-size: 0.9rem; color: var(--text-primary); }
   .exp-twd { font-size: 0.7rem; color: var(--text-muted); }
+  .exp-edit { background: none; border: none; cursor: pointer; padding: 10px; min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; opacity: 0.25; transition: opacity 0.2s; }
+  .exp-edit:hover, .exp-edit:active { opacity: 0.7; }
   .exp-delete { background: none; border: none; color: rgba(255,255,255,0.15); cursor: pointer; padding: 10px; font-size: 0.82rem; min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; }
   .exp-delete:hover { color: var(--danger); }
   .exp-total { display: flex; justify-content: space-between; padding: 12px 0; font-weight: 800; font-size: 0.95rem; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 8px; color: var(--accent); }
@@ -433,12 +437,12 @@
     <!-- Nav buttons -->
     <div class="nav-grid">
       <div class="nav-card" role="button" tabindex="0" onclick="goPage('trip')">
-        <div class="nav-icon"><img src="icon-footprint.png" alt="足跡" style="width:28px;image-rendering:pixelated;"></div>
+        <div class="nav-icon"><img src="icon-footprint.png" alt="足跡"></div>
         <div class="nav-label">行程記錄</div>
         <div class="nav-desc">記下足跡</div>
       </div>
       <div class="nav-card" role="button" tabindex="0" onclick="goPage('expense')">
-        <div class="nav-icon"><img src="icon-coin.png" alt="記帳" style="width:36px;image-rendering:pixelated;"></div>
+        <div class="nav-icon"><img src="icon-coin.png" alt="記帳"></div>
         <div class="nav-label">記帳</div>
         <div class="nav-desc">花費總覽</div>
       </div>
@@ -448,12 +452,12 @@
         <div class="nav-desc">回顧旅程</div>
       </div>
       <div class="nav-card" role="button" tabindex="0" onclick="goPage('flight')">
-        <div class="nav-icon"><img src="icon-flight.png" alt="航班住宿" style="width:44px;image-rendering:pixelated;"></div>
+        <div class="nav-icon"><img src="icon-flight.png" alt="航班住宿"></div>
         <div class="nav-label">航班住宿</div>
         <div class="nav-desc">班機飯店</div>
       </div>
       <div class="nav-card" role="button" tabindex="0" onclick="goPage('fishguide')">
-        <div class="nav-icon"><img src="icon-fishguide.png" alt="生物圖鑑" style="width:44px;image-rendering:pixelated;"></div>
+        <div class="nav-icon"><img src="icon-fishguide.png" alt="生物圖鑑"></div>
         <div class="nav-label">生物圖鑑</div>
         <div class="nav-desc">收集帛琉</div>
         <div class="nav-badge" id="badge-fish" style="display:none;">0</div>
@@ -771,11 +775,11 @@
     <span class="tab-label">首頁</span>
   </button>
   <button class="tab-item" data-page="trip" onclick="goPage('trip')">
-    <div class="tab-icon"><img src="icon-footprint.png" alt="" style="width:16px;image-rendering:pixelated;"></div>
+    <div class="tab-icon"><img src="icon-footprint.png" alt=""></div>
     <span class="tab-label">行程</span>
   </button>
   <button class="tab-item" data-page="expense" onclick="goPage('expense')">
-    <div class="tab-icon"><img src="icon-coin.png" alt="" style="width:20px;image-rendering:pixelated;"></div>
+    <div class="tab-icon"><img src="icon-coin.png" alt=""></div>
     <span class="tab-label">記帳</span>
   </button>
   <button class="tab-item" data-page="overview" onclick="goPage('overview')">
@@ -783,11 +787,11 @@
     <span class="tab-label">總覽</span>
   </button>
   <button class="tab-item" data-page="flight" onclick="goPage('flight')">
-    <div class="tab-icon"><img src="icon-flight.png" alt="" style="width:24px;image-rendering:pixelated;"></div>
+    <div class="tab-icon"><img src="icon-flight.png" alt=""></div>
     <span class="tab-label">航班</span>
   </button>
   <button class="tab-item" data-page="fishguide" onclick="goPage('fishguide')">
-    <div class="tab-icon"><img src="icon-fishguide.png" alt="" style="width:24px;image-rendering:pixelated;"></div>
+    <div class="tab-icon"><img src="icon-fishguide.png" alt=""></div>
     <span class="tab-label">圖鑑</span>
   </button>
 </nav>
@@ -1205,7 +1209,7 @@ function renderExpenses() {
     html += `<div class="date-group">${date}</div>`;
     items.forEach(e => {
       const cat = catMap[e.cat] || catMap.other;
-      html += `<div class="exp-item"><div class="exp-icon">${px(cat.icon, 20)}</div><div class="exp-info"><div class="exp-cat">${cat.name}</div><div class="exp-note">${escHtml(e.memo)}</div></div><div class="exp-amounts"><div class="exp-usd">$${e.amount.toFixed(2)}</div><div class="exp-twd">≈ NT$${e.twd.toLocaleString()}</div></div><button class="exp-delete" onclick="deleteExpense('${e.id}')">✕</button></div>`;
+      html += `<div class="exp-item"><div class="exp-icon">${px(cat.icon, 20)}</div><div class="exp-info"><div class="exp-cat">${cat.name}</div><div class="exp-note">${escHtml(e.memo)}</div></div><div class="exp-amounts"><div class="exp-usd">$${e.amount.toFixed(2)}</div><div class="exp-twd">≈ NT$${e.twd.toLocaleString()}</div></div><button class="exp-edit" onclick="editExpense(event,'${e.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="#8bbad0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button><button class="exp-delete" onclick="deleteExpense('${e.id}')">✕</button></div>`;
     });
   }
   html += `<div class="exp-total"><span>合計</span><span>$${totalUsd.toFixed(2)}（≈ NT$${totalTwd.toLocaleString()}）</span></div></div>`;
@@ -1357,7 +1361,7 @@ function renderTrips() {
       const time = new Date(t.time).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
       const ph = t.photos && t.photos.length > 0
         ? `<div class="tl-photos">${t.photos.map(p => `<img src="${p}" onclick="openLightbox(this.src)">`).join('')}</div>` : '';
-      html += `<div class="tl-item"><div class="tl-dot"></div><button class="tl-delete" onclick="deleteTrip(${t.id})">✕</button><div class="tl-date">${time}</div><div class="tl-place">${escHtml(t.place)}</div>${t.note ? `<div class="tl-note">${escHtml(t.note)}</div>` : ''}${ph}</div>`;
+      html += `<div class="tl-item"><div class="tl-dot"></div><button class="tl-edit" onclick="editTrip(event,'${t.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="#8bbad0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button><button class="tl-delete" onclick="deleteTrip('${t.id}')">✕</button><div class="tl-date">${time}</div><div class="tl-place">${escHtml(t.place)}</div>${t.note ? `<div class="tl-note">${escHtml(t.note)}</div>` : ''}${ph}</div>`;
     });
     html += '</div></div>';
   }
@@ -1407,11 +1411,11 @@ function renderOverview() {
         const t = ev.data;
         const ph = t.photos && t.photos.length > 0
           ? `<div class="tl-photos">${t.photos.map(p => `<img src="${p}" onclick="openLightbox(this.src)">`).join('')}</div>` : '';
-        html += `<div class="tl-item"><div class="tl-dot"></div><button class="tl-edit" onclick="editTrip(event,${t.id})"><svg viewBox="0 0 24 24" fill="none" stroke="#8bbad0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button><div class="tl-date">${time}</div><div class="tl-place">${px('pin',14)} ${escHtml(t.place)}</div>${t.note ? `<div class="tl-note">${escHtml(t.note)}</div>` : ''}${ph}</div>`;
+        html += `<div class="tl-item"><div class="tl-dot"></div><button class="tl-edit" onclick="editTrip(event,'${t.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="#8bbad0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button><div class="tl-date">${time}</div><div class="tl-place">${px('pin',14)} ${escHtml(t.place)}</div>${t.note ? `<div class="tl-note">${escHtml(t.note)}</div>` : ''}${ph}</div>`;
       } else {
         const e = ev.data;
         const cat = catMap[e.cat] || catMap.other;
-        html += `<div class="tl-item"><div class="tl-dot" style="background:#f59e0b;box-shadow:0 0 0 2px #f59e0b;"></div><button class="tl-edit" onclick="editExpense(event,${e.id})"><svg viewBox="0 0 24 24" fill="none" stroke="#8bbad0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button><div class="tl-date">${time}</div><div class="tl-place">${px(cat.icon,14)} ${escHtml(e.memo)}</div><div class="tl-note">$${e.amount.toFixed(2)}（≈ NT$${e.twd.toLocaleString()}）</div></div>`;
+        html += `<div class="tl-item"><div class="tl-dot" style="background:#f59e0b;box-shadow:0 0 0 2px #f59e0b;"></div><button class="tl-edit" onclick="editExpense(event,'${e.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="#8bbad0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button><div class="tl-date">${time}</div><div class="tl-place">${px(cat.icon,14)} ${escHtml(e.memo)}</div><div class="tl-note">$${e.amount.toFixed(2)}（≈ NT$${e.twd.toLocaleString()}）</div></div>`;
       }
     });
     html += '</div></div>';
@@ -1422,7 +1426,7 @@ function renderOverview() {
 // ===== Edit =====
 function editTrip(e, id) {
   e.preventDefault();
-  const t = trips.find(x => x.id === id);
+  const t = trips.find(x => String(x.id) === String(id));
   if (!t) return false;
   const modal = document.getElementById('edit-modal');
   document.getElementById('edit-modal-body').innerHTML = `
@@ -1430,8 +1434,8 @@ function editTrip(e, id) {
     <div class="field"><label>地點</label><input type="text" id="edit-place" value="${escAttr(t.place)}"></div>
     <div class="field"><label>時間</label><input type="datetime-local" id="edit-time" value="${t.time.slice(0,16)}"></div>
     <div class="field"><label>備註</label><textarea id="edit-note">${escHtml(t.note || '')}</textarea></div>
-    <button class="btn btn-primary" onclick="saveEditTrip(${id})">儲存修改</button>
-    <button class="btn btn-danger" onclick="closeEditModal();deleteTrip(${id})" style="margin-top:8px;">刪除這筆</button>
+    <button class="btn btn-primary" onclick="saveEditTrip('${id}')">儲存修改</button>
+    <button class="btn btn-danger" onclick="closeEditModal();deleteTrip('${id}')" style="margin-top:8px;">刪除這筆</button>
     <button class="btn btn-secondary" onclick="closeEditModal()" style="margin-top:8px;">取消</button>
   `;
   modal.classList.add('show');
@@ -1439,19 +1443,20 @@ function editTrip(e, id) {
 }
 
 function saveEditTrip(id) {
-  const t = trips.find(x => x.id === id);
+  const t = trips.find(x => String(x.id) === String(id));
   if (!t) return;
   const idx = trips.indexOf(t);
   trips[idx] = { ...t, place: document.getElementById('edit-place').value, time: document.getElementById('edit-time').value, note: document.getElementById('edit-note').value };
   localStorage.setItem('palau-trips', JSON.stringify(trips));
   closeEditModal();
   renderOverview();
+  renderTrips();
   showToast('已更新', 'success');
 }
 
 function editExpense(e, id) {
   e.preventDefault();
-  const exp = expenses.find(x => x.id === id);
+  const exp = expenses.find(x => String(x.id) === String(id));
   if (!exp) return false;
   const modal = document.getElementById('edit-modal');
   document.getElementById('edit-modal-body').innerHTML = `
@@ -1476,6 +1481,7 @@ function saveEditExpense(id) {
   localStorage.setItem('palau-expenses', JSON.stringify(expenses));
   closeEditModal();
   renderOverview();
+  renderExpenses();
   showToast('已更新', 'success');
 
   // Sync: delete old + create new in Notion
