@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Palau 2026">
 <meta name="theme-color" content="#051b2e">
-<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjQwIiBmaWxsPSIjMGE0YTZlIi8+PHRleHQgeD0iOTAiIHk9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjYwIj7wn4yK</link>
+<link rel="apple-touch-icon" href="apple-touch-icon.png"></link>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌊</text></svg>">
 <link rel="manifest" href="manifest.json">
 <style>
@@ -50,6 +50,11 @@
 
   /* Header */
   .header { text-align: center; margin-bottom: 20px; }
+  .home-hero { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 20px; padding-top: 8px; }
+  .home-hero-row { display: flex; align-items: center; gap: 8px; }
+  .home-hero-flag { width: 36px; image-rendering: pixelated; }
+  .home-hero-text { width: 150px; image-rendering: pixelated; }
+  .home-hero-sub { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 1px; }
   .header h1 { font-size: 1.4rem; color: var(--accent); letter-spacing: 1px; }
   .header p { font-size: 0.78rem; color: var(--text-muted); }
 
@@ -250,7 +255,7 @@
   .fish-card.seen .fish-top-right { color: #e8d8a8; }
   /* Card image area */
   .fish-img-area {
-    position: relative; padding: 16px 8px 10px; min-height: 90px;
+    position: relative; padding: 0; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
     background: linear-gradient(180deg, #1a4a6a 0%, #0e3a55 40%, #0a2a42 100%);
     border-top: 1px solid rgba(100,180,220,0.15); border-bottom: 2px solid rgba(255,255,255,0.05);
   }
@@ -261,11 +266,12 @@
   .fish-card.seen .fish-img-area::after {
     content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 20px;
     background: linear-gradient(0deg, rgba(40,120,160,0.4) 0%, transparent 100%);
-    border-radius: 0 0 0 0;
   }
   .fish-emoji { font-size: 3rem; display: block; filter: brightness(0) invert(0.1); transition: filter 0.3s; }
-  .fish-card.revealed .fish-emoji { filter: none; }
   .fish-card.seen .fish-emoji { filter: none; }
+  .fish-silhouette { width: 55%; max-height: 50%; object-fit: contain; image-rendering: pixelated; }
+  .fish-card.seen .fish-silhouette { display: none; }
+  .fish-card .fish-photo { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 2px; display: block; }
   /* Stars */
   .fish-stars { margin-top: 8px; letter-spacing: 3px; font-size: 0.85rem; }
   .fish-stars .star-on { color: #ecc94b; text-shadow: 0 0 4px rgba(236,201,75,0.5); }
@@ -279,12 +285,8 @@
   .fish-name { font-size: 0.85rem; font-weight: 800; color: #c8e6f0; letter-spacing: 2px; }
   .fish-card.seen .fish-name { color: #fff; text-shadow: 1px 1px 0 rgba(0,0,0,0.3); }
   /* Info area */
-  .fish-info { padding: 6px 8px; font-size: 0.62rem; color: #6b9ab8; display: flex; justify-content: space-between; }
+  .fish-info { padding: 6px 8px; font-size: 0.65rem; color: #6b9ab8; text-align: center; }
   .fish-card.seen .fish-info { color: #6a5020; }
-  /* Description */
-  .fish-desc { padding: 0 8px 6px; font-size: 0.7rem; color: #4a7a8a; text-align: left; line-height: 1.5; min-height: 24px; }
-  .fish-card.seen .fish-desc { color: #5a4a2a; }
-  .fish-card:not(.seen) .fish-desc { color: #2a4a5a; }
   /* Card number */
   .fish-no { padding: 2px 8px 4px; text-align: right; font-size: 0.55rem; color: #3a5a6a; font-weight: 600; }
   .fish-card.seen .fish-no { color: #8a7a50; }
@@ -299,6 +301,35 @@
   .fish-card.seen .fish-seen-badge { display: flex; }
   .fish-progress { text-align: center; margin-bottom: 14px; font-size: 0.78rem; color: #6b9ab8; }
   .fish-progress strong { color: var(--accent); }
+
+  /* Fish detail modal */
+  .fish-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999; align-items: center; justify-content: center; padding: 16px; }
+  .fish-modal.show { display: flex; }
+  .fish-modal-content { background: linear-gradient(180deg, #0c3d5f 0%, #0a2a42 100%); border-radius: 14px; width: 100%; max-width: 400px; border: 1px solid rgba(255,255,255,0.15); overflow: hidden; max-height: 90vh; overflow-y: auto; }
+  .fish-modal-content.seen { border-color: #c8960a; box-shadow: 0 0 20px rgba(200,150,10,0.3); }
+  .fish-modal-header { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(180deg, #1a4a6a 0%, #0a2a42 100%); min-height: 120px; }
+  .fish-modal-content.seen .fish-modal-header { background: linear-gradient(180deg, #7ec8e8 0%, #3a98c8 100%); }
+  .fish-modal-header .fish-emoji { font-size: 4rem; filter: brightness(0) invert(0.1); }
+  .fish-modal-content.seen .fish-modal-header .fish-emoji { filter: none; }
+  .fish-modal-photo { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+  .fish-modal-body { padding: 16px; }
+  .fish-modal-name { font-size: 1.2rem; font-weight: 800; color: #c8e6f0; margin-bottom: 4px; }
+  .fish-modal-content.seen .fish-modal-name { color: #ecc94b; }
+  .fish-modal-depth { font-size: 0.78rem; color: #6b9ab8; margin-bottom: 12px; }
+  .fish-modal-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; display: none; }
+  .fish-modal-content.seen .fish-modal-desc { display: block; }
+  .fish-modal-note { margin-bottom: 16px; }
+  .fish-modal-note label { display: block; font-size: 0.75rem; color: #6b9ab8; margin-bottom: 6px; font-weight: 600; }
+  .fish-modal-note textarea { width: 100%; min-height: 60px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: var(--text-primary); padding: 10px; font-size: 0.82rem; font-family: inherit; resize: vertical; }
+  .fish-modal-note textarea::placeholder { color: #4a7a94; }
+  .fish-modal-actions { display: flex; gap: 8px; }
+  .fish-modal-btn { flex: 1; padding: 12px; border-radius: 10px; border: none; font-size: 0.85rem; font-weight: 700; cursor: pointer; font-family: inherit; min-height: 44px; transition: all 0.2s; }
+  .fish-modal-btn.upload { background: var(--accent); color: #fff; }
+  .fish-modal-btn.upload:active { background: #4ab0c0; }
+  .fish-modal-btn.remove { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .fish-modal-btn.remove:active { background: rgba(239,68,68,0.25); }
+  .fish-modal-btn.close { background: rgba(255,255,255,0.08); color: var(--text-secondary); }
+  .fish-modal-close { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; z-index: 1; display: flex; align-items: center; justify-content: center; }
 
   /* Overview filter */
   .ov-filter { display: flex; gap: 6px; margin-bottom: 14px; }
@@ -339,6 +370,24 @@
   .accordion-body { display: none; }
   .accordion-body.open { display: block; }
 
+  /* Flight cards */
+  .flight-card { margin-bottom: 12px; }
+  .flight-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .flight-card-head .acc-title { font-weight: 800; font-size: 0.95rem; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
+  .flight-edit-btn { background: none; border: none; cursor: pointer; padding: 4px 6px; min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; opacity: 0.3; transition: opacity 0.2s; }
+  .flight-edit-btn:hover, .flight-edit-btn:active { opacity: 0.7; }
+  .flight-edit-btn svg { width: 16px; height: 16px; }
+  .flight-route { display: flex; align-items: baseline; gap: 6px; margin-bottom: 10px; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); flex-wrap: wrap; }
+  .flight-time-inline { font-size: 0.82rem; font-weight: 600; color: var(--accent); }
+  .flight-arrow { color: var(--accent); font-size: 1.2rem; }
+  .hotel-addr-link { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+  .flight-detail { display: flex; gap: 8px; align-items: baseline; margin-bottom: 4px; font-size: 0.88rem; color: var(--text-secondary); }
+  .flight-label { color: var(--text-muted); min-width: 48px; flex-shrink: 0; }
+  .flight-note { color: var(--text-dim); font-size: 0.82rem; }
+  .flight-empty { color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 12px 0; }
+  .hotel-map-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 8px 16px; background: rgba(255,255,255,0.08); border: 1px solid var(--surface-border); border-radius: 10px; color: var(--accent); font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: var(--transition); min-height: 44px; }
+  .hotel-map-btn:hover { background: rgba(255,255,255,0.12); }
+
   /* Onboarding */
   .onboarding { position: fixed; inset: 0; z-index: 300; background: rgba(5,27,46,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; text-align: center; }
   .onboarding-icon { font-size: 4rem; margin-bottom: 16px; }
@@ -356,9 +405,12 @@
 
   <!-- ===== 首頁 ===== -->
   <div id="page-home" class="page active">
-    <div class="header">
-      <h1><i data-px="wave" data-sz="22"></i> Palau 2026</h1>
-      <p>帛琉旅遊手帳</p>
+    <div class="home-hero">
+      <div class="home-hero-row">
+        <img class="home-hero-flag" src="palau-flag.png" alt="Palau Flag">
+        <img class="home-hero-text" src="palau-text.png" alt="PALAU 2026">
+      </div>
+      <div class="home-hero-sub">帛琉旅遊手帳</div>
     </div>
 
     <!-- Quick currency converter -->
@@ -375,18 +427,18 @@
         <div class="converted-label">約等於新台幣</div>
         <div class="converted-value" id="home-twd">NT$0</div>
       </div>
-      <button class="btn btn-confirm" id="home-record-btn" style="display:none;" onclick="homeToExpense()"><i data-px="money" data-sz="14"></i> 記錄這筆花費 →</button>
+      <button class="btn btn-confirm" id="home-record-btn" style="display:none;" onclick="homeToExpense()"><img src="icon-coin.png" alt="" style="width:14px;vertical-align:middle;image-rendering:pixelated;"> 記錄這筆花費 →</button>
     </div>
 
     <!-- Nav buttons -->
     <div class="nav-grid">
       <div class="nav-card" role="button" tabindex="0" onclick="goPage('trip')">
-        <div class="nav-icon"><i data-px="pin" data-sz="40"></i></div>
+        <div class="nav-icon"><img src="icon-footprint.png" alt="足跡" style="width:28px;image-rendering:pixelated;"></div>
         <div class="nav-label">行程記錄</div>
         <div class="nav-desc">記下足跡</div>
       </div>
       <div class="nav-card" role="button" tabindex="0" onclick="goPage('expense')">
-        <div class="nav-icon"><i data-px="money" data-sz="40"></i></div>
+        <div class="nav-icon"><img src="icon-coin.png" alt="記帳" style="width:36px;image-rendering:pixelated;"></div>
         <div class="nav-label">記帳</div>
         <div class="nav-desc">花費總覽</div>
       </div>
@@ -396,12 +448,12 @@
         <div class="nav-desc">回顧旅程</div>
       </div>
       <div class="nav-card" role="button" tabindex="0" onclick="goPage('flight')">
-        <div class="nav-icon"><i data-px="plane" data-sz="40"></i></div>
+        <div class="nav-icon"><img src="icon-flight.png" alt="航班住宿" style="width:44px;image-rendering:pixelated;"></div>
         <div class="nav-label">航班住宿</div>
         <div class="nav-desc">班機飯店</div>
       </div>
       <div class="nav-card" role="button" tabindex="0" onclick="goPage('fishguide')">
-        <div class="nav-icon"><i data-px="fish" data-sz="40"></i></div>
+        <div class="nav-icon"><img src="icon-fishguide.png" alt="生物圖鑑" style="width:44px;image-rendering:pixelated;"></div>
         <div class="nav-label">生物圖鑑</div>
         <div class="nav-desc">收集帛琉</div>
         <div class="nav-badge" id="badge-fish" style="display:none;">0</div>
@@ -417,7 +469,7 @@
   <!-- ===== 行程記錄 ===== -->
   <div id="page-trip" class="page">
     <div class="card">
-      <div class="card-title"><i data-px="pin" data-sz="18"></i> 新增足跡</div>
+      <div class="card-title"><img src="icon-footprint.png" alt="" style="width:18px;vertical-align:middle;image-rendering:pixelated;"> 新增足跡</div>
       <div class="field">
         <label>地點名稱</label>
         <input type="text" id="trip-place" placeholder="例：水母湖、牛奶湖">
@@ -460,7 +512,7 @@
 
     <div id="exp-step-1" class="step active">
       <div class="card">
-        <div class="card-title"><i data-px="money" data-sz="18"></i> 輸入金額</div>
+        <div class="card-title"><img src="icon-coin.png" alt="" style="width:18px;vertical-align:middle;image-rendering:pixelated;"> 輸入金額</div>
         <div class="field">
           <label>美金金額 (USD)</label>
           <div class="currency-input-wrap">
@@ -519,8 +571,8 @@
   <div id="page-overview" class="page">
     <div class="ov-filter">
       <button class="ov-filter-btn active" onclick="setOverviewFilter('all', this)">全部</button>
-      <button class="ov-filter-btn" onclick="setOverviewFilter('trip', this)"><i data-px="pin" data-sz="12"></i> 只看足跡</button>
-      <button class="ov-filter-btn" onclick="setOverviewFilter('expense', this)"><i data-px="money" data-sz="12"></i> 只看花費</button>
+      <button class="ov-filter-btn" onclick="setOverviewFilter('trip', this)"><img src="icon-footprint.png" alt="" style="width:12px;vertical-align:middle;image-rendering:pixelated;"> 只看足跡</button>
+      <button class="ov-filter-btn" onclick="setOverviewFilter('expense', this)"><img src="icon-coin.png" alt="" style="width:12px;vertical-align:middle;image-rendering:pixelated;"> 只看花費</button>
     </div>
     <div id="overview-timeline"></div>
   </div>
@@ -528,65 +580,131 @@
   <!-- ===== 航班 / 住宿 ===== -->
   <div id="page-flight" class="page">
     <div class="header" style="margin-bottom:14px;">
-      <h1><i data-px="plane" data-sz="22"></i> 航班 / 住宿</h1>
-      <p>點擊展開編輯，輸入後自動儲存</p>
+      <h1><img src="icon-flight.png" alt="" style="width:28px;vertical-align:middle;image-rendering:pixelated;"> 航班 / 住宿</h1>
     </div>
 
-    <div class="accordion-header" onclick="toggleAccordion(this)">
-      <span class="acc-title"><i data-px="depart" data-sz="18"></i> 去程</span>
-      <span class="acc-arrow">▸</span>
-    </div>
-    <div class="accordion-body">
-      <div class="card" style="margin-top:0;border-radius:0 0 14px 14px;">
-        <div class="field"><label>航班編號</label><input type="text" data-flight="dep_flight" placeholder="例：CI 2791" oninput="saveFlightInfo()"></div>
-        <div class="field"><label>日期</label><input type="date" data-flight="dep_date" oninput="saveFlightInfo()"></div>
-        <div class="field"><label>起飛時間</label><input type="time" data-flight="dep_time" oninput="saveFlightInfo()"></div>
-        <div class="field"><label>出發地</label><input type="text" data-flight="dep_from" placeholder="例：桃園 TPE" oninput="saveFlightInfo()"></div>
-        <div class="field"><label>目的地</label><input type="text" data-flight="dep_to" placeholder="例：帛琉 ROR" oninput="saveFlightInfo()"></div>
-        <div class="field"><label>備註</label><input type="text" data-flight="dep_note" placeholder="例：集合時間、航廈" oninput="saveFlightInfo()"></div>
+    <!-- 去程 display -->
+    <div class="card flight-card" id="dep-display">
+      <div class="flight-card-head">
+        <span class="acc-title"><i data-px="depart" data-sz="18"></i> 去程</span>
+        <button class="flight-edit-btn" onclick="toggleFlightEdit('dep')" aria-label="編輯去程"><svg viewBox="0 0 24 24" fill="none" stroke="#8bbad0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
       </div>
-    </div>
-
-    <div class="accordion-header" onclick="toggleAccordion(this)">
-      <span class="acc-title"><i data-px="arrive" data-sz="18"></i> 回程</span>
-      <span class="acc-arrow">▸</span>
-    </div>
-    <div class="accordion-body">
-      <div class="card" style="margin-top:0;border-radius:0 0 14px 14px;">
-        <div class="field"><label>航班編號</label><input type="text" data-flight="ret_flight" placeholder="例：CI 2792" oninput="saveFlightInfo()"></div>
-        <div class="field"><label>日期</label><input type="date" data-flight="ret_date" oninput="saveFlightInfo()"></div>
-        <div class="field"><label>起飛時間</label><input type="time" data-flight="ret_time" oninput="saveFlightInfo()"></div>
-        <div class="field"><label>出發地</label><input type="text" data-flight="ret_from" placeholder="例：帛琉 ROR" oninput="saveFlightInfo()"></div>
-        <div class="field"><label>目的地</label><input type="text" data-flight="ret_to" placeholder="例：桃園 TPE" oninput="saveFlightInfo()"></div>
-        <div class="field"><label>備註</label><input type="text" data-flight="ret_note" placeholder="" oninput="saveFlightInfo()"></div>
+      <div class="flight-route">
+        <span class="flight-city" id="dep-show-from"></span>
+        <span class="flight-time-inline" id="dep-show-time"></span>
+        <span class="flight-arrow">→</span>
+        <span class="flight-city" id="dep-show-to"></span>
+        <span class="flight-time-inline" id="dep-show-arrive"></span>
       </div>
+      <div class="flight-detail"><span class="flight-label">航班</span><span id="dep-show-flight"></span></div>
+      <div class="flight-detail"><span class="flight-label">日期</span><span id="dep-show-date"></span></div>
+      <div class="flight-detail flight-note" id="dep-show-note-row"><span class="flight-label">訂位代號</span><span id="dep-show-note"></span></div>
+    </div>
+    <!-- 去程 edit -->
+    <div class="card flight-card" id="dep-edit" style="display:none;">
+      <div class="flight-card-head">
+        <span class="acc-title"><i data-px="depart" data-sz="18"></i> 去程（編輯）</span>
+        <button class="flight-edit-btn" onclick="toggleFlightEdit('dep')" aria-label="完成編輯"><svg viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+      </div>
+      <div class="field"><label>航班編號</label><input type="text" data-flight="dep_flight" placeholder="例：CI 028" oninput="saveFlightInfo()"></div>
+      <div class="field"><label>日期</label><input type="date" data-flight="dep_date" oninput="saveFlightInfo()"></div>
+      <div class="field"><label>起飛時間</label><input type="time" data-flight="dep_time" oninput="saveFlightInfo()"></div>
+      <div class="field"><label>抵達時間</label><input type="time" data-flight="dep_arrive" oninput="saveFlightInfo()"></div>
+      <div class="field"><label>出發地</label><input type="text" data-flight="dep_from" placeholder="例：台北TPE" oninput="saveFlightInfo()"></div>
+      <div class="field"><label>目的地</label><input type="text" data-flight="dep_to" placeholder="例：帛琉ROR" oninput="saveFlightInfo()"></div>
+      <div class="field"><label>訂位代號</label><input type="text" data-flight="dep_note" placeholder="例：DYD5CJ" oninput="saveFlightInfo()"></div>
     </div>
 
-    <div class="accordion-header" onclick="toggleAccordion(this)">
-      <span class="acc-title"><i data-px="hotel" data-sz="18"></i> 住宿</span>
-      <span class="acc-arrow">▸</span>
+    <!-- 回程 display -->
+    <div class="card flight-card" id="ret-display">
+      <div class="flight-card-head">
+        <span class="acc-title"><i data-px="arrive" data-sz="18"></i> 回程</span>
+        <button class="flight-edit-btn" onclick="toggleFlightEdit('ret')" aria-label="編輯回程"><svg viewBox="0 0 24 24" fill="none" stroke="#8bbad0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+      </div>
+      <div class="flight-route">
+        <span class="flight-city" id="ret-show-from"></span>
+        <span class="flight-time-inline" id="ret-show-time"></span>
+        <span class="flight-arrow">→</span>
+        <span class="flight-city" id="ret-show-to"></span>
+        <span class="flight-time-inline" id="ret-show-arrive"></span>
+      </div>
+      <div class="flight-detail"><span class="flight-label">航班</span><span id="ret-show-flight"></span></div>
+      <div class="flight-detail"><span class="flight-label">日期</span><span id="ret-show-date"></span></div>
+      <div class="flight-detail flight-note" id="ret-show-note-row"><span class="flight-label">訂位代號</span><span id="ret-show-note"></span></div>
     </div>
-    <div class="accordion-body">
-      <div class="card" style="margin-top:0;border-radius:0 0 14px 14px;">
-      <div class="card-title"><i data-px="hotel" data-sz="18"></i> 住宿</div>
+    <!-- 回程 edit -->
+    <div class="card flight-card" id="ret-edit" style="display:none;">
+      <div class="flight-card-head">
+        <span class="acc-title"><i data-px="arrive" data-sz="18"></i> 回程（編輯）</span>
+        <button class="flight-edit-btn" onclick="toggleFlightEdit('ret')" aria-label="完成編輯"><svg viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+      </div>
+      <div class="field"><label>航班編號</label><input type="text" data-flight="ret_flight" placeholder="例：CI 029" oninput="saveFlightInfo()"></div>
+      <div class="field"><label>日期</label><input type="date" data-flight="ret_date" oninput="saveFlightInfo()"></div>
+      <div class="field"><label>起飛時間</label><input type="time" data-flight="ret_time" oninput="saveFlightInfo()"></div>
+      <div class="field"><label>抵達時間</label><input type="time" data-flight="ret_arrive" oninput="saveFlightInfo()"></div>
+      <div class="field"><label>出發地</label><input type="text" data-flight="ret_from" placeholder="例：帛琉ROR" oninput="saveFlightInfo()"></div>
+      <div class="field"><label>目的地</label><input type="text" data-flight="ret_to" placeholder="例：台北TPE" oninput="saveFlightInfo()"></div>
+      <div class="field"><label>訂位代號</label><input type="text" data-flight="ret_note" placeholder="例：DYD5CJ" oninput="saveFlightInfo()"></div>
+    </div>
+
+    <!-- 住宿 display -->
+    <div class="card flight-card" id="hotel-display">
+      <div class="flight-card-head">
+        <span class="acc-title"><i data-px="hotel" data-sz="18"></i> 住宿</span>
+        <button class="flight-edit-btn" onclick="toggleFlightEdit('hotel')" aria-label="編輯住宿"><svg viewBox="0 0 24 24" fill="none" stroke="#8bbad0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+      </div>
+      <div class="flight-detail" id="hotel-show-name-row"><span class="flight-label">飯店</span><span id="hotel-show-name"></span></div>
+      <div class="flight-detail" id="hotel-show-addr-row"><span class="flight-label">地址</span><a id="hotel-show-addr" class="hotel-addr-link" href="#" target="_blank" rel="noopener"></a></div>
+      <div class="flight-detail" id="hotel-show-checkin-row"><span class="flight-label">入住</span><span id="hotel-show-checkin"></span></div>
+      <div class="flight-detail" id="hotel-show-checkout-row"><span class="flight-label">退房</span><span id="hotel-show-checkout"></span></div>
+      <div class="flight-detail" id="hotel-show-confirm-row"><span class="flight-label">訂房編號</span><span id="hotel-show-confirm"></span></div>
+      <div class="flight-detail" id="hotel-show-note-row"><span class="flight-label">備註</span><span id="hotel-show-note"></span></div>
+      <div id="hotel-empty" class="flight-empty">尚未填寫住宿資訊，點右上鉛筆圖示新增</div>
+    </div>
+    <!-- 住宿 edit -->
+    <div class="card flight-card" id="hotel-edit" style="display:none;">
+      <div class="flight-card-head">
+        <span class="acc-title"><i data-px="hotel" data-sz="18"></i> 住宿（編輯）</span>
+        <button class="flight-edit-btn" onclick="toggleFlightEdit('hotel')" aria-label="完成編輯"><svg viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+      </div>
       <div class="field"><label>飯店名稱</label><input type="text" data-flight="hotel_name" placeholder="" oninput="saveFlightInfo()"></div>
       <div class="field"><label>地址</label><input type="text" data-flight="hotel_addr" placeholder="" oninput="saveFlightInfo()"></div>
       <div class="field"><label>入住日期</label><input type="date" data-flight="hotel_checkin" oninput="saveFlightInfo()"></div>
       <div class="field"><label>退房日期</label><input type="date" data-flight="hotel_checkout" oninput="saveFlightInfo()"></div>
       <div class="field"><label>訂房編號</label><input type="text" data-flight="hotel_confirm" placeholder="" oninput="saveFlightInfo()"></div>
       <div class="field"><label>備註</label><input type="text" data-flight="hotel_note" placeholder="例：含早餐、接駁車" oninput="saveFlightInfo()"></div>
-      </div>
+      <div class="field"><label>Google Maps 連結</label><input type="url" data-flight="hotel_map" placeholder="https://maps.app.goo.gl/..." oninput="saveFlightInfo()"></div>
     </div>
   </div>
 
   <!-- ===== 生物圖鑑 ===== -->
   <div id="page-fishguide" class="page">
     <div class="header" style="margin-bottom:14px;">
-      <h1><i data-px="fish" data-sz="22"></i> 帛琉生物圖鑑</h1>
-      <p>點擊翻牌 ｜ 連點三下 = 我看到了！</p>
+      <h1><img src="icon-fishguide.png" alt="" style="width:28px;vertical-align:middle;image-rendering:pixelated;"> 帛琉生物圖鑑</h1>
+      <p>點擊生物查看詳情，上傳照片解鎖圖鑑</p>
     </div>
     <div class="fish-progress" id="fish-progress"></div>
     <div class="fish-grid" id="fish-grid"></div>
+  </div>
+
+  <!-- Fish detail modal -->
+  <div class="fish-modal" id="fish-modal" onclick="if(event.target===this)closeFishModal()">
+    <div class="fish-modal-content" id="fish-modal-inner">
+      <div class="fish-modal-header" id="fish-modal-header">
+        <button class="fish-modal-close" onclick="closeFishModal()">✕</button>
+      </div>
+      <div class="fish-modal-body">
+        <div class="fish-modal-name" id="fish-modal-name"></div>
+        <div class="fish-modal-depth" id="fish-modal-depth"></div>
+        <div class="fish-modal-desc" id="fish-modal-desc"></div>
+        <div class="fish-modal-note" id="fish-modal-note-area">
+          <label>我的感想</label>
+          <textarea id="fish-modal-note" placeholder="記錄你看到這個生物的心得..." oninput="saveFishNote()"></textarea>
+        </div>
+        <div class="fish-modal-actions" id="fish-modal-actions"></div>
+      </div>
+    </div>
+    <input type="file" id="fish-photo-input" accept="image/*" style="display:none" onchange="handleFishPhoto(event)">
   </div>
 
   <!-- ===== 緊急資訊 ===== -->
@@ -653,11 +771,11 @@
     <span class="tab-label">首頁</span>
   </button>
   <button class="tab-item" data-page="trip" onclick="goPage('trip')">
-    <div class="tab-icon"><i data-px="pin" data-sz="24"></i></div>
+    <div class="tab-icon"><img src="icon-footprint.png" alt="" style="width:16px;image-rendering:pixelated;"></div>
     <span class="tab-label">行程</span>
   </button>
   <button class="tab-item" data-page="expense" onclick="goPage('expense')">
-    <div class="tab-icon"><i data-px="money" data-sz="24"></i></div>
+    <div class="tab-icon"><img src="icon-coin.png" alt="" style="width:20px;image-rendering:pixelated;"></div>
     <span class="tab-label">記帳</span>
   </button>
   <button class="tab-item" data-page="overview" onclick="goPage('overview')">
@@ -665,11 +783,11 @@
     <span class="tab-label">總覽</span>
   </button>
   <button class="tab-item" data-page="flight" onclick="goPage('flight')">
-    <div class="tab-icon"><i data-px="plane" data-sz="24"></i></div>
+    <div class="tab-icon"><img src="icon-flight.png" alt="" style="width:24px;image-rendering:pixelated;"></div>
     <span class="tab-label">航班</span>
   </button>
   <button class="tab-item" data-page="fishguide" onclick="goPage('fishguide')">
-    <div class="tab-icon"><i data-px="fish" data-sz="24"></i></div>
+    <div class="tab-icon"><img src="icon-fishguide.png" alt="" style="width:24px;image-rendering:pixelated;"></div>
     <span class="tab-label">圖鑑</span>
   </button>
 </nav>
@@ -722,7 +840,23 @@ const API_BASE = location.hostname === 'localhost' || location.hostname === '127
 let trips = JSON.parse(localStorage.getItem('palau-trips') || '[]');
 let expenses = JSON.parse(localStorage.getItem('palau-expenses') || '[]');
 let expensesLoaded = false;
-let flightInfo = JSON.parse(localStorage.getItem('palau-flight') || '{}');
+const defaultFlightInfo = {
+  dep_flight: 'CI 028', dep_date: '2026-04-04', dep_time: '12:30', dep_arrive: '17:20',
+  dep_from: '台北TPE', dep_to: '帛琉ROR',
+  dep_note: 'Ashley DYD5CJ / Howt DY6VR7',
+  ret_flight: 'CI 029', ret_date: '2026-04-09', ret_time: '15:35', ret_arrive: '18:35',
+  ret_from: '帛琉ROR', ret_to: '台北TPE', ret_note: 'Ashley DYD5CJ / Howt DY6VR7',
+  hotel_name: 'Ocean Star Hotel',
+  hotel_addr: 'Lebuu St, Koror, Palau 96940',
+  hotel_checkin: '2026-04-04', hotel_checkout: '2026-04-09',
+  hotel_map: 'https://maps.app.goo.gl/3QKdiQE3WXHA9ddu8',
+};
+let flightInfo = (() => {
+  const saved = JSON.parse(localStorage.getItem('palau-flight') || '{}');
+  const merged = Object.assign({}, defaultFlightInfo);
+  for (const k of Object.keys(saved)) { if (saved[k] !== '' && saved[k] != null) merged[k] = saved[k]; }
+  return merged;
+})();
 let emergencyInfo = JSON.parse(localStorage.getItem('palau-emergency') || '{}');
 let exchangeRate = parseFloat(localStorage.getItem('palau-rate') || '0');
 let rateDate = localStorage.getItem('palau-rate-date') || '';
@@ -889,6 +1023,71 @@ function updateExpRateDisplay() {
 }
 
 // ===== Load from Notion =====
+async function loadFishFromKV() {
+  try {
+    const photoKeys = fishList.map(f => 'fish-' + f.id);
+    const noteKeys = fishList.map(f => 'fish-note-' + f.id);
+    const res = await fetch(API_BASE + '/api/photos/batch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ keys: [...photoKeys, ...noteKeys] }),
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    let updated = false;
+    fishList.forEach(f => {
+      const photo = data['fish-' + f.id];
+      const note = data['fish-note-' + f.id];
+      if (photo || note) {
+        if (!fishState[f.id]) fishState[f.id] = {};
+        if (photo && fishState[f.id].photo !== photo) { fishState[f.id].photo = photo; updated = true; }
+        if (note && fishState[f.id].note !== note) { fishState[f.id].note = note; updated = true; }
+      }
+    });
+    if (updated) {
+      localStorage.setItem('palau-fish', JSON.stringify(fishState));
+      renderFishGuide();
+    }
+  } catch (e) { console.warn('Failed to load fish data from KV:', e); }
+}
+
+async function loadTripsFromAPI() {
+  try {
+    const res = await fetch(API_BASE + '/api/trips');
+    if (!res.ok) throw new Error('API error');
+    const remote = await res.json();
+    if (remote.length > 0 || trips.length === 0) {
+      // Collect all photo keys from remote trips
+      const allPhotoKeys = [];
+      remote.forEach(t => {
+        if (t.photoKeys) t.photoKeys.split(',').forEach(k => { if (k) allPhotoKeys.push(k); });
+      });
+
+      // Batch fetch photos from KV
+      let photoData = {};
+      if (allPhotoKeys.length > 0) {
+        try {
+          const pRes = await fetch(API_BASE + '/api/photos/batch', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ keys: allPhotoKeys }),
+          });
+          if (pRes.ok) photoData = await pRes.json();
+        } catch (e) { console.warn('Failed to load photos from KV:', e); }
+      }
+
+      trips = remote.map(t => {
+        const keys = t.photoKeys ? t.photoKeys.split(',').filter(k => k) : [];
+        const photos = keys.map(k => photoData[k] || null).filter(p => p);
+        return { ...t, photos };
+      });
+      localStorage.setItem('palau-trips', JSON.stringify(trips));
+      renderTrips();
+      if (document.getElementById('page-overview').classList.contains('active')) renderOverview();
+    }
+  } catch (e) { console.warn('Failed to load trips from Notion, using localStorage:', e); }
+}
+
 async function loadExpensesFromAPI() {
   try {
     const res = await fetch(API_BASE + '/api/expenses');
@@ -985,7 +1184,7 @@ function renderExpenses() {
   const el = document.getElementById('exp-list');
   const summary = document.getElementById('exp-summary');
   if (expenses.length === 0) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">' + px('money',40) + '</div><div class="empty-text">還沒有記帳紀錄</div></div>';
+    el.innerHTML = '<div class="empty"><div class="empty-icon"><img src="icon-coin.png" alt="" style="width:40px;image-rendering:pixelated;"></div><div class="empty-text">還沒有記帳紀錄</div></div>';
     summary.style.display = 'none'; return;
   }
   summary.style.display = 'grid';
@@ -1059,12 +1258,15 @@ function renderPhotoSlots() {
   ).join('');
 }
 
-function addTrip() {
+async function addTrip() {
   const place = document.getElementById('trip-place').value.trim();
   const time = document.getElementById('trip-time').value;
   const note = document.getElementById('trip-note').value.trim();
   if (!place) { alert('請輸入地點名稱'); return; }
-  trips.push({ id: Date.now(), place, time: time || new Date().toISOString(), note, photos: photos.filter(p => p !== null) });
+  const tripPhotos = photos.filter(p => p !== null);
+  const localId = Date.now();
+  const entry = { place, time: time || new Date().toISOString(), note };
+  trips.push({ ...entry, id: localId, photos: tripPhotos });
   localStorage.setItem('palau-trips', JSON.stringify(trips));
   document.getElementById('trip-place').value = '';
   document.getElementById('trip-note').value = '';
@@ -1073,20 +1275,72 @@ function addTrip() {
   document.getElementById('photo-input-1').value = '';
   renderPhotoSlots(); setDefaultTime(); renderTrips();
   showToast('足跡已儲存', 'success');
+
+  // Sync photos to KV, then trip to Notion
+  try {
+    const photoKeys = [];
+    for (let i = 0; i < tripPhotos.length; i++) {
+      const key = `trip-${localId}-${i}`;
+      await fetch(API_BASE + '/api/photos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, data: tripPhotos[i] }),
+      });
+      photoKeys.push(key);
+    }
+    const res = await fetch(API_BASE + '/api/trips', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...entry, photoKeys: photoKeys.join(',') }),
+    });
+    if (res.ok) {
+      const saved = await res.json();
+      const idx = trips.findIndex(t => t.id === localId);
+      if (idx !== -1) {
+        // Update photo keys with Notion ID for future reference
+        const newKeys = photoKeys.map(k => k.replace(`trip-${localId}`, `trip-${saved.id}`));
+        // Rename KV keys to use Notion ID
+        for (let i = 0; i < photoKeys.length; i++) {
+          if (photoKeys[i] !== newKeys[i]) {
+            await fetch(API_BASE + '/api/photos', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ key: newKeys[i], data: tripPhotos[i] }),
+            });
+            fetch(API_BASE + '/api/photos/' + photoKeys[i], { method: 'DELETE' });
+          }
+        }
+        trips[idx].id = saved.id;
+      }
+      localStorage.setItem('palau-trips', JSON.stringify(trips));
+      renderTrips();
+    }
+  } catch (e) { console.warn('Notion sync failed, kept locally:', e); }
 }
 
-function deleteTrip(id) {
+async function deleteTrip(id) {
   if (!confirm('確定刪除這個足跡？')) return;
-  trips = trips.filter(t => t.id !== id);
+  trips = trips.filter(t => String(t.id) !== String(id));
   localStorage.setItem('palau-trips', JSON.stringify(trips));
   renderTrips();
   renderOverview();
+
+  // Sync to Notion (Notion IDs are UUIDs, local IDs are numbers)
+  if (typeof id === 'string' && id.includes('-')) {
+    try {
+      await fetch(API_BASE + '/api/trips/' + id, { method: 'DELETE' });
+      // Delete photos from KV
+      for (let i = 0; i < 2; i++) {
+        fetch(API_BASE + '/api/photos/trip-' + id + '-' + i, { method: 'DELETE' });
+      }
+    } catch (e) { console.warn('Notion delete failed:', e); }
+  }
 }
 
 function renderTrips() {
   const el = document.getElementById('trip-list');
   if (trips.length === 0) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">' + px('pin',40) + '</div><div class="empty-text">還沒有足跡紀錄<br>開始記錄你的帛琉之旅吧！</div></div>';
+    el.innerHTML = '<div class="empty"><div class="empty-icon"><img src="icon-footprint.png" alt="" style="width:40px;image-rendering:pixelated;"></div><div class="empty-text">還沒有足跡紀錄<br>開始記錄你的帛琉之旅吧！</div></div>';
     return;
   }
   const sorted = [...trips].sort((a, b) => new Date(a.time) - new Date(b.time));
@@ -1244,12 +1498,81 @@ function escAttr(s) { return s.replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
 let flightSaveTimer;
 function saveFlightInfo() {
   document.querySelectorAll('[data-flight]').forEach(el => { flightInfo[el.dataset.flight] = el.value; });
-  localStorage.setItem('palau-flight', JSON.stringify(flightInfo));
+  // Only persist non-empty values so defaults aren't overwritten
+  const toSave = {};
+  for (const k of Object.keys(flightInfo)) { if (flightInfo[k] !== '' && flightInfo[k] != null) toSave[k] = flightInfo[k]; }
+  localStorage.setItem('palau-flight', JSON.stringify(toSave));
   clearTimeout(flightSaveTimer);
   flightSaveTimer = setTimeout(() => showToast('已儲存', 'success'), 500);
 }
 function loadFlightInfo() {
   document.querySelectorAll('[data-flight]').forEach(el => { el.value = flightInfo[el.dataset.flight] || ''; });
+  renderFlightDisplay();
+}
+function formatFlightDate(d) {
+  if (!d) return '';
+  const [y, m, day] = d.split('-');
+  const dt = new Date(d + 'T00:00:00');
+  const weekdays = ['日','一','二','三','四','五','六'];
+  return `${parseInt(m)}/${parseInt(day)}（${weekdays[dt.getDay()]}）`;
+}
+function renderFlightDisplay() {
+  ['dep', 'ret'].forEach(prefix => {
+    const el = (id) => document.getElementById(id);
+    el(prefix + '-show-from').textContent = flightInfo[prefix + '_from'] || '—';
+    el(prefix + '-show-to').textContent = flightInfo[prefix + '_to'] || '—';
+    el(prefix + '-show-time').textContent = flightInfo[prefix + '_time'] || '';
+    el(prefix + '-show-arrive').textContent = flightInfo[prefix + '_arrive'] || '';
+    el(prefix + '-show-flight').textContent = flightInfo[prefix + '_flight'] || '—';
+    el(prefix + '-show-date').textContent = formatFlightDate(flightInfo[prefix + '_date']);
+    const note = flightInfo[prefix + '_note'] || '';
+    el(prefix + '-show-note').textContent = note;
+    el(prefix + '-show-note-row').style.display = note ? '' : 'none';
+  });
+  // hotel
+  const hotelFields = ['name','addr','checkin','checkout','confirm','note'];
+  const hasAny = hotelFields.some(f => flightInfo['hotel_' + f]) || flightInfo.hotel_map;
+  document.getElementById('hotel-empty').style.display = hasAny ? 'none' : '';
+  hotelFields.forEach(f => {
+    const val = flightInfo['hotel_' + f] || '';
+    const row = document.getElementById('hotel-show-' + f + '-row');
+    const el = document.getElementById('hotel-show-' + f);
+    if (f === 'checkin' || f === 'checkout') {
+      el.textContent = formatFlightDate(val);
+    } else if (f === 'addr') {
+      el.textContent = val;
+      const mapUrl = flightInfo.hotel_map || '';
+      if (val && mapUrl) {
+        el.href = mapUrl;
+        el.style.pointerEvents = '';
+      } else {
+        el.removeAttribute('href');
+        el.style.pointerEvents = 'none';
+      }
+    } else {
+      el.textContent = val;
+    }
+    if (row) row.style.display = val ? '' : 'none';
+  });
+}
+function toggleFlightEdit(section) {
+  const display = document.getElementById(section + '-display');
+  const edit = document.getElementById(section + '-edit');
+  const isEditing = edit.style.display !== 'none';
+  if (isEditing) {
+    saveFlightInfo();
+    renderFlightDisplay();
+    edit.style.display = 'none';
+    display.style.display = '';
+  } else {
+    loadFlightInputs(section);
+    display.style.display = 'none';
+    edit.style.display = '';
+  }
+}
+function loadFlightInputs(section) {
+  const container = document.getElementById(section + '-edit');
+  container.querySelectorAll('[data-flight]').forEach(el => { el.value = flightInfo[el.dataset.flight] || ''; });
 }
 
 // ===== Emergency =====
@@ -1270,71 +1593,206 @@ function closeLightbox() { document.getElementById('lightbox').classList.remove(
 
 // ===== Fish Guide =====
 const fishList = [
-  { id: 'jellyfish', emoji: '🪼', name: '黃金水母', stars: 3, size: '10cm', depth: '0-15m', desc: '水母湖限定的無毒水母，陽光下閃耀金色光芒' },
-  { id: 'turtle', emoji: '🐢', name: '海龜', stars: 3, size: '100cm', depth: '0-30m', desc: '綠蠵龜與玳瑁，常在珊瑚礁悠游覓食' },
-  { id: 'clownfish', emoji: '🐠', name: '小丑魚', stars: 3, size: '8cm', depth: '3-15m', desc: '躲在海葵觸手間的橘白條紋小魚' },
-  { id: 'parrotfish', emoji: '🐟', name: '鸚哥魚', stars: 3, size: '40cm', depth: '1-25m', desc: '用鳥嘴般的牙齒啃食珊瑚，色彩鮮豔' },
-  { id: 'butterflyfish', emoji: '🦋', name: '蝴蝶魚', stars: 3, size: '15cm', depth: '2-20m', desc: '成對出沒，身上有各種美麗花紋' },
-  { id: 'grouper', emoji: '🐡', name: '石斑魚', stars: 2, size: '60cm', depth: '5-40m', desc: '躲在珊瑚礁縫隙中的伏擊獵手' },
-  { id: 'reefshark', emoji: '🦈', name: '黑鰭鯊', stars: 2, size: '150cm', depth: '0-50m', desc: '鰭尖帶黑色標記的礁鯊，性格溫和' },
-  { id: 'manta', emoji: '🦅', name: '魔鬼魟', stars: 2, size: '300cm', depth: '5-40m', desc: '張開雙翼滑翔的巨大魟魚，極為優雅' },
-  { id: 'napoleon', emoji: '🐋', name: '拿破崙魚', stars: 2, size: '180cm', depth: '2-60m', desc: '又稱龍王鯛，額頭隆起像拿破崙帽' },
-  { id: 'lionfish', emoji: '🦔', name: '獅子魚', stars: 2, size: '25cm', depth: '2-50m', desc: '展開華麗鰭刺像獅子鬃毛，有毒勿觸' },
-  { id: 'nudibranch', emoji: '🐌', name: '海蛞蝓', stars: 2, size: '5cm', depth: '3-30m', desc: '色彩繽紛的海底活寶石，種類繁多' },
-  { id: 'octopus', emoji: '🐙', name: '章魚', stars: 2, size: '50cm', depth: '3-40m', desc: '擁有高智商的偽裝大師，八腕靈活' },
-  { id: 'squid', emoji: '🦑', name: '魷魚', stars: 2, size: '30cm', depth: '5-200m', desc: '夜潛時常見，會被燈光吸引靠近' },
-  { id: 'starfish', emoji: '⭐', name: '海星', stars: 3, size: '20cm', depth: '1-20m', desc: '沙地上的五角明星，動作緩慢但堅韌' },
-  { id: 'eel', emoji: '🐍', name: '海鰻', stars: 2, size: '120cm', depth: '5-50m', desc: '從洞穴探出頭來的長條伏擊者' },
-  { id: 'crab', emoji: '🦀', name: '椰子蟹', stars: 1, size: '40cm', depth: '陸地', desc: '世界最大陸生節肢動物，力大無窮' },
-  { id: 'hammerhead', emoji: '🔨', name: '鎚頭鯊', stars: 1, size: '300cm', depth: '20-80m', desc: '藍角外海深水區偶遇的T型頭鯊魚' },
-  { id: 'dugong', emoji: '🦭', name: '儒艮', stars: 1, size: '300cm', depth: '2-10m', desc: '美人魚傳說的原型，以海草為食' },
-  { id: 'whaleshark', emoji: '🐳', name: '鯨鯊', stars: 1, size: '1200cm', depth: '0-100m', desc: '海中最大的魚類，性情溫馴的濾食者' },
-  { id: 'crocodile', emoji: '🐊', name: '鹹水鱷', stars: 1, size: '400cm', depth: '紅樹林', desc: '棲息於紅樹林水域，帛琉野生族群極稀有' },
-  { id: 'dolphin', emoji: '🐬', name: '海豚', stars: 1, size: '200cm', depth: '0-50m', desc: '船程中有機會遇見的海上精靈' },
+  // ★ 常見
+  { id: 'turtle', emoji: '🐢', img: 'fish-turtle.png', name: '海龜', stars: 1, depth: '0-30m', desc: '綠蠵龜與玳瑁，常在珊瑚礁悠游覓食' },
+  { id: 'clownfish', emoji: '🐠', img: 'fish-clownfish.png', name: '小丑魚', stars: 1, depth: '3-15m', desc: '躲在海葵觸手間的橘白條紋小魚' },
+  { id: 'parrotfish', emoji: '🐟', img: 'fish-parrotfish.png', name: '鸚哥魚', stars: 1, depth: '1-25m', desc: '用鳥嘴般的牙齒啃食珊瑚，色彩鮮豔' },
+  { id: 'butterflyfish', emoji: '🦋', img: 'fish-butterflyfish.png', name: '蝴蝶魚', stars: 1, depth: '2-20m', desc: '成對出沒，身上有各種美麗花紋' },
+  { id: 'starfish', emoji: '⭐', name: '海星', stars: 1, depth: '1-20m', desc: '沙地上的五角明星，動作緩慢但堅韌' },
+  // ★★ 中等
+  { id: 'jellyfish', emoji: '🪼', name: '黃金水母', stars: 2, depth: '0-15m', desc: '水母湖限定的無毒水母，陽光下閃耀金色光芒' },
+  { id: 'grouper', emoji: '🐡', img: 'fish-grouper.png', name: '石斑魚', stars: 2, depth: '5-40m', desc: '躲在珊瑚礁縫隙中的伏擊獵手' },
+  { id: 'reefshark', emoji: '🦈', img: 'fish-reefshark.png', name: '黑鰭鯊', stars: 2, depth: '0-50m', desc: '鰭尖帶黑色標記的礁鯊，性格溫和' },
+  { id: 'lionfish', emoji: '🦔', img: 'fish-lionfish.png', name: '獅子魚', stars: 2, depth: '2-50m', desc: '展開華麗鰭刺像獅子鬃毛，有毒勿觸' },
+  { id: 'nudibranch', emoji: '🐌', name: '海蛞蝓', stars: 2, depth: '3-30m', desc: '色彩繽紛的海底活寶石，種類繁多' },
+  { id: 'octopus', emoji: '🐙', img: 'fish-octopus.png', name: '章魚', stars: 2, depth: '3-40m', desc: '擁有高智商的偽裝大師，八腕靈活' },
+  { id: 'squid', emoji: '🦑', img: 'fish-squid.png', name: '魷魚', stars: 2, depth: '5-200m', desc: '夜潛時常見，會被燈光吸引靠近' },
+  { id: 'eel', emoji: '🐍', name: '海鰻', stars: 2, depth: '5-50m', desc: '從洞穴探出頭來的長條伏擊者' },
+  { id: 'crab', emoji: '🦀', name: '椰子蟹', stars: 2, depth: '陸地', desc: '世界最大陸生節肢動物，力大無窮' },
+  // ★★★ 稀有
+  { id: 'manta', emoji: '🦅', img: 'fish-manta.png', name: '魔鬼魟', stars: 3, depth: '5-40m', desc: '張開雙翼滑翔的巨大魟魚，極為優雅' },
+  { id: 'napoleon', emoji: '🐋', name: '拿破崙魚', stars: 3, depth: '2-60m', desc: '又稱龍王鯛，額頭隆起像拿破崙帽' },
+  { id: 'hammerhead', emoji: '🔨', name: '鎚頭鯊', stars: 3, depth: '20-80m', desc: '藍角外海深水區偶遇的T型頭鯊魚' },
+  { id: 'dugong', emoji: '🦭', name: '儒艮', stars: 3, depth: '2-10m', desc: '美人魚傳說的原型，以海草為食' },
+  { id: 'whaleshark', emoji: '🐳', name: '鯨鯊', stars: 3, depth: '0-100m', desc: '海中最大的魚類，性情溫馴的濾食者' },
+  { id: 'crocodile', emoji: '🐊', name: '鹹水鱷', stars: 3, depth: '紅樹林', desc: '棲息於紅樹林水域，帛琉野生族群極稀有' },
+  { id: 'dolphin', emoji: '🐬', name: '海豚', stars: 3, depth: '0-50m', desc: '船程中有機會遇見的海上精靈' },
 ];
 
+// fishState: { [id]: { photo: 'data:...', note: '...' } } or legacy number
 let fishState = JSON.parse(localStorage.getItem('palau-fish') || '{}');
+// Migrate legacy format (numbers) to new format
+for (const k of Object.keys(fishState)) {
+  if (typeof fishState[k] === 'number') {
+    fishState[k] = fishState[k] >= 3 ? { photo: '', note: '' } : null;
+    if (!fishState[k]) delete fishState[k];
+  }
+}
+
+function isFishSeen(id) {
+  const s = fishState[id];
+  return s && s.photo;
+}
+
+let currentFishId = null;
 
 function renderFishGuide() {
   const grid = document.getElementById('fish-grid');
-  const seenCount = fishList.filter(f => (fishState[f.id] || 0) >= 3).length;
+  const seenCount = fishList.filter(f => isFishSeen(f.id)).length;
   document.getElementById('fish-progress').innerHTML = `已發現 <strong>${seenCount}</strong> / ${fishList.length} 種`;
 
   grid.innerHTML = fishList.map((f, idx) => {
-    const clicks = fishState[f.id] || 0;
-    const seen = clicks >= 3;
-    const revealed = seen || (clicks % 2 === 1);
+    const seen = isFishSeen(f.id);
+    const state = fishState[f.id];
+    const hasPhoto = seen && state.photo;
+    const no = String(idx + 1).padStart(3, '0');
     const starsHtml = Array.from({length: 3}, (_, i) =>
       `<span class="${i < f.stars ? 'star-on' : 'star-off'}">${i < f.stars ? '★' : '☆'}</span>`
     ).join('');
-    const no = String(idx + 1).padStart(3, '0');
-    return `<div class="fish-card ${revealed ? 'revealed' : ''} ${seen ? 'seen' : ''}" onclick="clickFish('${f.id}')">
+    const silhouette = f.img
+      ? `<img class="fish-silhouette" src="${f.img}" alt="${f.name}">`
+      : `<span class="fish-emoji">${f.emoji}</span>`;
+    const imgArea = hasPhoto
+      ? `<div class="fish-seen-badge">✓</div><img class="fish-photo" src="${state.photo}" alt="${f.name}"><div class="fish-stars">${starsHtml}</div>`
+      : `${silhouette}<div class="fish-stars">${starsHtml}</div>`;
+    return `<div class="fish-card ${seen ? 'seen' : ''}" onclick="openFishModal('${f.id}')">
       <div class="fish-top">
         <span class="fish-top-left">🇵🇼 PALAU</span>
         <span class="fish-top-right">${'★'.repeat(f.stars)}</span>
       </div>
-      <div class="fish-img-area">
-        <div class="fish-seen-badge">✓</div>
-        <span class="fish-emoji">${f.emoji}</span>
-        <div class="fish-stars">${starsHtml}</div>
-      </div>
-      <div class="fish-name-plate"><div class="fish-name">${seen ? f.name : (revealed ? f.name : '？？？')}</div></div>
-      <div class="fish-info"><span>📐 ${seen ? f.size : '???'}</span><span>📍 ${seen ? f.depth : '???'}</span></div>
-      <div class="fish-desc">${seen ? f.desc : (revealed ? '點擊一次以上即可收錄...' : '')}</div>
+      <div class="fish-img-area">${imgArea}</div>
+      <div class="fish-name-plate"><div class="fish-name">${f.name}</div></div>
+      <div class="fish-info">📍 ${f.depth}</div>
       <div class="fish-no">No. ${no}</div>
     </div>`;
   }).join('');
 }
 
-function clickFish(id) {
-  const clicks = (fishState[id] || 0) + 1;
-  fishState[id] = clicks;
-  localStorage.setItem('palau-fish', JSON.stringify(fishState));
-  renderFishGuide();
-  if (clicks === 3) {
-    const fish = fishList.find(f => f.id === id);
-    if (fish) showToast(`🎉 發現${fish.name}！`, 'success');
+function openFishModal(id) {
+  currentFishId = id;
+  const f = fishList.find(x => x.id === id);
+  const state = fishState[id] || {};
+  const seen = isFishSeen(id);
+  const modal = document.getElementById('fish-modal');
+  const inner = document.getElementById('fish-modal-inner');
+  const header = document.getElementById('fish-modal-header');
+
+  inner.className = 'fish-modal-content' + (seen ? ' seen' : '');
+  document.getElementById('fish-modal-name').textContent = f.name;
+  document.getElementById('fish-modal-depth').textContent = '📍 棲息深度：' + f.depth;
+  document.getElementById('fish-modal-desc').textContent = f.desc;
+
+  // Header: photo or emoji
+  const closeBtn = header.querySelector('.fish-modal-close');
+  header.innerHTML = '';
+  header.appendChild(closeBtn);
+  if (state.photo) {
+    const img = document.createElement('img');
+    img.className = 'fish-modal-photo';
+    img.src = state.photo;
+    img.alt = f.name;
+    img.onclick = () => openLightbox(state.photo);
+    header.appendChild(img);
+  } else if (f.img) {
+    const silImg = document.createElement('img');
+    silImg.src = f.img;
+    silImg.alt = f.name;
+    silImg.style.cssText = 'width:50%;max-height:100px;object-fit:contain;image-rendering:pixelated;';
+    header.appendChild(silImg);
+  } else {
+    const emoji = document.createElement('span');
+    emoji.className = 'fish-emoji';
+    emoji.textContent = f.emoji;
+    header.appendChild(emoji);
   }
+
+  // Note
+  document.getElementById('fish-modal-note').value = state.note || '';
+
+  // Actions
+  const actions = document.getElementById('fish-modal-actions');
+  if (state.photo) {
+    actions.innerHTML = `<button class="fish-modal-btn remove" onclick="removeFishPhoto()">移除照片</button><button class="fish-modal-btn upload" onclick="triggerFishUpload()">換一張</button>`;
+  } else {
+    actions.innerHTML = `<button class="fish-modal-btn close" onclick="closeFishModal()">返回</button><button class="fish-modal-btn upload" onclick="triggerFishUpload()">📷 上傳照片</button>`;
+  }
+
+  modal.classList.add('show');
+}
+
+function closeFishModal() {
+  document.getElementById('fish-modal').classList.remove('show');
+  currentFishId = null;
+}
+
+function triggerFishUpload() {
+  document.getElementById('fish-photo-input').click();
+}
+
+function handleFishPhoto(event) {
+  const file = event.target.files[0];
+  if (!file || !currentFishId) return;
+  const fishId = currentFishId;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    // Resize to save localStorage space
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const size = 600;
+      // Crop center square
+      const minDim = Math.min(img.width, img.height);
+      const sx = (img.width - minDim) / 2;
+      const sy = (img.height - minDim) / 2;
+      const outSize = Math.min(size, minDim);
+      canvas.width = outSize;
+      canvas.height = outSize;
+      canvas.getContext('2d').drawImage(img, sx, sy, minDim, minDim, 0, 0, outSize, outSize);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+      if (!fishState[fishId]) fishState[fishId] = {};
+      fishState[fishId].photo = dataUrl;
+      localStorage.setItem('palau-fish', JSON.stringify(fishState));
+      const fish = fishList.find(f => f.id === fishId);
+      showToast(`🎉 發現${fish.name}！`, 'success');
+      openFishModal(fishId);
+      renderFishGuide();
+      // Sync photo to KV
+      fetch(API_BASE + '/api/photos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: 'fish-' + fishId, data: dataUrl }),
+      }).catch(e => console.warn('Fish photo sync failed:', e));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+function removeFishPhoto() {
+  if (!currentFishId) return;
+  if (fishState[currentFishId]) {
+    fishState[currentFishId].photo = '';
+  }
+  localStorage.setItem('palau-fish', JSON.stringify(fishState));
+  openFishModal(currentFishId);
+  renderFishGuide();
+  // Sync delete to KV
+  fetch(API_BASE + '/api/photos/fish-' + currentFishId, { method: 'DELETE' })
+    .catch(e => console.warn('Fish photo delete sync failed:', e));
+}
+
+function saveFishNote() {
+  if (!currentFishId) return;
+  if (!fishState[currentFishId]) fishState[currentFishId] = {};
+  fishState[currentFishId].note = document.getElementById('fish-modal-note').value;
+  localStorage.setItem('palau-fish', JSON.stringify(fishState));
+  // Sync note to KV
+  fetch(API_BASE + '/api/photos', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key: 'fish-note-' + currentFishId, data: fishState[currentFishId].note }),
+  }).catch(e => console.warn('Fish note sync failed:', e));
 }
 
 // ===== Toast =====
@@ -1379,6 +1837,8 @@ document.querySelectorAll('i[data-px]').forEach(el => {
 });
 fetchRate();
 loadExpensesFromAPI();
+loadTripsFromAPI();
+loadFishFromKV();
 checkOnboarding();
 
 // ===== Bottom Tab Bar =====

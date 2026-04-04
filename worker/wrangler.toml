@@ -4,4 +4,9 @@ compatibility_date = "2024-01-01"
 
 [vars]
 NOTION_DATABASE_ID = "e77be345a89d4fa09cd9a0fc1e7ccd07"
+NOTION_TRIPS_DB_ID = "b0714204814a439c8574e8b4b61c3ddd"
 ALLOWED_ORIGIN = "https://palau-trip.pages.dev"
+
+[[kv_namespaces]]
+binding = "PHOTOS"
+id = "2c7b243d98aa4e9eb413236e4e16a791"
