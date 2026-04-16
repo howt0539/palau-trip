@@ -844,14 +844,8 @@ h1 em {
   <div class="day-card" id="gearCard">
     <div style="padding:18px 24px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line);background:linear-gradient(90deg, var(--foam) 0%, transparent 40%);flex-wrap:wrap">
       <div style="flex:1;min-width:200px">
-        <div class="day-label">租用人數 × 天數</div>
+        <div class="day-label">租用天數</div>
         <div style="display:flex;align-items:center;gap:12px;margin-top:6px">
-          <div class="counter" style="height:34px">
-            <button onclick="adjustGear('pax', -1)" style="width:32px;height:32px">−</button>
-            <input type="number" id="gearPax" value="0" min="0" oninput="render()" style="width:42px;height:32px;font-size:16px">
-            <button onclick="adjustGear('pax', 1)" style="width:32px;height:32px">+</button>
-          </div>
-          <span style="color:var(--muted);font-size:13px">人 ×</span>
           <div class="counter" style="height:34px">
             <button onclick="adjustGear('days', -1)" style="width:32px;height:32px">−</button>
             <input type="number" id="gearDays" value="0" min="0" oninput="render()" style="width:42px;height:32px;font-size:16px">
@@ -978,9 +972,8 @@ let state = {
   transferIn: true,
   days: [],
   gear: {
-    pax: 0,
     days: 0,
-    items: {}  // { bcd: true, reg: true, ... }
+    items: {}  // { bcd: 2, reg: 3, ... } — qty per item (0 = not renting)
   }
 };
 
@@ -1050,33 +1043,36 @@ function adjustFlightPax(dayId, delta) {
 
 // ----- Gear rental -----
 function adjustGear(field, delta) {
-  const el = document.getElementById(field === 'pax' ? 'gearPax' : 'gearDays');
+  const el = document.getElementById('gearDays');
   const v = Math.max(0, (parseInt(el.value) || 0) + delta);
   el.value = v;
   render();
 }
 
-function toggleGear(key) {
-  state.gear.items[key] = !state.gear.items[key];
+function adjustGearQty(key, delta) {
+  const current = state.gear.items[key] || 0;
+  const next = Math.max(0, current + delta);
+  if (next === 0) {
+    delete state.gear.items[key];
+  } else {
+    state.gear.items[key] = next;
+  }
   renderGear();
   render();
 }
 
 function gearPreset(preset) {
+  const pax = state.people + state.foc; // FOC 也要租裝備
   state.gear.items = {};
   if (preset === 'full') {
-    FULL_SET_KEYS.forEach(k => state.gear.items[k] = true);
+    FULL_SET_KEYS.forEach(k => state.gear.items[k] = pax);
   } else if (preset === 'fullPlus') {
-    FULL_SET_KEYS.forEach(k => state.gear.items[k] = true);
-    state.gear.items.computer = true;
+    FULL_SET_KEYS.forEach(k => state.gear.items[k] = pax);
+    state.gear.items.computer = pax;
   }
-  // 若沒設人數／天數，套用預設值方便快速計算
+  // 若沒設天數，套用預設值方便快速計算
   if (preset !== 'clear') {
-    if ((parseInt(document.getElementById('gearPax').value) || 0) === 0) {
-      document.getElementById('gearPax').value = state.people;
-    }
     if ((parseInt(document.getElementById('gearDays').value) || 0) === 0) {
-      // 預設租借有水肺出海的天數
       const scubaDays = state.days.filter(d => d.activities.scuba).length;
       document.getElementById('gearDays').value = scubaDays || state.days.length;
     }
@@ -1088,25 +1084,29 @@ function gearPreset(preset) {
 function renderGear() {
   const container = document.getElementById('gearItems');
   if (!container) return;
-  const selectedSet = Object.keys(state.gear.items).filter(k => state.gear.items[k]);
-  const hasFullSet = FULL_SET_KEYS.every(k => selectedSet.includes(k));
+  const selectedKeys = Object.keys(state.gear.items).filter(k => state.gear.items[k] > 0);
+  const hasFullSet = FULL_SET_KEYS.every(k => selectedKeys.includes(k));
 
   container.innerHTML = Object.entries(GEAR).map(([key, g]) => {
-    const on = state.gear.items[key];
+    const qty = state.gear.items[key] || 0;
+    const on = qty > 0;
     const klass = on ? 'activity checked' : 'activity';
-    // 若已構成全套，標註此項已併入全套價
     const inFullSet = hasFullSet && FULL_SET_KEYS.includes(key);
     return `
-      <label class="${klass}">
-        <input type="checkbox" ${on ? 'checked' : ''} onchange="toggleGear('${key}')">
+      <div class="${klass}" style="display:flex;align-items:center;justify-content:space-between;cursor:default">
         <div class="act-info">
           <div class="act-name">${g.name}</div>
           <div class="act-price">
-            $${g.price}/人/天
+            $${g.price}/件/天
             ${inFullSet ? ' <span class="tax" style="color:var(--surface)">全套</span>' : ''}
           </div>
         </div>
-      </label>
+        <div class="counter" style="height:28px;flex-shrink:0">
+          <button onclick="adjustGearQty('${key}', -1)" style="width:28px;height:28px">−</button>
+          <span style="min-width:24px;text-align:center;font-size:14px;font-weight:600">${qty}</span>
+          <button onclick="adjustGearQty('${key}', 1)" style="width:28px;height:28px">+</button>
+        </div>
+      </div>
     `;
   }).join('');
 }
@@ -1123,12 +1123,11 @@ function resetAll() {
   state.transferOut = true;
   state.transferIn = true;
   state.days = [createDay(1), createDay(2), createDay(3)];
-  state.gear = { pax: 0, days: 0, items: {} };
+  state.gear = { days: 0, items: {} };
   document.getElementById('people').value = 6;
   document.getElementById('foc').value = 0;
   document.getElementById('transferOut').checked = true;
   document.getElementById('transferIn').checked = true;
-  document.getElementById('gearPax').value = 0;
   document.getElementById('gearDays').value = 0;
   renderDays();
   renderGear();
@@ -1217,26 +1216,39 @@ function dayFeePerPerson(day) {
   return dayActivityCost(day).perPersonFee;
 }
 
-// 計算裝備「每人每天」金額（含全套優惠邏輯）
-function gearPerPersonPerDay() {
-  const selected = Object.keys(state.gear.items).filter(k => state.gear.items[k]);
-  if (selected.length === 0) return { total: 0, breakdown: [] };
+// 計算裝備每天總金額（含全套優惠邏輯）
+function gearCostPerDay() {
+  const items = state.gear.items;
+  const selectedKeys = Object.keys(items).filter(k => items[k] > 0);
+  if (selectedKeys.length === 0) return { total: 0, breakdown: [] };
 
-  const hasFullSet = FULL_SET_KEYS.every(k => selected.includes(k));
+  const hasFullSet = FULL_SET_KEYS.every(k => selectedKeys.includes(k));
   let total = 0;
   const breakdown = [];
 
   if (hasFullSet) {
-    total += FULL_SET_PRICE;
-    breakdown.push({ label: '全套（BCD + 調節器 + 防寒衣 + 面鏡 + 蛙鞋）', price: FULL_SET_PRICE });
-    if (selected.includes('computer')) {
-      total += GEAR.computer.price;
-      breakdown.push({ label: '電腦錶', price: GEAR.computer.price });
+    // 全套優惠：取五項最小數量為全套組數，剩餘個別計價
+    const setQty = Math.min(...FULL_SET_KEYS.map(k => items[k]));
+    total += FULL_SET_PRICE * setQty;
+    breakdown.push({ label: '全套（BCD+調節器+防寒衣+面鏡+蛙鞋）', qty: setQty, unitPrice: FULL_SET_PRICE, subtotal: FULL_SET_PRICE * setQty });
+    // 超出全套數量的個別項目
+    FULL_SET_KEYS.forEach(k => {
+      const extra = items[k] - setQty;
+      if (extra > 0) {
+        total += GEAR[k].price * extra;
+        breakdown.push({ label: GEAR[k].name, qty: extra, unitPrice: GEAR[k].price, subtotal: GEAR[k].price * extra });
+      }
+    });
+    // 電腦錶獨立
+    if (items.computer > 0) {
+      total += GEAR.computer.price * items.computer;
+      breakdown.push({ label: '電腦錶', qty: items.computer, unitPrice: GEAR.computer.price, subtotal: GEAR.computer.price * items.computer });
     }
   } else {
-    selected.forEach(k => {
-      total += GEAR[k].price;
-      breakdown.push({ label: GEAR[k].name, price: GEAR[k].price });
+    selectedKeys.forEach(k => {
+      const q = items[k];
+      total += GEAR[k].price * q;
+      breakdown.push({ label: GEAR[k].name, qty: q, unitPrice: GEAR[k].price, subtotal: GEAR[k].price * q });
     });
   }
   return { total, breakdown };
@@ -1356,10 +1368,9 @@ function render() {
   }
 
   // --- Gear rental ---
-  state.gear.pax = Math.max(0, parseInt(document.getElementById('gearPax').value) || 0);
   state.gear.days = Math.max(0, parseInt(document.getElementById('gearDays').value) || 0);
-  const gearCalc = gearPerPersonPerDay();
-  const gearTotal = gearCalc.total * state.gear.pax * state.gear.days;
+  const gearCalc = gearCostPerDay();
+  const gearTotal = gearCalc.total * state.gear.days;
 
   document.getElementById('gearTotal').innerHTML = `<span class="ccy">USD</span>${formatNum(gearTotal)}`;
 
@@ -1368,9 +1379,9 @@ function render() {
     breakdown.push({ type: 'section', label: '水肺裝備租賃 Gear Rental' });
     gearCalc.breakdown.forEach(item => {
       breakdown.push({
-        label: item.label,
-        calc: `$${item.price} × ${state.gear.pax} 人 × ${state.gear.days} 天`,
-        amt: item.price * state.gear.pax * state.gear.days
+        label: `${item.label} ×${item.qty}`,
+        calc: `$${item.unitPrice} × ${item.qty} 件 × ${state.gear.days} 天`,
+        amt: item.subtotal * state.gear.days
       });
     });
   }
