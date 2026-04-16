@@ -837,26 +837,6 @@ h1 em {
 
   <button class="add-day" onclick="addDay()">＋ 新增一天</button>
 
-  <!-- Extras -->
-  <h2 class="section-title" style="margin-top:48px"><span class="num">03 /</span> 其他費用</h2>
-  <p class="section-desc">接送與總計出海稅（一張效期 5 天）的彙整。</p>
-
-  <div class="day-card">
-    <div class="day-body" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
-      <label class="activity">
-        <input type="checkbox" id="transferOut" checked onchange="render()">
-        <div class="act-info">
-          <div class="act-name">機場 ↔ 飯店來回接送</div>
-          <div class="act-price">$30 / 人（來回）</div>
-        </div>
-      </label>
-      <label class="activity" style="visibility:hidden">
-        <input type="checkbox" id="transferIn">
-        <div class="act-info"></div>
-      </label>
-    </div>
-  </div>
-
   <!-- Gear Rental -->
   <h2 class="section-title" style="margin-top:48px"><span class="num">02 /</span> 水肺裝備租賃</h2>
   <p class="section-desc">按人、按天計費；可選擇單項組合或整套租借。FOC 不計入租金。</p>
@@ -894,6 +874,27 @@ h1 em {
       <!-- Gear items rendered by JS -->
     </div>
   </div>
+
+  <!-- Extras -->
+  <h2 class="section-title" style="margin-top:48px"><span class="num">03 /</span> 其他費用</h2>
+  <p class="section-desc">機場與飯店之間的來回接送費用。</p>
+
+  <div class="day-card">
+    <div class="day-body" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
+      <label class="activity">
+        <input type="checkbox" id="transferOut" checked onchange="render()">
+        <div class="act-info">
+          <div class="act-name">機場 ↔ 飯店來回接送</div>
+          <div class="act-price">$30 / 人（來回）</div>
+        </div>
+      </label>
+      <label class="activity" style="visibility:hidden">
+        <input type="checkbox" id="transferIn">
+        <div class="act-info"></div>
+      </label>
+    </div>
+  </div>
+
   <div class="summary" style="margin-top:48px">
     <div class="summary-header">
       <div>
