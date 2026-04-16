@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trislander Palau 行程規劃計算機</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400&family=Noto+Serif+TC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --abyss: #0a1e2e;
+  --deep: #0f3148;
+  --mid: #1a5673;
+  --surface: #2a8aa8;
+  --shallow: #5bc0c7;
+  --foam: #c8ecec;
+  --sand: #f4ead5;
+  --coral: #ff6b5b;
+  --sunset: #ffa562;
+  --paper: #fbf7ee;
+  --ink: #0a1e2e;
+  --muted: #6b7f8a;
+  --line: rgba(10,30,46,0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Noto Serif TC', 'Fraunces', serif;
+  font-weight: 400;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at top left, rgba(91,192,199,0.08), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(255,107,91,0.06), transparent 50%),
+    var(--paper);
+  background-attachment: fixed;
+}
+
+/* Grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  z-index: 100;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 32px 120px;
+}
+
+/* Header */
+.hero {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 32px;
+  margin-bottom: 48px;
+  position: relative;
+}
+
+.hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+
+.hero-top .dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--coral);
+  border-radius: 50%;
+  margin-right: 8px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(42px, 7vw, 88px);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--abyss);
+  margin-bottom: 12px;
+}
+
+h1 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--surface);
+}
+
+.hero-sub {
+  font-size: 15px;
+  color: var(--muted);
+  max-width: 620px;
+  line-height: 1.6;
+}
+
+/* Mode toggle */
+.mode-bar {
+  display: flex;
+  gap: 0;
+  margin: 32px 0 48px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+  width: fit-content;
+  background: white;
+}
+
+.mode-bar button {
+  padding: 12px 24px;
+  background: transparent;
+  border: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-right: 1px solid var(--line);
+}
+
+.mode-bar button:last-child { border-right: none; }
+
+.mode-bar button.active {
+  background: var(--abyss);
+  color: var(--sand);
+}
+
+.mode-bar button:hover:not(.active) {
+  background: var(--foam);
+  color: var(--abyss);
+}
+
+/* People count */
+.people-row {
+  display: flex;
+  gap: 24px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--line);
+}
+
+.people-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.people-group label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+}
+
+.counter button {
+  width: 38px;
+  height: 38px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--abyss);
+  transition: background 0.2s;
+}
+
+.counter button:hover { background: var(--foam); }
+
+.counter input {
+  width: 50px;
+  height: 38px;
+  text-align: center;
+  border: none;
+  background: transparent;
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--abyss);
+  outline: none;
+}
+
+.counter input::-webkit-outer-spin-button,
+.counter input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.foc-hint {
+  font-size: 13px;
+  color: var(--surface);
+  font-style: italic;
+  padding-bottom: 8px;
+}
+
+/* Section headings */
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 400;
+  font-size: 28px;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+  color: var(--abyss);
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.section-title .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--coral);
+  letter-spacing: 0.15em;
+}
+
+.section-desc {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+
+/* Days container */
+.days {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.day-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.day-card:hover {
+  border-color: var(--surface);
+  box-shadow: 0 4px 20px rgba(10,30,46,0.06);
+}
+
+.day-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(90deg, var(--foam) 0%, transparent 40%);
+}
+
+.day-num {
+  font-family: 'Fraunces', serif;
+  font-size: 42px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--surface);
+  font-style: italic;
+}
+
+.day-label-group {
+  flex: 1;
+}
+
+.day-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.day-input {
+  border: none;
+  background: transparent;
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  color: var(--abyss);
+  width: 100%;
+  outline: none;
+  padding: 2px 0;
+  border-bottom: 1px dashed transparent;
+  transition: border-color 0.2s;
+}
+
+.day-input:focus { border-bottom-color: var(--surface); }
+
+.day-total {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--abyss);
+  font-variant-numeric: tabular-nums;
+}
+
+.day-total .ccy {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+  margin-right: 2px;
+}
+
+.day-remove {
+  background: transparent;
+  border: 1px solid var(--line);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.day-remove:hover {
+  background: var(--coral);
+  color: white;
+  border-color: var(--coral);
+}
+
+.day-body {
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.activity {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--paper);
+}
+
+.activity:hover {
+  border-color: var(--surface);
+  background: white;
+}
+
+.activity input[type="checkbox"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--muted);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.activity input[type="checkbox"]:checked {
+  background: var(--abyss);
+  border-color: var(--abyss);
+}
+
+.activity input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  color: var(--sand);
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.activity.checked {
+  border-color: var(--abyss);
+  background: white;
+}
+
+.activity.checked::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--coral);
+}
+
+.act-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.act-name {
+  font-size: 14px;
+  color: var(--abyss);
+  line-height: 1.3;
+  font-weight: 500;
+}
+
+.act-price {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.act-price .tax {
+  color: var(--coral);
+  font-size: 10px;
+}
+
+/* Extras row */
+.extras-row {
+  display: flex;
+  gap: 24px;
+  padding: 14px 24px;
+  border-top: 1px solid var(--line);
+  background: rgba(200,236,236,0.2);
+  flex-wrap: wrap;
+}
+
+.extras-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.extras-row input[type="checkbox"] {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--muted);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.extras-row input[type="checkbox"]:checked {
+  background: var(--abyss);
+  border-color: var(--abyss);
+}
+
+.extras-row input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  color: var(--sand);
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* Add day button */
+.add-day {
+  padding: 18px;
+  border: 2px dashed var(--line);
+  background: transparent;
+  width: 100%;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+.add-day:hover {
+  border-color: var(--surface);
+  color: var(--surface);
+  background: white;
+}
+
+/* Summary */
+.summary {
+  background: var(--abyss);
+  color: var(--sand);
+  padding: 40px;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.summary::before {
+  content: '';
+  position: absolute;
+  top: -60%;
+  right: -20%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, var(--surface), transparent 60%);
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(244,234,213,0.15);
+  padding-bottom: 16px;
+}
+
+.summary-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+
+.summary-title em {
+  font-style: italic;
+  color: var(--shallow);
+}
+
+.summary-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--shallow);
+  opacity: 0.7;
+}
+
+.breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.breakdown-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 16px;
+  align-items: baseline;
+  font-size: 14px;
+  padding: 6px 0;
+  color: var(--foam);
+}
+
+.breakdown-row .calc {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--shallow);
+  opacity: 0.8;
+  text-align: right;
+}
+
+.breakdown-row .amt {
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  min-width: 100px;
+  color: var(--sand);
+}
+
+.breakdown-section {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(244,234,213,0.1);
+}
+
+.breakdown-section:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 24px 0 0;
+  border-top: 2px solid var(--sand);
+  margin-top: 16px;
+}
+
+.total-label {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.total-amt {
+  font-family: 'Fraunces', serif;
+  font-size: 48px;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--sand);
+}
+
+.total-amt .ccy {
+  font-size: 16px;
+  color: var(--shallow);
+  font-weight: 400;
+  margin-right: 4px;
+  vertical-align: 0.4em;
+}
+
+.per-person {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--shallow);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
+.empty-state {
+  color: var(--shallow);
+  opacity: 0.6;
+  font-style: italic;
+  text-align: center;
+  padding: 20px 0;
+  font-size: 14px;
+}
+
+/* Footer notes */
+.notes {
+  margin-top: 48px;
+  padding: 24px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.notes h3 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--abyss);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.notes ul {
+  list-style: none;
+  padding: 0;
+}
+
+.notes li {
+  padding: 4px 0 4px 16px;
+  position: relative;
+}
+
+.notes li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--coral);
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
+}
+
+.btn {
+  padding: 12px 20px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  background: var(--abyss);
+  color: var(--sand);
+  border-color: var(--abyss);
+}
+
+.btn.primary {
+  background: var(--coral);
+  color: white;
+  border-color: var(--coral);
+}
+
+.btn.primary:hover {
+  background: var(--abyss);
+  border-color: var(--abyss);
+}
+
+.summary .btn {
+  color: var(--sand);
+  border-color: rgba(244,234,213,0.3);
+}
+
+.summary .btn:hover {
+  background: var(--sand);
+  color: var(--abyss);
+  border-color: var(--sand);
+}
+
+.summary .btn.primary {
+  background: var(--coral);
+  color: white;
+  border-color: var(--coral);
+}
+
+.summary .btn.primary:hover {
+  background: var(--sand);
+  color: var(--abyss);
+  border-color: var(--sand);
+}
+
+.btn.danger {
+  color: rgba(255,165,98,0.85);
+  border-color: rgba(255,165,98,0.3);
+  margin-left: auto;
+}
+
+.btn.danger:hover {
+  background: transparent;
+  color: var(--coral);
+  border-color: var(--coral);
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 32px 20px 80px; }
+  .day-body { grid-template-columns: 1fr; }
+  .day-header { flex-wrap: wrap; }
+  .summary { padding: 28px 20px; }
+  .total-amt { font-size: 38px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-top">
+      <span><span class="dot"></span>Trislander Palau · 行程計算機</span>
+      <span id="today"></span>
+    </div>
+    <h1>Palau <em>itinerary</em><br>& cost planner</h1>
+    <p class="hero-sub">自由搭配每日自潛／水肺／浮潛／立槳／陸遊行程，自動計算出海稅、潛導服務費與 FOC 優惠</p>
+  </header>
+
+  <!-- Mode -->
+  <div class="mode-bar" role="group" aria-label="報價模式">
+    <button class="mode-btn active" data-mode="retail">一般客報價</button>
+    <button class="mode-btn" data-mode="trade">同業報價</button>
+  </div>
+
+  <!-- People -->
+  <div class="people-row">
+    <div class="people-group">
+      <label>一般團員 Participants</label>
+      <div class="counter">
+        <button onclick="adjust('people', -1)">−</button>
+        <input type="number" id="people" value="6" min="0" oninput="render()">
+        <button onclick="adjust('people', 1)">+</button>
+      </div>
+    </div>
+    <div class="people-group">
+      <label>FOC 教練／攝影師</label>
+      <div class="counter">
+        <button onclick="adjust('foc', -1)">−</button>
+        <input type="number" id="foc" value="0" min="0" oninput="render()">
+        <button onclick="adjust('foc', 1)">+</button>
+      </div>
+    </div>
+    <div class="foc-hint" id="focHint">※ 6 人成行；滿 8 人開團，教練／攝影師出海享 FOC (8+1)</div>
+  </div>
+
+  <!-- Days -->
+  <h2 class="section-title"><span class="num">01 /</span> 每日行程</h2>
+  <p class="section-desc">勾選當日活動，可自由搭配；每日獨立計算午餐、船資、潛導費與出海稅。</p>
+
+  <div class="days" id="days"></div>
+
+  <button class="add-day" onclick="addDay()">＋ 新增一天</button>
+
+  <!-- Extras -->
+  <h2 class="section-title" style="margin-top:48px"><span class="num">03 /</span> 其他費用</h2>
+  <p class="section-desc">接送與總計出海稅（一張效期 5 天）的彙整。</p>
+
+  <div class="day-card">
+    <div class="day-body" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
+      <label class="activity">
+        <input type="checkbox" id="transferOut" checked onchange="render()">
+        <div class="act-info">
+          <div class="act-name">機場 ↔ 飯店來回接送</div>
+          <div class="act-price">$30 / 人（來回）</div>
+        </div>
+      </label>
+      <label class="activity" style="visibility:hidden">
+        <input type="checkbox" id="transferIn">
+        <div class="act-info"></div>
+      </label>
+    </div>
+  </div>
+
+  <!-- Gear Rental -->
+  <h2 class="section-title" style="margin-top:48px"><span class="num">02 /</span> 水肺裝備租賃</h2>
+  <p class="section-desc">按人、按天計費；可選擇單項組合或整套租借。FOC 不計入租金。</p>
+
+  <div class="day-card" id="gearCard">
+    <div style="padding:18px 24px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line);background:linear-gradient(90deg, var(--foam) 0%, transparent 40%);flex-wrap:wrap">
+      <div style="flex:1;min-width:200px">
+        <div class="day-label">租用人數 × 天數</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:6px">
+          <div class="counter" style="height:34px">
+            <button onclick="adjustGear('pax', -1)" style="width:32px;height:32px">−</button>
+            <input type="number" id="gearPax" value="0" min="0" oninput="render()" style="width:42px;height:32px;font-size:16px">
+            <button onclick="adjustGear('pax', 1)" style="width:32px;height:32px">+</button>
+          </div>
+          <span style="color:var(--muted);font-size:13px">人 ×</span>
+          <div class="counter" style="height:34px">
+            <button onclick="adjustGear('days', -1)" style="width:32px;height:32px">−</button>
+            <input type="number" id="gearDays" value="0" min="0" oninput="render()" style="width:42px;height:32px;font-size:16px">
+            <button onclick="adjustGear('days', 1)" style="width:32px;height:32px">+</button>
+          </div>
+          <span style="color:var(--muted);font-size:13px">天</span>
+        </div>
+      </div>
+      <div class="day-total" id="gearTotal"><span class="ccy">USD</span>0</div>
+    </div>
+
+    <div style="padding:14px 24px;background:rgba(255,107,91,0.06);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--coral);font-weight:600">快速選擇</span>
+      <button type="button" class="btn" style="padding:6px 14px;font-size:10px" onclick="gearPreset('full')">全套 $60</button>
+      <button type="button" class="btn" style="padding:6px 14px;font-size:10px" onclick="gearPreset('fullPlus')">全套＋電腦錶 $80</button>
+      <button type="button" class="btn" style="padding:6px 14px;font-size:10px" onclick="gearPreset('clear')">清除</button>
+    </div>
+
+    <div class="day-body" id="gearItems">
+      <!-- Gear items rendered by JS -->
+    </div>
+  </div>
+  <div class="summary" style="margin-top:48px">
+    <div class="summary-header">
+      <div>
+        <div class="summary-title">總計 <em>summary</em></div>
+      </div>
+      <div class="summary-meta" id="modeLabel">Retail pricing</div>
+    </div>
+
+    <div class="breakdown" id="breakdown"></div>
+
+    <div class="total-row">
+      <div>
+        <div class="total-label">Grand Total</div>
+        <div class="per-person" id="perPerson"></div>
+      </div>
+      <div class="total-amt">
+        <span class="ccy">USD</span><span id="grandTotal">0</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn primary" onclick="exportJSON()">匯出 JSON</button>
+      <button class="btn" onclick="window.print()">列印／PDF</button>
+      <button class="btn danger" id="resetBtn" onclick="resetAll()">重置</button>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  <div class="notes">
+    <h3>報價備註</h3>
+    <ul>
+      <li>出海稅 $50／人，效期五天內無限次出海共用一張</li>
+      <li>潛導／導遊服務費 $10／人／天（出海當天計）</li>
+      <li>FOC：只需自付出海稅 $50 並協助照顧團員</li>
+      <li>北島陸遊：Ngardmau 大瀑布 → 海邊餐廳用餐 → 總統府（小白宮）</li>
+      <li>Nikko Bay SUP 路線：洛克群島</li>
+      <li>愛萊州 SUP 路線：石錢步道、石灰岩溶洞、二戰日軍戰機、紅樹林水道</li>
+      <li>景觀小飛機：單人包機 $310；2 人以上每人 $220；行程約 2 小時、飛行 45 分鐘</li>
+      <li>景觀小飛機路線：牛奶湖、水母湖、長沙灘、德國水道、藍角、藍洞、七十群島、海豚灣、科羅州、KB 大橋</li>
+      <li>水肺裝備：BCD／調節器／防寒衣 各 $20，面鏡／蛙鞋 各 $10；全套 $60（不含電腦錶），電腦錶 $20</li>
+      <li>潛點可客製，依當日海況、潮汐及團員能力再做討論</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+// -------- Data --------
+const ACTIVITIES = {
+  scuba:   { name: '水肺出海',   retail: 240, trade: 200, tax: true,  guide: true,  category: '海上行程' },
+  freedive:{ name: '自潛出海',   retail: 175, trade: 150, tax: true,  guide: true,  category: '海上行程' },
+  snorkel: { name: '浮潛出海',   retail: 140, trade: 120, tax: true,  guide: true,  category: '海上行程' },
+  supFull: { name: 'SUP 全日立槳', retail: 165, trade: 145, tax: true,  guide: true,  category: '立槳' },
+  supHalf: { name: 'SUP 半日立槳', retail: 110, trade: 90,  tax: true,  guide: true,  category: '立槳' },
+  landN:   { name: '北島全日陸遊', retail: 110, trade: 90,  tax: false, guide: true,  category: '陸遊' },
+  scenicFlight: { name: '景觀小飛機', retail: 220, trade: 220, solo: 310, tax: false, guide: false, category: '空中行程', note: '單人 $310／2 人以上每人 $220' },
+};
+
+const FOC_ELIGIBLE = ['scuba','freedive','snorkel','supFull','supHalf','landN'];
+const TAX_FEE = 50;        // per person, valid 5 days
+const GUIDE_FEE = 10;      // per person per day (every day of the trip)
+const TRANSFER_FEE = 30;   // per person, round trip (total)
+
+const GEAR = {
+  bcd:      { name: 'BCD',       price: 20 },
+  reg:      { name: '調節器',    price: 20 },
+  wetsuit:  { name: '防寒衣',    price: 20 },
+  mask:     { name: '面鏡',      price: 10 },
+  fins:     { name: '蛙鞋',      price: 10 },
+  computer: { name: '電腦錶',    price: 20 },
+};
+// 全套 $60 = BCD + 調節器 + 防寒衣 + 面鏡 + 蛙鞋（原價 $80，全套優惠 $60，不含電腦錶）
+const FULL_SET_PRICE = 60;
+const FULL_SET_KEYS = ['bcd','reg','wetsuit','mask','fins'];
+
+// -------- State --------
+let state = {
+  mode: 'retail',
+  people: 6,
+  foc: 0,
+  transferOut: true,
+  transferIn: true,
+  days: [],
+  gear: {
+    pax: 0,
+    days: 0,
+    items: {}  // { bcd: true, reg: true, ... }
+  }
+};
+
+function createDay(n) {
+  return {
+    id: Date.now() + Math.random(),
+    label: `Day ${n}`,
+    activities: {},
+    flightPax: 2  // 景觀小飛機搭乘人數（預設 2 人適用 $220 價）
+  };
+}
+
+// Initialize with 3 sample days
+state.days.push(createDay(1));
+state.days.push(createDay(2));
+state.days.push(createDay(3));
+
+// -------- Controls --------
+function adjust(field, delta) {
+  const el = document.getElementById(field);
+  const v = Math.max(0, (parseInt(el.value) || 0) + delta);
+  el.value = v;
+  render();
+}
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.mode = btn.dataset.mode;
+    renderDays();
+    render();
+  };
+});
+
+function addDay() {
+  state.days.push(createDay(state.days.length + 1));
+  renderDays();
+  render();
+}
+
+function removeDay(id) {
+  state.days = state.days.filter(d => d.id !== id);
+  // relabel defaults
+  state.days.forEach((d, i) => {
+    if (/^Day \d+$/.test(d.label)) d.label = `Day ${i+1}`;
+  });
+  renderDays();
+  render();
+}
+
+function toggleActivity(dayId, key) {
+  const day = state.days.find(d => d.id === dayId);
+  if (!day) return;
+  day.activities[key] = !day.activities[key];
+  renderDays();
+  render();
+}
+
+function adjustFlightPax(dayId, delta) {
+  const day = state.days.find(d => d.id === dayId);
+  if (!day) return;
+  day.flightPax = Math.max(1, (day.flightPax || 2) + delta);
+  renderDays();
+  render();
+}
+
+// ----- Gear rental -----
+function adjustGear(field, delta) {
+  const el = document.getElementById(field === 'pax' ? 'gearPax' : 'gearDays');
+  const v = Math.max(0, (parseInt(el.value) || 0) + delta);
+  el.value = v;
+  render();
+}
+
+function toggleGear(key) {
+  state.gear.items[key] = !state.gear.items[key];
+  renderGear();
+  render();
+}
+
+function gearPreset(preset) {
+  state.gear.items = {};
+  if (preset === 'full') {
+    FULL_SET_KEYS.forEach(k => state.gear.items[k] = true);
+  } else if (preset === 'fullPlus') {
+    FULL_SET_KEYS.forEach(k => state.gear.items[k] = true);
+    state.gear.items.computer = true;
+  }
+  // 若沒設人數／天數，套用預設值方便快速計算
+  if (preset !== 'clear') {
+    if ((parseInt(document.getElementById('gearPax').value) || 0) === 0) {
+      document.getElementById('gearPax').value = state.people;
+    }
+    if ((parseInt(document.getElementById('gearDays').value) || 0) === 0) {
+      // 預設租借有水肺出海的天數
+      const scubaDays = state.days.filter(d => d.activities.scuba).length;
+      document.getElementById('gearDays').value = scubaDays || state.days.length;
+    }
+  }
+  renderGear();
+  render();
+}
+
+function renderGear() {
+  const container = document.getElementById('gearItems');
+  if (!container) return;
+  const selectedSet = Object.keys(state.gear.items).filter(k => state.gear.items[k]);
+  const hasFullSet = FULL_SET_KEYS.every(k => selectedSet.includes(k));
+
+  container.innerHTML = Object.entries(GEAR).map(([key, g]) => {
+    const on = state.gear.items[key];
+    const klass = on ? 'activity checked' : 'activity';
+    // 若已構成全套，標註此項已併入全套價
+    const inFullSet = hasFullSet && FULL_SET_KEYS.includes(key);
+    return `
+      <label class="${klass}">
+        <input type="checkbox" ${on ? 'checked' : ''} onchange="toggleGear('${key}')">
+        <div class="act-info">
+          <div class="act-name">${g.name}</div>
+          <div class="act-price">
+            $${g.price}/人/天
+            ${inFullSet ? ' <span class="tax" style="color:var(--surface)">全套</span>' : ''}
+          </div>
+        </div>
+      </label>
+    `;
+  }).join('');
+}
+
+function updateLabel(dayId, val) {
+  const day = state.days.find(d => d.id === dayId);
+  if (day) day.label = val;
+}
+
+function resetAll() {
+  if (!confirm('確定要重置所有行程設定嗎？此動作無法復原。')) return;
+  state.people = 6;
+  state.foc = 0;
+  state.transferOut = true;
+  state.transferIn = true;
+  state.days = [createDay(1), createDay(2), createDay(3)];
+  state.gear = { pax: 0, days: 0, items: {} };
+  document.getElementById('people').value = 6;
+  document.getElementById('foc').value = 0;
+  document.getElementById('transferOut').checked = true;
+  document.getElementById('transferIn').checked = true;
+  document.getElementById('gearPax').value = 0;
+  document.getElementById('gearDays').value = 0;
+  renderDays();
+  renderGear();
+  render();
+}
+
+// -------- Render --------
+function renderDays() {
+  const container = document.getElementById('days');
+  container.innerHTML = '';
+  state.days.forEach((day, idx) => {
+    const card = document.createElement('div');
+    card.className = 'day-card';
+    card.innerHTML = `
+      <div class="day-header">
+        <div class="day-num">${String(idx+1).padStart(2,'0')}</div>
+        <div class="day-label-group">
+          <div class="day-label">Day · 標籤</div>
+          <input class="day-input" value="${escapeHtml(day.label)}" onchange="updateLabel(${day.id}, this.value)" placeholder="例：Day 1 · Blue Corner">
+        </div>
+        <div class="day-total" id="dayTotal-${day.id}"><span class="ccy">USD</span>0</div>
+        <button class="day-remove" onclick="removeDay(${day.id})" title="刪除此日">✕</button>
+      </div>
+      <div class="day-body">
+        ${Object.entries(ACTIVITIES).map(([key, a]) => {
+          const checked = day.activities[key] ? 'checked' : '';
+          const klass = day.activities[key] ? 'activity checked' : 'activity';
+          let priceLabel;
+          if (key === 'scenicFlight') {
+            const pax = day.flightPax || 2;
+            const unit = pax <= 1 ? a.solo : a[state.mode];
+            priceLabel = `$${unit}/人 × ${pax} 人 <span class="tax" style="color:var(--surface)">${pax <= 1 ? '單人包機' : '2人以上'}</span>`;
+          } else {
+            const price = a[state.mode];
+            priceLabel = `$${price}/人 ${a.tax ? '<span class="tax">+稅</span>' : ''}`;
+          }
+          const extraControl = (key === 'scenicFlight' && day.activities[key]) ? `
+            <div style="margin-top:8px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:0.05em">
+              <span>搭乘</span>
+              <button type="button" onclick="event.preventDefault();event.stopPropagation();adjustFlightPax(${day.id}, -1)" style="width:22px;height:22px;border:1px solid var(--line);background:white;cursor:pointer;border-radius:2px">−</button>
+              <span style="min-width:18px;text-align:center;color:var(--abyss);font-size:13px;font-weight:600">${day.flightPax || 2}</span>
+              <button type="button" onclick="event.preventDefault();event.stopPropagation();adjustFlightPax(${day.id}, 1)" style="width:22px;height:22px;border:1px solid var(--line);background:white;cursor:pointer;border-radius:2px">+</button>
+              <span>人</span>
+            </div>
+          ` : '';
+          return `
+            <label class="${klass}" style="flex-direction:${key === 'scenicFlight' && day.activities[key] ? 'row' : 'row'};align-items:flex-start">
+              <input type="checkbox" ${checked} onchange="toggleActivity(${day.id}, '${key}')" style="margin-top:2px">
+              <div class="act-info">
+                <div class="act-name">${a.name}</div>
+                <div class="act-price">${priceLabel}</div>
+                ${extraControl}
+              </div>
+            </label>
+          `;
+        }).join('')}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// 每日行程費用（會區分：一般照團員人數計的項目 + 景觀飛機這種按搭乘人數獨立計的項目）
+function dayActivityCost(day) {
+  let perPersonFee = 0;  // 按團員人數乘的費用
+  let flatFee = 0;       // 按實際搭乘人數獨立計算的費用（如景觀小飛機）
+  Object.entries(day.activities).forEach(([key, on]) => {
+    if (!on) return;
+    const a = ACTIVITIES[key];
+    if (key === 'scenicFlight') {
+      const pax = day.flightPax || 2;
+      const unit = pax <= 1 ? a.solo : a[state.mode];
+      flatFee += unit * pax;
+    } else {
+      perPersonFee += a[state.mode];
+    }
+  });
+  return { perPersonFee, flatFee };
+}
+
+function dayFeePerPerson(day) {
+  return dayActivityCost(day).perPersonFee;
+}
+
+// 計算裝備「每人每天」金額（含全套優惠邏輯）
+function gearPerPersonPerDay() {
+  const selected = Object.keys(state.gear.items).filter(k => state.gear.items[k]);
+  if (selected.length === 0) return { total: 0, breakdown: [] };
+
+  const hasFullSet = FULL_SET_KEYS.every(k => selected.includes(k));
+  let total = 0;
+  const breakdown = [];
+
+  if (hasFullSet) {
+    total += FULL_SET_PRICE;
+    breakdown.push({ label: '全套（BCD + 調節器 + 防寒衣 + 面鏡 + 蛙鞋）', price: FULL_SET_PRICE });
+    if (selected.includes('computer')) {
+      total += GEAR.computer.price;
+      breakdown.push({ label: '電腦錶', price: GEAR.computer.price });
+    }
+  } else {
+    selected.forEach(k => {
+      total += GEAR[k].price;
+      breakdown.push({ label: GEAR[k].name, price: GEAR[k].price });
+    });
+  }
+  return { total, breakdown };
+}
+
+function dayHasTaxableActivity(day) {
+  return Object.entries(day.activities).some(([k, on]) => on && ACTIVITIES[k].tax);
+}
+
+function dayHasGuidedActivity(day) {
+  return Object.entries(day.activities).some(([k, on]) => on && ACTIVITIES[k].guide);
+}
+
+function render() {
+  // sync state
+  state.people = Math.max(0, parseInt(document.getElementById('people').value) || 0);
+  state.foc = Math.max(0, parseInt(document.getElementById('foc').value) || 0);
+  state.transferOut = document.getElementById('transferOut').checked;
+  state.transferIn = document.getElementById('transferIn').checked;
+
+  document.getElementById('modeLabel').textContent = state.mode === 'retail' ? 'Retail pricing · 一般客' : 'Trade pricing · 同業';
+
+  // FOC hint
+  const totalParticipants = state.people;
+  const focHint = document.getElementById('focHint');
+  if (totalParticipants >= 8 && state.foc === 0) {
+    focHint.textContent = `※ 已達 ${totalParticipants} 人，教練／攝影師可享 FOC（建議 foc = 1）`;
+    focHint.style.color = 'var(--coral)';
+  } else if (state.foc > 0 && totalParticipants < 8) {
+    focHint.textContent = `※ FOC 需滿 8 人開團；目前僅 ${totalParticipants} 人`;
+    focHint.style.color = 'var(--coral)';
+  } else {
+    focHint.textContent = '※ 6 人成行；滿 8 人開團，教練／攝影師出海享 FOC (8+1)';
+    focHint.style.color = 'var(--surface)';
+  }
+
+  // 注意：活動項目的價格顯示由 renderDays() 控制，切換模式時會重新渲染
+
+  // Calculate
+  const breakdown = [];
+  let grandTotal = 0;
+
+  // --- Activities per day ---
+  let hasAnyActivity = false;
+  state.days.forEach((day, idx) => {
+    const { perPersonFee, flatFee } = dayActivityCost(day);
+    if (perPersonFee > 0 || flatFee > 0) hasAnyActivity = true;
+
+    const dayTotalForDisplay = perPersonFee * state.people + flatFee;
+    document.getElementById(`dayTotal-${day.id}`).innerHTML = `<span class="ccy">USD</span>${formatNum(dayTotalForDisplay)}`;
+  });
+
+  if (hasAnyActivity) {
+    breakdown.push({ type: 'section', label: '行程費用 Activities' });
+    state.days.forEach((day, idx) => {
+      const { perPersonFee, flatFee } = dayActivityCost(day);
+      if (perPersonFee > 0) {
+        const cost = perPersonFee * state.people;
+        grandTotal += cost;
+        breakdown.push({
+          label: `${day.label}`,
+          calc: `$${perPersonFee} × ${state.people} 人`,
+          amt: cost
+        });
+      }
+      if (flatFee > 0) {
+        const pax = day.flightPax || 2;
+        const unit = pax <= 1 ? ACTIVITIES.scenicFlight.solo : ACTIVITIES.scenicFlight[state.mode];
+        grandTotal += flatFee;
+        breakdown.push({
+          label: `${day.label} · 景觀小飛機`,
+          calc: `$${unit} × ${pax} 人${pax <= 1 ? '（單人包機）' : ''}`,
+          amt: flatFee
+        });
+      }
+    });
+  }
+
+  // --- Guide / service fees (charged for every day of the trip) ---
+  const tripDays = state.days.length;
+  if (tripDays > 0 && state.people > 0) {
+    const guideTotal = GUIDE_FEE * state.people * tripDays;
+    grandTotal += guideTotal;
+    breakdown.push({ type: 'section', label: '潛導／導遊服務費 Guide Fee' });
+    breakdown.push({
+      label: `服務費 $${GUIDE_FEE}/人/天`,
+      calc: `× ${state.people} 人 × ${tripDays} 天`,
+      amt: guideTotal
+    });
+  }
+
+  // --- Tax (shared 5-day permit) ---
+  // Count unique 5-day windows needed: group taxable days into chunks of 5 consecutive days
+  // Simple approach: every taxable day consumes the pass; one tax = 5 consecutive days.
+  // We assume the trip is contiguous, so number of tax permits = ceil(span / 5) where span = max day index with tax activity.
+  const taxableDayIndexes = state.days
+    .map((d, i) => dayHasTaxableActivity(d) ? i : -1)
+    .filter(i => i >= 0);
+
+  if (taxableDayIndexes.length > 0) {
+    const firstTax = taxableDayIndexes[0];
+    const lastTax = taxableDayIndexes[taxableDayIndexes.length - 1];
+    const span = lastTax - firstTax + 1;
+    const permits = Math.ceil(span / 5);
+
+    const peopleWithTax = state.people + state.foc; // FOC pay tax
+    const taxTotal = TAX_FEE * peopleWithTax * permits;
+    grandTotal += taxTotal;
+
+    breakdown.push({ type: 'section', label: '出海稅 Tax' });
+    const focNote = state.foc > 0 ? `（含 ${state.foc} 位 FOC）` : '';
+    breakdown.push({
+      label: `出海稅 $${TAX_FEE}/人 × ${permits} 張`,
+      calc: `× ${peopleWithTax} 人${focNote}`,
+      amt: taxTotal
+    });
+  }
+
+  // --- Gear rental ---
+  state.gear.pax = Math.max(0, parseInt(document.getElementById('gearPax').value) || 0);
+  state.gear.days = Math.max(0, parseInt(document.getElementById('gearDays').value) || 0);
+  const gearCalc = gearPerPersonPerDay();
+  const gearTotal = gearCalc.total * state.gear.pax * state.gear.days;
+
+  document.getElementById('gearTotal').innerHTML = `<span class="ccy">USD</span>${formatNum(gearTotal)}`;
+
+  if (gearTotal > 0) {
+    grandTotal += gearTotal;
+    breakdown.push({ type: 'section', label: '水肺裝備租賃 Gear Rental' });
+    gearCalc.breakdown.forEach(item => {
+      breakdown.push({
+        label: item.label,
+        calc: `$${item.price} × ${state.gear.pax} 人 × ${state.gear.days} 天`,
+        amt: item.price * state.gear.pax * state.gear.days
+      });
+    });
+  }
+
+  // --- Transfers ($30/person for round trip total) ---
+  const needTransfer = state.transferOut || state.transferIn;
+  if (needTransfer) {
+    const peopleTransfer = state.people + state.foc;
+    const transferTotal = TRANSFER_FEE * peopleTransfer;
+    grandTotal += transferTotal;
+    breakdown.push({ type: 'section', label: '機場接送 Transfers' });
+    breakdown.push({
+      label: `接送 $${TRANSFER_FEE}/人（來回）`,
+      calc: `× ${peopleTransfer} 人`,
+      amt: transferTotal
+    });
+  }
+
+  // Render breakdown
+  const bEl = document.getElementById('breakdown');
+  if (breakdown.length === 0) {
+    bEl.innerHTML = '<div class="empty-state">尚未選擇任何行程</div>';
+  } else {
+    bEl.innerHTML = breakdown.map(row => {
+      if (row.type === 'section') {
+        return `<div class="breakdown-section">${row.label}</div>`;
+      }
+      return `
+        <div class="breakdown-row">
+          <span>${row.label}</span>
+          <span class="calc">${row.calc}</span>
+          <span class="amt">$${formatNum(row.amt)}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  document.getElementById('grandTotal').textContent = formatNum(grandTotal);
+
+  // Per person (excluding FOC from divisor)
+  const perPersonEl = document.getElementById('perPerson');
+  if (state.people > 0 && grandTotal > 0) {
+    const perHead = grandTotal / state.people;
+    perPersonEl.textContent = `≈ $${formatNum(Math.round(perHead))} / 團員`;
+  } else {
+    perPersonEl.textContent = '';
+  }
+}
+
+function formatNum(n) {
+  return n.toLocaleString('en-US');
+}
+
+function exportJSON() {
+  const data = {
+    exportedAt: new Date().toISOString(),
+    mode: state.mode,
+    people: state.people,
+    foc: state.foc,
+    transferOut: state.transferOut,
+    transferIn: state.transferIn,
+    days: state.days.map(d => ({
+      label: d.label,
+      activities: Object.entries(d.activities).filter(([_, v]) => v).map(([k]) => {
+        if (k === 'scenicFlight') return `${ACTIVITIES[k].name} (${d.flightPax || 2}人)`;
+        return ACTIVITIES[k].name;
+      })
+    })),
+    gear: {
+      pax: state.gear.pax,
+      days: state.gear.days,
+      items: Object.keys(state.gear.items).filter(k => state.gear.items[k]).map(k => GEAR[k].name)
+    }
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `palau-trip-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Today date
+const today = new Date();
+document.getElementById('today').textContent = today.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+
+// Initial render
+renderDays();
+renderGear();
+render();
+</script>
+</body>
+</html>
