@@ -915,8 +915,7 @@ h1 em {
     </div>
 
     <div class="actions">
-      <button class="btn primary" onclick="exportJSON()">匯出 JSON</button>
-      <button class="btn" onclick="window.print()">列印／PDF</button>
+      <button class="btn primary" onclick="window.print()">列印／PDF</button>
       <button class="btn danger" id="resetBtn" onclick="resetAll()">重置</button>
     </div>
   </div>
@@ -1424,35 +1423,6 @@ function formatNum(n) {
   return n.toLocaleString('en-US');
 }
 
-function exportJSON() {
-  const data = {
-    exportedAt: new Date().toISOString(),
-    mode: state.mode,
-    people: state.people,
-    foc: state.foc,
-    transferOut: state.transferOut,
-    transferIn: state.transferIn,
-    days: state.days.map(d => ({
-      label: d.label,
-      activities: Object.entries(d.activities).filter(([_, v]) => v).map(([k]) => {
-        if (k === 'scenicFlight') return `${ACTIVITIES[k].name} (${d.flightPax || 2}人)`;
-        return ACTIVITIES[k].name;
-      })
-    })),
-    gear: {
-      pax: state.gear.pax,
-      days: state.gear.days,
-      items: Object.keys(state.gear.items).filter(k => state.gear.items[k]).map(k => GEAR[k].name)
-    }
-  };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `palau-trip-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
 
 // Today date
 const today = new Date();
