@@ -922,7 +922,7 @@ h1 em {
     <ul>
       <li>出海稅 $50／人，效期五天內無限次出海共用一張</li>
       <li>潛導／導遊服務費 $10／人／天（行程每天皆計，不限出海日）</li>
-      <li>FOC：只需自付出海稅 $50 並協助照顧團員</li>
+      <li>FOC：只需自付出海稅 $50 並協助照顧團員，含機場接送</li>
       <li>北島陸遊：Ngardmau 大瀑布 → 海邊餐廳用餐 → 總統府（小白宮）</li>
       <li>Nikko Bay SUP 路線：洛克群島</li>
       <li>愛萊州 SUP 路線：石錢步道、石灰岩溶洞、二戰日軍戰機、紅樹林水道</li>
@@ -1387,16 +1387,16 @@ function render() {
     });
   }
 
-  // --- Transfers ($30/person for round trip total) ---
+  // --- Transfers ($30/person for round trip total, FOC included free) ---
   const needTransfer = state.transferOut || state.transferIn;
   if (needTransfer) {
-    const peopleTransfer = state.people + state.foc;
-    const transferTotal = TRANSFER_FEE * peopleTransfer;
+    const transferTotal = TRANSFER_FEE * state.people;
     grandTotal += transferTotal;
     breakdown.push({ type: 'section', label: '機場接送 Transfers' });
+    const focTransferNote = state.foc > 0 ? `（FOC ${state.foc} 位免費）` : '';
     breakdown.push({
       label: `接送 $${TRANSFER_FEE}/人（來回）`,
-      calc: `× ${peopleTransfer} 人`,
+      calc: `× ${state.people} 人${focTransferNote}`,
       amt: transferTotal
     });
   }
