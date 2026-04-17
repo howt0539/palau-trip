@@ -1360,10 +1360,9 @@ function render() {
     grandTotal += taxTotal;
 
     breakdown.push({ type: 'section', label: '出海稅 Tax' });
-    const focNote = state.foc > 0 ? `（含 ${state.foc} 位 FOC）` : '';
     breakdown.push({
       label: `出海稅 $${TAX_FEE}/人 × ${permits} 張`,
-      calc: `× ${peopleWithTax} 人${focNote}`,
+      calc: `× ${peopleWithTax} 人`,
       amt: taxTotal
     });
   }
@@ -1393,10 +1392,9 @@ function render() {
     const transferTotal = TRANSFER_FEE * state.people;
     grandTotal += transferTotal;
     breakdown.push({ type: 'section', label: '機場接送 Transfers' });
-    const focTransferNote = state.foc > 0 ? `（FOC ${state.foc} 位免費）` : '';
     breakdown.push({
       label: `接送 $${TRANSFER_FEE}/人（來回）`,
-      calc: `× ${state.people} 人${focTransferNote}`,
+      calc: `× ${state.people} 人`,
       amt: transferTotal
     });
   }
