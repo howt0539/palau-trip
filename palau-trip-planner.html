@@ -8,21 +8,23 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400&family=Noto+Serif+TC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 :root {
-  --abyss: #0a1e2e;
-  --deep: #0f3148;
-  --mid: #1a5673;
-  --surface: #2a8aa8;
-  --shallow: #5bc0c7;
-  --foam: #c8ecec;
-  --sand: #f4ead5;
-  --coral: #ff6b5b;
-  --sunset: #ffa562;
-  --paper: #fbf7ee;
-  --ink: #0a1e2e;
-  --muted: #6b7f8a;
-  --line: rgba(10,30,46,0.12);
+  /* Trislander Palau brand palette */
+  --abyss: #1f4755;        /* darkest teal — ink / summary bg */
+  --deep: #3e6977;         /* deep teal */
+  --mid: #527f8c;          /* mid teal */
+  --surface: #5f8f9a;      /* primary brand teal */
+  --shallow: #a7c5cc;      /* soft teal */
+  --foam: #dce8eb;         /* palest teal */
+  --sand: #f1e5c6;         /* warm cream (on dark) */
+  --coral: #d9c47a;        /* gold accent (replaces coral) */
+  --sunset: #bfa55a;       /* deep gold */
+  --paper: #f5efe3;        /* warm off-white page bg */
+  --ink: #1f4755;
+  --muted: #7b8f96;
+  --line: rgba(31,71,85,0.14);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -39,8 +41,8 @@ html, body {
 
 body {
   background:
-    radial-gradient(ellipse at top left, rgba(91,192,199,0.08), transparent 50%),
-    radial-gradient(ellipse at bottom right, rgba(255,107,91,0.06), transparent 50%),
+    radial-gradient(ellipse at top left, rgba(95,143,154,0.10), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(217,196,122,0.10), transparent 50%),
     var(--paper);
   background-attachment: fixed;
 }
@@ -68,6 +70,28 @@ body::before {
   padding-bottom: 32px;
   margin-bottom: 48px;
   position: relative;
+}
+
+.brand-banner {
+  margin-bottom: 28px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(31,71,85,0.18);
+  line-height: 0;
+  aspect-ratio: 16 / 7;
+  background: var(--surface);
+}
+
+.brand-banner img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (max-width: 640px) {
+  .brand-banner { aspect-ratio: 4 / 3; }
 }
 
 .hero-top {
@@ -350,9 +374,9 @@ h1 em {
 }
 
 .day-remove:hover {
-  background: var(--coral);
-  color: white;
-  border-color: var(--coral);
+  background: var(--abyss);
+  color: var(--coral);
+  border-color: var(--abyss);
 }
 
 .day-body {
@@ -738,12 +762,14 @@ h1 em {
 
 .btn.primary {
   background: var(--coral);
-  color: white;
+  color: var(--abyss);
   border-color: var(--coral);
+  font-weight: 600;
 }
 
 .btn.primary:hover {
   background: var(--abyss);
+  color: var(--sand);
   border-color: var(--abyss);
 }
 
@@ -760,8 +786,9 @@ h1 em {
 
 .summary .btn.primary {
   background: var(--coral);
-  color: white;
+  color: var(--abyss);
   border-color: var(--coral);
+  font-weight: 600;
 }
 
 .summary .btn.primary:hover {
@@ -789,12 +816,204 @@ h1 em {
   .summary { padding: 28px 20px; }
   .total-amt { font-size: 38px; }
 }
+
+/* Quote card (for image export) */
+.quote-stage {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.quote-card {
+  width: 720px;
+  background: #5f8f9a;
+  color: #f1e5c6;
+  font-family: 'Noto Serif TC', 'Fraunces', serif;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.quote-card .qc-banner {
+  width: 100%;
+  height: 260px;
+  background-color: #5f8f9a;
+  background-image: url('brand-logo.jpg');
+  background-size: 720px auto;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.quote-card .qc-body {
+  padding: 40px 48px 48px;
+  position: relative;
+}
+
+.quote-card .qc-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(241,229,198,0.7);
+}
+
+.quote-card .qc-title {
+  font-family: 'Fraunces', serif;
+  font-size: 42px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  margin: 4px 0 8px;
+  color: #ffffff;
+  line-height: 1.05;
+}
+
+.quote-card .qc-title em {
+  font-style: italic;
+  color: #d9c47a;
+  font-weight: 400;
+}
+
+.quote-card .qc-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: rgba(241,229,198,0.78);
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(241,229,198,0.2);
+  margin-bottom: 20px;
+}
+
+.quote-card .qc-meta span + span::before {
+  content: '·';
+  margin-right: 14px;
+  color: rgba(241,229,198,0.4);
+}
+
+.quote-card .qc-section {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #d9c47a;
+  margin: 18px 0 8px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(241,229,198,0.12);
+}
+
+.quote-card .qc-section:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+
+.quote-card .qc-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 16px;
+  align-items: baseline;
+  padding: 6px 0;
+  font-size: 14px;
+  color: rgba(241,229,198,0.95);
+}
+
+.quote-card .qc-row .calc {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(217,232,235,0.85);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.quote-card .qc-row .amt {
+  font-family: 'Fraunces', serif;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  min-width: 90px;
+  color: #f1e5c6;
+}
+
+.quote-card .qc-row.disc .amt { color: #a7c5cc; }
+
+.quote-card .qc-total {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 2px solid #d9c47a;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.quote-card .qc-total-label {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 22px;
+  color: #f1e5c6;
+}
+
+.quote-card .qc-total-amt {
+  font-family: 'Fraunces', serif;
+  font-size: 54px;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
+.quote-card .qc-total-amt .ccy {
+  font-size: 18px;
+  color: #d9c47a;
+  vertical-align: 0.45em;
+  margin-right: 4px;
+}
+
+.quote-card .qc-per {
+  margin-top: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: rgba(241,229,198,0.85);
+}
+
+.quote-card .qc-footer {
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(241,229,198,0.15);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: rgba(241,229,198,0.65);
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.quote-card .qc-footer > span { white-space: nowrap; }
+
+.quote-card .qc-tagline {
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: rgba(241,229,198,0.68);
+  font-style: italic;
+  line-height: 1.6;
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <header class="hero">
+    <div class="brand-banner">
+      <img src="brand-logo.jpg" alt="Trislander Palau">
+    </div>
     <div class="hero-top">
       <span><span class="dot"></span>Trislander Palau · 行程計算機</span>
       <span id="today"></span>
@@ -870,25 +1089,6 @@ h1 em {
     </div>
   </div>
 
-  <!-- Extras -->
-  <h2 class="section-title" style="margin-top:48px"><span class="num">03 /</span> 其他費用</h2>
-  <p class="section-desc">機場與飯店之間的來回接送費用。</p>
-
-  <div class="day-card">
-    <div class="day-body" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
-      <label class="activity">
-        <input type="checkbox" id="transferOut" checked onchange="render()">
-        <div class="act-info">
-          <div class="act-name">機場 ↔ 飯店來回接送</div>
-          <div class="act-price">$30 / 人（來回）</div>
-        </div>
-      </label>
-      <label class="activity" style="visibility:hidden">
-        <input type="checkbox" id="transferIn">
-        <div class="act-info"></div>
-      </label>
-    </div>
-  </div>
 
   <div class="summary" style="margin-top:48px">
     <div class="summary-header">
@@ -911,7 +1111,8 @@ h1 em {
     </div>
 
     <div class="actions">
-      <button class="btn primary" onclick="window.print()">列印／PDF</button>
+      <button class="btn primary" onclick="generateQuoteImage()">下載報價圖</button>
+      <button class="btn" onclick="window.print()">列印／PDF</button>
       <button class="btn danger" id="resetBtn" onclick="resetAll()">重置</button>
     </div>
   </div>
@@ -920,44 +1121,98 @@ h1 em {
   <div class="notes">
     <h3>報價備註</h3>
     <ul>
-      <li>出海稅 $50／人，效期五天內無限次出海共用一張</li>
+      <li>柯羅州出海稅 $50／人，效期五天內無限次出海共用一張</li>
+      <li>愛萊州出海稅 $25／人／天（僅 SUP 全日立槳日需購買）</li>
+      <li>釣魚稅 $50／人／天（僅夜釣日計）</li>
       <li>潛導／導遊服務費 $10／人／天（行程每天皆計，不限出海日）</li>
+      <li>出海行程提供面鏡＋呼吸管（自潛/浮潛用）、救生背心、浮板；水肺面鏡需另行租借</li>
       <li>FOC：只需自付出海稅 $50 並協助照顧團員，含機場接送</li>
-      <li>北島陸遊：Ngardmau 大瀑布 → 海邊餐廳用餐 → 總統府（小白宮）</li>
+      <li>北島陸遊：安德貌（Ngardmau）大瀑布 → 海邊餐廳 → 總統府（小白宮）；含門票、稅金，不含午餐、導遊服務費</li>
+      <li>市區觀光：傳統建築 BAI → 歷史博物館 → 私人博物館 → 精選紀念品店；含門票，不含導遊服務費</li>
+      <li>夕陽獨木舟：含簡易小點心、導遊服務費；不含出海稅；行程約 17:40–20:30</li>
+      <li>夜釣：含簡易晚餐、導遊服務費；不含出海稅、釣魚稅；行程約 17:40–20:30</li>
+      <li>水肺三潛特殊晨潛：一日三潛含日出／晨光潛；需具備相應潛水資格</li>
+      <li>水肺體驗潛（兩潛）：無需證照，1V1 或 1V2（最多 2 人配 1 位教練）</li>
+      <li>私人導潛：$150／天（不分人數），專屬導潛陪同</li>
+      <li>專業攝影／客製化包船：自填金額，金額由雙方議定</li>
       <li>Nikko Bay SUP 路線：洛克群島</li>
       <li>愛萊州 SUP 路線：石錢步道、石灰岩溶洞、二戰日軍戰機、紅樹林水道</li>
       <li>景觀小飛機：單人包機 $310；2 人以上每人 $220；行程約 2 小時、飛行 45 分鐘</li>
       <li>景觀小飛機路線：牛奶湖、水母湖、長沙灘、德國水道、藍角、藍洞、七十群島、海豚灣、科羅州、KB 大橋</li>
-      <li>水肺裝備：BCD／調節器／防寒衣 各 $20，面鏡／蛙鞋 各 $10；全套 $60（不含電腦錶），電腦錶 $20</li>
+      <li>水肺裝備：BCD／調節器／防寒衣 各 $20，面鏡 $10，蛙鞋 $6；全套 $60（不含電腦錶），電腦錶 $20</li>
       <li>潛點可客製，依當日海況、潮汐及團員能力再做討論</li>
+      <li>客製化包船另有價格，歡迎洽詢</li>
     </ul>
   </div>
 
 </div>
 
+<!-- Hidden quote card stage for image export -->
+<div class="quote-stage">
+  <div class="quote-card" id="quoteCard">
+    <div class="qc-banner"></div>
+    <div class="qc-body">
+      <div class="qc-title-row">
+        <span>Trislander Palau</span>
+        <span id="qcDate"></span>
+      </div>
+      <div class="qc-title">Palau <em>itinerary</em> quote</div>
+      <div class="qc-meta" id="qcMeta"></div>
+      <div id="qcBreakdown"></div>
+      <div class="qc-total">
+        <div>
+          <div class="qc-total-label">Grand Total</div>
+          <div class="qc-per" id="qcPerPerson"></div>
+        </div>
+        <div class="qc-total-amt">
+          <span class="ccy">USD</span><span id="qcGrandTotal">0</span>
+        </div>
+      </div>
+      <p class="qc-tagline">報價含稅與服務費；行程順序與實際潛點路線視當日海況、潮汐及團員能力彈性調整</p>
+      <div class="qc-footer">
+        <span>Trislander Palau</span>
+        <span>dive · freedive</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // -------- Data --------
 const ACTIVITIES = {
-  scuba:   { name: '水肺出海',   retail: 240, trade: 200, tax: true,  guide: true,  category: '海上行程' },
-  freedive:{ name: '自潛出海',   retail: 175, trade: 150, tax: true,  guide: true,  category: '海上行程' },
-  snorkel: { name: '浮潛出海',   retail: 140, trade: 120, tax: true,  guide: true,  category: '海上行程' },
-  supFull: { name: 'SUP 全日立槳', retail: 165, trade: 145, tax: true,  guide: true,  category: '立槳' },
-  supHalf: { name: 'SUP 半日立槳', retail: 110, trade: 90,  tax: true,  guide: true,  category: '立槳' },
-  landN:   { name: '北島全日陸遊', retail: 110, trade: 90,  tax: false, guide: true,  category: '陸遊' },
-  scenicFlight: { name: '景觀小飛機', retail: 220, trade: 220, solo: 310, tax: false, guide: false, category: '空中行程', note: '單人 $310／2 人以上每人 $220' },
+  scuba:        { name: '水肺出海（三潛）',               retail: 250, trade: 210, tax: true,  guide: true,  category: '海上行程' },
+  scubaSpecial: { name: '水肺出海（三潛）· 特殊晨潛',     retail: 300, trade: 260, tax: true,  guide: true,  category: '海上行程' },
+  scubaTrial:   { name: '水肺出海（兩潛）· 無證照 1V1／1V2 體驗潛', retail: 280, trade: 280, tax: true,  guide: true,  category: '海上行程' },
+  freedive:     { name: '自潛出海',                       retail: 180, trade: 150, tax: true,  guide: true,  category: '海上行程' },
+  snorkel:      { name: '浮潛出海',                       retail: 140, trade: 120, tax: true,  guide: true,  category: '海上行程' },
+  privateGuide: { name: '私人導潛',                       retail: 150, trade: 150, tax: false, guide: false, category: '海上行程', flat: true, note: '$150／天（不分人數）' },
+  supFull:      { name: 'SUP 全日立槳（愛萊州）',         retail: 165, trade: 145, tax: false, airaiTax: true, guide: true, category: '立槳' },
+  supHalf:      { name: 'SUP 半日立槳（柯羅州）',         retail: 110, trade: 90,  tax: true,  guide: true,  category: '立槳' },
+  sunsetKayak:  { name: '夕陽獨木舟',                     retail: 70,  trade: 70,  tax: true,  guide: true,  category: '夜間行程' },
+  nightFishing: { name: '夜釣',                           retail: 95,  trade: 95,  tax: true,  guide: true,  fishingTax: true, category: '夜間行程' },
+  landN:        { name: '北島全日陸遊',                   retail: 110, trade: 90,  tax: false, guide: true,  category: '陸遊' },
+  cityTour:     { name: '市區觀光 & 文化導覽',            retail: 35,  trade: 35,  tax: false, guide: true,  category: '陸遊' },
+  scenicFlight: { name: '景觀小飛機',                     retail: 220, trade: 220, solo: 310,  tax: false, guide: false, category: '空中行程', note: '單人 $310／2 人以上每人 $220' },
+  photographer: { name: '專業攝影',                       custom: true, category: '加購服務', note: '自填金額／天' },
+  privateBoat:  { name: '客製化包船',                     custom: true, category: '加購服務', note: '自填金額／天' },
+  airportPickup:  { name: '機場接機',  retail: 20, trade: 20, tax: false, guide: false, category: '機場接送', transfer: 'pickup' },
+  airportDropoff: { name: '機場送機',  retail: 20, trade: 20, tax: false, guide: false, category: '機場接送', transfer: 'dropoff' },
 };
 
-const FOC_ELIGIBLE = ['scuba','freedive','snorkel','supFull','supHalf','landN'];
-const TAX_FEE = 50;        // per person, valid 5 days
-const GUIDE_FEE = 10;      // per person per day (every day of the trip)
-const TRANSFER_FEE = 30;   // per person, round trip (total)
+const FOC_ELIGIBLE = ['scuba','scubaSpecial','scubaTrial','freedive','snorkel','supFull','supHalf','landN','cityTour'];
+const TAX_FEE = 50;          // per person, valid 5 days (Koror)
+const AIRAI_TAX_FEE = 25;    // per person per day (Airai state, no permit sharing)
+const FISHING_TAX_FEE = 50;  // per person per night-fishing day
+const GUIDE_FEE = 10;        // per person per day (every day of the trip)
+const TRANSFER_ONE = 20;     // per person, single direction
+const TRANSFER_RT = 30;      // per person, round trip (both directions)
 
 const GEAR = {
   bcd:      { name: 'BCD',       price: 20 },
   reg:      { name: '調節器',    price: 20 },
   wetsuit:  { name: '防寒衣',    price: 20 },
   mask:     { name: '面鏡',      price: 10 },
-  fins:     { name: '蛙鞋',      price: 10 },
+  fins:     { name: '蛙鞋',      price: 6 },
   computer: { name: '電腦錶',    price: 20 },
 };
 // 全套 $60 = BCD + 調節器 + 防寒衣 + 面鏡 + 蛙鞋（原價 $80，全套優惠 $60，不含電腦錶）
@@ -969,8 +1224,6 @@ let state = {
   mode: 'retail',
   people: 6,
   foc: 0,
-  transferOut: true,
-  transferIn: true,
   days: [],
   gear: {
     days: 0,
@@ -983,7 +1236,11 @@ function createDay(n) {
     id: Date.now() + Math.random(),
     label: `Day ${n}`,
     activities: {},
-    flightPax: 2  // 景觀小飛機搭乘人數（預設 2 人適用 $220 價）
+    activityPax: {},     // 各活動獨立人數（含 FOC）
+    activityAmount: {},  // 自填金額項目（專業攝影 / 客製包船）
+    flightPax: 2,        // 景觀小飛機搭乘人數（預設 2 人適用 $220 價）
+    pickupPax: 6,        // 機場接機人數
+    dropoffPax: 6        // 機場送機人數
   };
 }
 
@@ -1029,7 +1286,20 @@ function removeDay(id) {
 function toggleActivity(dayId, key) {
   const day = state.days.find(d => d.id === dayId);
   if (!day) return;
-  day.activities[key] = !day.activities[key];
+  const turningOn = !day.activities[key];
+  day.activities[key] = turningOn;
+  const a = ACTIVITIES[key];
+  if (turningOn && a) {
+    const total = Math.max(1, state.people + state.foc);
+    if (key === 'airportPickup') day.pickupPax = total;
+    else if (key === 'airportDropoff') day.dropoffPax = total;
+    else if (key === 'scenicFlight') day.flightPax = total;
+    else if (a.custom) {
+      if (!(key in day.activityAmount)) day.activityAmount[key] = 0;
+    } else if (!a.flat && !a.transfer) {
+      day.activityPax[key] = total;
+    }
+  }
   renderDays();
   render();
 }
@@ -1038,6 +1308,32 @@ function adjustFlightPax(dayId, delta) {
   const day = state.days.find(d => d.id === dayId);
   if (!day) return;
   day.flightPax = Math.max(1, (day.flightPax || 2) + delta);
+  renderDays();
+  render();
+}
+
+function adjustActivityPax(dayId, key, delta) {
+  const day = state.days.find(d => d.id === dayId);
+  if (!day) return;
+  const cur = day.activityPax[key] || 0;
+  day.activityPax[key] = Math.max(1, cur + delta);
+  renderDays();
+  render();
+}
+
+function updateActivityAmount(dayId, key, val) {
+  const day = state.days.find(d => d.id === dayId);
+  if (!day) return;
+  day.activityAmount[key] = Math.max(0, parseFloat(val) || 0);
+  render();
+}
+
+// ----- Airport transfer -----
+function adjustTransferPax(dayId, dir, delta) {
+  const day = state.days.find(d => d.id === dayId);
+  if (!day) return;
+  const field = dir === 'pickup' ? 'pickupPax' : 'dropoffPax';
+  day[field] = Math.max(1, (day[field] || 1) + delta);
   renderDays();
   render();
 }
@@ -1121,14 +1417,10 @@ function resetAll() {
   if (!confirm('確定要重置所有行程設定嗎？此動作無法復原。')) return;
   state.people = 6;
   state.foc = 0;
-  state.transferOut = true;
-  state.transferIn = true;
   state.days = [createDay(1), createDay(2), createDay(3)];
   state.gear = { days: 0, items: {} };
   document.getElementById('people').value = 6;
   document.getElementById('foc').value = 0;
-  document.getElementById('transferOut').checked = true;
-  document.getElementById('transferIn').checked = true;
   document.getElementById('gearDays').value = 0;
   renderDays();
   renderGear();
@@ -1154,28 +1446,13 @@ function renderDays() {
       </div>
       <div class="day-body">
         ${Object.entries(ACTIVITIES).map(([key, a]) => {
-          const checked = day.activities[key] ? 'checked' : '';
-          const klass = day.activities[key] ? 'activity checked' : 'activity';
-          let priceLabel;
-          if (key === 'scenicFlight') {
-            const pax = day.flightPax || 2;
-            const unit = pax <= 1 ? a.solo : a[state.mode];
-            priceLabel = `$${unit}/人 × ${pax} 人 <span class="tax" style="color:var(--surface)">${pax <= 1 ? '單人包機' : '2人以上'}</span>`;
-          } else {
-            const price = a[state.mode];
-            priceLabel = `$${price}/人 ${a.tax ? '<span class="tax">+稅</span>' : ''}`;
-          }
-          const extraControl = (key === 'scenicFlight' && day.activities[key]) ? `
-            <div style="margin-top:8px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:0.05em">
-              <span>搭乘</span>
-              <button type="button" onclick="event.preventDefault();event.stopPropagation();adjustFlightPax(${day.id}, -1)" style="width:22px;height:22px;border:1px solid var(--line);background:white;cursor:pointer;border-radius:2px">−</button>
-              <span style="min-width:18px;text-align:center;color:var(--abyss);font-size:13px;font-weight:600">${day.flightPax || 2}</span>
-              <button type="button" onclick="event.preventDefault();event.stopPropagation();adjustFlightPax(${day.id}, 1)" style="width:22px;height:22px;border:1px solid var(--line);background:white;cursor:pointer;border-radius:2px">+</button>
-              <span>人</span>
-            </div>
-          ` : '';
+          const on = !!day.activities[key];
+          const checked = on ? 'checked' : '';
+          const klass = on ? 'activity checked' : 'activity';
+          const priceLabel = buildPriceLabel(key, a, day, on);
+          const extraControl = on ? buildExtraControl(key, a, day) : '';
           return `
-            <label class="${klass}" style="flex-direction:${key === 'scenicFlight' && day.activities[key] ? 'row' : 'row'};align-items:flex-start">
+            <label class="${klass}" style="align-items:flex-start">
               <input type="checkbox" ${checked} onchange="toggleActivity(${day.id}, '${key}')" style="margin-top:2px">
               <div class="act-info">
                 <div class="act-name">${a.name}</div>
@@ -1195,22 +1472,145 @@ function escapeHtml(s) {
   return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-// 每日行程費用（會區分：一般照團員人數計的項目 + 景觀飛機這種按搭乘人數獨立計的項目）
+function buildPriceLabel(key, a, day, on) {
+  const taxBadge = a.tax ? ' <span class="tax">+稅</span>' : (a.airaiTax ? ' <span class="tax">+愛萊州稅</span>' : '');
+  if (key === 'scenicFlight') {
+    if (on) {
+      const pax = day.flightPax || 2;
+      const unit = pax <= 1 ? a.solo : a[state.mode];
+      return `$${unit}/人 × ${pax} 人 <span class="tax" style="color:var(--surface)">${pax <= 1 ? '單人包機' : '2 人以上'}</span>`;
+    }
+    return `$${a[state.mode]}/人 <span class="tax" style="color:var(--surface)">單人 $${a.solo}</span>`;
+  }
+  if (a.transfer) {
+    if (on) {
+      const pax = a.transfer === 'pickup' ? (day.pickupPax || 1) : (day.dropoffPax || 1);
+      return `$${a[state.mode]}/人 × ${pax} 人`;
+    }
+    return `$${a[state.mode]}/人`;
+  }
+  if (a.custom) {
+    if (on) {
+      const amt = day.activityAmount[key] || 0;
+      return `自填：$${formatNum(amt)}/天`;
+    }
+    return `<span class="tax" style="color:var(--surface)">自填金額／天</span>`;
+  }
+  if (a.flat) {
+    return `$${a[state.mode]}/天 <span class="tax" style="color:var(--surface)">不分人數</span>`;
+  }
+  if (on) {
+    const pax = day.activityPax[key] || Math.max(1, state.people + state.foc);
+    return `$${a[state.mode]}/人 × ${pax} 人${taxBadge}`;
+  }
+  return `$${a[state.mode]}/人${taxBadge}`;
+}
+
+function buildExtraControl(key, a, day) {
+  const counterStyle = `margin-top:8px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:0.05em`;
+  const btnStyle = `width:22px;height:22px;border:1px solid var(--line);background:white;cursor:pointer;border-radius:2px`;
+  const valStyle = `min-width:18px;text-align:center;color:var(--abyss);font-size:13px;font-weight:600`;
+  const stop = `event.preventDefault();event.stopPropagation();`;
+
+  if (key === 'scenicFlight') {
+    return `
+      <div style="${counterStyle}">
+        <span>搭乘</span>
+        <button type="button" onclick="${stop}adjustFlightPax(${day.id}, -1)" style="${btnStyle}">−</button>
+        <span style="${valStyle}">${day.flightPax || 2}</span>
+        <button type="button" onclick="${stop}adjustFlightPax(${day.id}, 1)" style="${btnStyle}">+</button>
+        <span>人</span>
+      </div>
+    `;
+  }
+  if (a.transfer) {
+    const pax = a.transfer === 'pickup' ? (day.pickupPax || 1) : (day.dropoffPax || 1);
+    return `
+      <div style="${counterStyle}">
+        <span>人數</span>
+        <button type="button" onclick="${stop}adjustTransferPax(${day.id}, '${a.transfer}', -1)" style="${btnStyle}">−</button>
+        <span style="${valStyle}">${pax}</span>
+        <button type="button" onclick="${stop}adjustTransferPax(${day.id}, '${a.transfer}', 1)" style="${btnStyle}">+</button>
+        <span>人</span>
+      </div>
+    `;
+  }
+  if (a.custom) {
+    const amt = day.activityAmount[key] || 0;
+    return `
+      <div style="${counterStyle}">
+        <span>金額 USD</span>
+        <input type="number" min="0" step="10" value="${amt}"
+               oninput="updateActivityAmount(${day.id}, '${key}', this.value)"
+               onclick="${stop}"
+               style="width:90px;height:26px;padding:2px 6px;font-family:inherit;font-size:12px;color:var(--abyss);border:1px solid var(--line);border-radius:2px">
+      </div>
+    `;
+  }
+  if (a.flat) return '';
+  // 一般按人計項目
+  const pax = day.activityPax[key] || Math.max(1, state.people + state.foc);
+  return `
+    <div style="${counterStyle}">
+      <span>人數</span>
+      <button type="button" onclick="${stop}adjustActivityPax(${day.id}, '${key}', -1)" style="${btnStyle}">−</button>
+      <span style="${valStyle}">${pax}</span>
+      <button type="button" onclick="${stop}adjustActivityPax(${day.id}, '${key}', 1)" style="${btnStyle}">+</button>
+      <span>人</span>
+    </div>
+  `;
+}
+
+// 計算每日行程費用；items 陣列每項代表單一活動，summary 會逐條列出
 function dayActivityCost(day) {
-  let perPersonFee = 0;  // 按團員人數乘的費用
-  let flatFee = 0;       // 按實際搭乘人數獨立計算的費用（如景觀小飛機）
+  const items = [];
+  let total = 0;
   Object.entries(day.activities).forEach(([key, on]) => {
     if (!on) return;
     const a = ACTIVITIES[key];
+    if (!a) return;
+
     if (key === 'scenicFlight') {
       const pax = day.flightPax || 2;
       const unit = pax <= 1 ? a.solo : a[state.mode];
-      flatFee += unit * pax;
+      const cost = unit * pax;
+      total += cost;
+      items.push({ key, name: a.name, cost, calc: `$${unit} × ${pax} 人${pax <= 1 ? '（單人包機）' : ''}` });
+    } else if (a.transfer) {
+      const pax = a.transfer === 'pickup' ? (day.pickupPax || 0) : (day.dropoffPax || 0);
+      const billable = Math.max(0, pax - state.foc);
+      if (billable <= 0) return;
+      const cost = a[state.mode] * billable;
+      total += cost;
+      const calc = state.foc > 0
+        ? `$${a[state.mode]} × (${pax} − FOC ${state.foc}) 人`
+        : `$${a[state.mode]} × ${pax} 人`;
+      items.push({ key, name: a.name, cost, calc });
+    } else if (a.custom) {
+      const amt = parseFloat(day.activityAmount[key]) || 0;
+      if (amt <= 0) return;
+      total += amt;
+      items.push({ key, name: a.name, cost: amt, calc: '客製金額' });
+    } else if (a.flat) {
+      const cost = a[state.mode];
+      total += cost;
+      items.push({ key, name: a.name, cost, calc: `$${cost}/天` });
     } else {
-      perPersonFee += a[state.mode];
+      // 一般按人計項目
+      const pax = day.activityPax[key] || 0;
+      const isFoc = FOC_ELIGIBLE.includes(key);
+      const billable = isFoc ? Math.max(0, pax - state.foc) : pax;
+      if (billable <= 0) return;
+      const unit = a[state.mode];
+      const cost = unit * billable;
+      total += cost;
+      const calc = (isFoc && state.foc > 0)
+        ? `$${unit} × (${pax} − FOC ${state.foc}) 人`
+        : `$${unit} × ${pax} 人`;
+      items.push({ key, name: a.name, cost, calc });
     }
   });
-  return { perPersonFee, flatFee };
+  return { total, items };
 }
 
 function dayFeePerPerson(day) {
@@ -1267,8 +1667,6 @@ function render() {
   // sync state
   state.people = Math.max(0, parseInt(document.getElementById('people').value) || 0);
   state.foc = Math.max(0, parseInt(document.getElementById('foc').value) || 0);
-  state.transferOut = document.getElementById('transferOut').checked;
-  state.transferIn = document.getElementById('transferIn').checked;
 
   document.getElementById('modeLabel').textContent = state.mode === 'retail' ? 'Retail pricing · 一般客' : 'Trade pricing · 同業';
 
@@ -1292,39 +1690,26 @@ function render() {
   const breakdown = [];
   let grandTotal = 0;
 
-  // --- Activities per day ---
+  // --- Activities per day (逐一列出每活動) ---
   let hasAnyActivity = false;
-  state.days.forEach((day, idx) => {
-    const { perPersonFee, flatFee } = dayActivityCost(day);
-    if (perPersonFee > 0 || flatFee > 0) hasAnyActivity = true;
-
-    const dayTotalForDisplay = perPersonFee * state.people + flatFee;
-    document.getElementById(`dayTotal-${day.id}`).innerHTML = `<span class="ccy">USD</span>${formatNum(dayTotalForDisplay)}`;
+  const daysWithItems = state.days.map(day => {
+    const result = dayActivityCost(day);
+    if (result.items.length > 0) hasAnyActivity = true;
+    document.getElementById(`dayTotal-${day.id}`).innerHTML = `<span class="ccy">USD</span>${formatNum(result.total)}`;
+    return { day, ...result };
   });
 
   if (hasAnyActivity) {
     breakdown.push({ type: 'section', label: '行程費用 Activities' });
-    state.days.forEach((day, idx) => {
-      const { perPersonFee, flatFee } = dayActivityCost(day);
-      if (perPersonFee > 0) {
-        const cost = perPersonFee * state.people;
-        grandTotal += cost;
+    daysWithItems.forEach(({ day, items }) => {
+      items.forEach(item => {
+        grandTotal += item.cost;
         breakdown.push({
-          label: `${day.label}`,
-          calc: `$${perPersonFee} × ${state.people} 人`,
-          amt: cost
+          label: `${day.label} · ${item.name}`,
+          calc: item.calc,
+          amt: item.cost
         });
-      }
-      if (flatFee > 0) {
-        const pax = day.flightPax || 2;
-        const unit = pax <= 1 ? ACTIVITIES.scenicFlight.solo : ACTIVITIES.scenicFlight[state.mode];
-        grandTotal += flatFee;
-        breakdown.push({
-          label: `${day.label} · 景觀小飛機`,
-          calc: `$${unit} × ${pax} 人${pax <= 1 ? '（單人包機）' : ''}`,
-          amt: flatFee
-        });
-      }
+      });
     });
   }
 
@@ -1359,11 +1744,43 @@ function render() {
     const taxTotal = TAX_FEE * peopleWithTax * permits;
     grandTotal += taxTotal;
 
-    breakdown.push({ type: 'section', label: '出海稅 Tax' });
+    breakdown.push({ type: 'section', label: '柯羅州出海稅 Koror Tax' });
     breakdown.push({
       label: `出海稅 $${TAX_FEE}/人 × ${permits} 張`,
       calc: `× ${peopleWithTax} 人`,
       amt: taxTotal
+    });
+  }
+
+  // --- Airai tax (per day, not a 5-day permit) ---
+  const airaiDaysCount = state.days.filter(d =>
+    Object.entries(d.activities).some(([k, on]) => on && ACTIVITIES[k] && ACTIVITIES[k].airaiTax)
+  ).length;
+
+  if (airaiDaysCount > 0) {
+    const peopleWithTax = state.people + state.foc;
+    const airaiTotal = AIRAI_TAX_FEE * peopleWithTax * airaiDaysCount;
+    grandTotal += airaiTotal;
+
+    breakdown.push({ type: 'section', label: '愛萊州出海稅 Airai Tax' });
+    breakdown.push({
+      label: `愛萊州出海稅 $${AIRAI_TAX_FEE}/人/天 × ${airaiDaysCount} 天`,
+      calc: `× ${peopleWithTax} 人`,
+      amt: airaiTotal
+    });
+  }
+
+  // --- Fishing tax (per night-fishing day, FOC included) ---
+  const fishingDays = state.days.filter(d => d.activities.nightFishing).length;
+  if (fishingDays > 0) {
+    const peopleWithTax = state.people + state.foc;
+    const fishingTaxTotal = FISHING_TAX_FEE * peopleWithTax * fishingDays;
+    grandTotal += fishingTaxTotal;
+    breakdown.push({ type: 'section', label: '釣魚稅 Fishing Tax' });
+    breakdown.push({
+      label: `釣魚稅 $${FISHING_TAX_FEE}/人/天 × ${fishingDays} 天`,
+      calc: `× ${peopleWithTax} 人`,
+      amt: fishingTaxTotal
     });
   }
 
@@ -1386,16 +1803,23 @@ function render() {
     });
   }
 
-  // --- Transfers ($30/person for round trip total, FOC included free) ---
-  const needTransfer = state.transferOut || state.transferIn;
-  if (needTransfer) {
-    const transferTotal = TRANSFER_FEE * state.people;
-    grandTotal += transferTotal;
+  // --- Airport transfer round-trip discount (global, FOC excluded) ---
+  let totalPickupPax = 0;
+  let totalDropoffPax = 0;
+  state.days.forEach(day => {
+    if (day.activities.airportPickup) totalPickupPax += Math.max(0, (day.pickupPax || 0) - state.foc);
+    if (day.activities.airportDropoff) totalDropoffPax += Math.max(0, (day.dropoffPax || 0) - state.foc);
+  });
+  const rtPax = Math.min(totalPickupPax, totalDropoffPax);
+  const rtDiscountPerPerson = (TRANSFER_ONE * 2) - TRANSFER_RT; // 40 - 30 = 10
+  if (rtPax > 0 && rtDiscountPerPerson > 0) {
+    const discount = rtPax * rtDiscountPerPerson;
+    grandTotal -= discount;
     breakdown.push({ type: 'section', label: '機場接送 Transfers' });
     breakdown.push({
-      label: `接送 $${TRANSFER_FEE}/人（來回）`,
-      calc: `× ${state.people} 人`,
-      amt: transferTotal
+      label: `來回優惠（去＋回合計 $${TRANSFER_RT}）`,
+      calc: `−$${rtDiscountPerPerson}/人 × ${rtPax} 人`,
+      amt: -discount
     });
   }
 
@@ -1408,11 +1832,14 @@ function render() {
       if (row.type === 'section') {
         return `<div class="breakdown-section">${row.label}</div>`;
       }
+      const amtStr = row.amt < 0
+        ? `<span style="color:var(--shallow)">−$${formatNum(Math.abs(row.amt))}</span>`
+        : `$${formatNum(row.amt)}`;
       return `
         <div class="breakdown-row">
           <span>${row.label}</span>
           <span class="calc">${row.calc}</span>
-          <span class="amt">$${formatNum(row.amt)}</span>
+          <span class="amt">${amtStr}</span>
         </div>
       `;
     }).join('');
@@ -1422,16 +1849,127 @@ function render() {
 
   // Per person (excluding FOC from divisor)
   const perPersonEl = document.getElementById('perPerson');
+  let perPerson = 0;
   if (state.people > 0 && grandTotal > 0) {
-    const perHead = grandTotal / state.people;
-    perPersonEl.textContent = `≈ $${formatNum(Math.round(perHead))} / 團員`;
+    perPerson = grandTotal / state.people;
+    perPersonEl.textContent = `≈ $${formatNum(Math.round(perPerson))} / 團員`;
   } else {
     perPersonEl.textContent = '';
   }
+
+  lastQuote = { breakdown, grandTotal, perPerson };
 }
 
 function formatNum(n) {
   return n.toLocaleString('en-US');
+}
+
+// -------- Quote image export --------
+let lastQuote = { breakdown: [], grandTotal: 0, perPerson: 0 };
+
+function populateQuoteCard() {
+  const { breakdown, grandTotal, perPerson } = lastQuote;
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  document.getElementById('qcDate').textContent = dateStr;
+
+  const tripDays = state.days.length;
+  const metaParts = [
+    `${state.people} 人`,
+  ];
+  if (state.foc > 0) metaParts.push(`FOC ${state.foc}`);
+  metaParts.push(`${tripDays} 天行程`);
+  metaParts.push(state.mode === 'retail' ? '一般客報價' : '同業報價');
+  document.getElementById('qcMeta').innerHTML = metaParts.map(p => `<span>${p}</span>`).join('');
+
+  const bEl = document.getElementById('qcBreakdown');
+  if (!breakdown.length) {
+    bEl.innerHTML = '<div class="qc-row"><span style="opacity:0.6;font-style:italic">尚未選擇任何行程</span><span class="calc"></span><span class="amt">—</span></div>';
+  } else {
+    bEl.innerHTML = breakdown.map(row => {
+      if (row.type === 'section') {
+        return `<div class="qc-section">${row.label}</div>`;
+      }
+      const neg = row.amt < 0;
+      const amtStr = neg ? `−$${formatNum(Math.abs(row.amt))}` : `$${formatNum(row.amt)}`;
+      return `
+        <div class="qc-row${neg ? ' disc' : ''}">
+          <span>${row.label}</span>
+          <span class="calc">${row.calc || ''}</span>
+          <span class="amt">${amtStr}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  document.getElementById('qcGrandTotal').textContent = formatNum(grandTotal);
+  document.getElementById('qcPerPerson').textContent = perPerson > 0
+    ? `≈ $${formatNum(Math.round(perPerson))} / 團員`
+    : '';
+}
+
+async function generateQuoteImage() {
+  if (typeof html2canvas === 'undefined') {
+    alert('匯出套件尚未載入，請稍候再試。');
+    return;
+  }
+  const btn = event && event.currentTarget;
+  const originalText = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = '生成中…'; }
+
+  populateQuoteCard();
+  const card = document.getElementById('quoteCard');
+
+  try {
+    // warm up background image so html2canvas sees it cached
+    await new Promise(res => {
+      const pre = new Image();
+      pre.onload = res;
+      pre.onerror = res;
+      pre.src = 'brand-logo.jpg';
+    });
+
+    const canvas = await html2canvas(card, {
+      scale: 2,
+      backgroundColor: '#5f8f9a',
+      useCORS: true,
+      logging: false,
+      width: card.offsetWidth,
+      height: card.offsetHeight
+    });
+
+    const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+    const ts = new Date().toISOString().slice(0, 10);
+    const filename = `palau-quote-${ts}.png`;
+    const file = new File([blob], filename, { type: 'image/png' });
+
+    const fallbackDownload = () => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    };
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: 'Palau Quote' });
+      } catch (shareErr) {
+        if (shareErr && shareErr.name === 'AbortError') return;
+        fallbackDownload();
+      }
+    } else {
+      fallbackDownload();
+    }
+  } catch (err) {
+    console.error(err);
+    alert('生成失敗：' + (err && err.message || err));
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = originalText; }
+  }
 }
 
 
