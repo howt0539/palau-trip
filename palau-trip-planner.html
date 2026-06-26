@@ -1111,7 +1111,7 @@ h1 em {
     </div>
 
     <div class="actions">
-      <button class="btn primary" onclick="generateQuoteImage()">下載報價圖</button>
+      <button class="btn primary" onclick="generateQuoteImage(event)">下載報價圖</button>
       <button class="btn" onclick="window.print()">列印／PDF</button>
       <button class="btn danger" id="resetBtn" onclick="resetAll()">重置</button>
     </div>
@@ -1908,12 +1908,12 @@ function populateQuoteCard() {
     : '';
 }
 
-async function generateQuoteImage() {
+async function generateQuoteImage(ev) {
   if (typeof html2canvas === 'undefined') {
     alert('匯出套件尚未載入，請稍候再試。');
     return;
   }
-  const btn = event && event.currentTarget;
+  const btn = ev && ev.currentTarget;
   const originalText = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.textContent = '生成中…'; }
 
@@ -1954,7 +1954,11 @@ async function generateQuoteImage() {
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     };
 
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    // Only route through the native share sheet on touch devices (phones /
+    // tablets). On desktop the share sheet either doesn't exist or hijacks the
+    // download, so always download the file directly there.
+    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+    if (isTouch && navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({ files: [file], title: 'Palau Quote' });
       } catch (shareErr) {
