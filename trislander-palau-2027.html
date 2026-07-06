@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>帛琉潛旅 2027 · Trislander Palau</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --deep:#173238;        /* 深海底 */
+    --teal:#23474f;        /* 主青 */
+    --teal-2:#2c5760;      /* 浮起面 */
+    --cream:#ece3d2;       /* 米白文字 */
+    --cream-dim:#9fb0ac;   /* 退色文字（帶青）*/
+    --gold:#d8b06a;        /* 金 */
+    --gold-soft:#e6c98c;
+    --line:rgba(236,227,210,.16);
+    --line-2:rgba(236,227,210,.09);
+    --maxw:880px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--deep);
+    color:var(--cream);
+    font-family:"Noto Sans TC",sans-serif;
+    font-weight:300;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(22px,5vw,46px)}
+  .serif{font-family:"Noto Serif TC","Fraunces",serif}
+  .lat{font-family:"Fraunces",serif}
+
+  /* eyebrow / 小標 */
+  .eyebrow{
+    font-family:"Fraunces",serif;
+    font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--gold);font-weight:500;
+    display:flex;align-items:center;gap:.7em;
+  }
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold);opacity:.7}
+
+  /* ===== HERO ===== */
+  .hero{position:relative;padding:clamp(60px,11vh,120px) 0 clamp(50px,8vh,90px);overflow:hidden}
+  .hero::before{ /* 金色太陽 */
+    content:"";position:absolute;top:clamp(-60px,-6vw,-30px);right:-8%;
+    width:min(58vw,460px);aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(circle at 38% 38%,var(--gold-soft),var(--gold) 46%,transparent 72%);
+    opacity:.14;filter:blur(2px);pointer-events:none;
+  }
+  .hero::after{ /* 海面漸層 */
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,var(--teal) 0%,var(--deep) 100%);
+    z-index:-2;
+  }
+  .hero-bg-lines{position:absolute;inset:0;z-index:-1;opacity:.5;
+    background-image:repeating-linear-gradient(180deg,transparent 0 38px,var(--line-2) 38px 39px);
+    -webkit-mask-image:linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent);
+            mask-image:linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent);
+  }
+  .brand{display:flex;align-items:center;gap:.85rem;margin-bottom:clamp(38px,7vh,70px)}
+  .brand .mark{width:40px;height:40px;border-radius:50%;flex:0 0 auto;position:relative;
+    background:radial-gradient(circle at 40% 38%,var(--gold-soft),var(--gold) 60%,#bd9450)}
+  .brand .name{font-family:"Fraunces",serif;font-weight:500;letter-spacing:.06em;
+    line-height:1.05;font-size:1.02rem}
+  .brand .name b{display:block;font-size:1.34rem;font-weight:600;letter-spacing:.02em}
+  .brand .name span{color:var(--cream-dim);font-size:.66rem;letter-spacing:.34em;text-transform:uppercase}
+
+  .hero h1{
+    font-family:"Noto Serif TC",serif;font-weight:600;
+    font-size:clamp(2.9rem,11vw,5.6rem);line-height:1.04;letter-spacing:.01em;
+    margin:.32em 0 .22em;
+  }
+  .hero h1 .yr{font-family:"Fraunces",serif;font-style:italic;font-weight:400;color:var(--gold-soft)}
+  .hero .dates{font-family:"Fraunces",serif;font-size:clamp(1.3rem,4.5vw,2.1rem);
+    font-weight:300;letter-spacing:.04em;color:var(--cream)}
+  .hero .lede{margin-top:1.5em;max-width:30ch;color:var(--cream-dim);font-size:1.02rem}
+  .hero .lede b{color:var(--cream);font-weight:500}
+
+  .hero-meta{display:flex;flex-wrap:wrap;gap:.5rem .9rem;margin-top:2.2em;align-items:center}
+  .chip{font-size:.82rem;letter-spacing:.04em;color:var(--cream);
+    border:1px solid var(--line);border-radius:999px;padding:.42em 1.05em;background:rgba(236,227,210,.03)}
+  .chip.gold{border-color:rgba(216,176,106,.5);color:var(--gold-soft)}
+
+  /* ===== sections ===== */
+  section{padding:clamp(48px,8vh,86px) 0;border-top:1px solid var(--line-2)}
+  .sec-head{margin-bottom:clamp(28px,4.5vh,48px)}
+  .sec-head h2{font-family:"Noto Serif TC",serif;font-weight:600;
+    font-size:clamp(1.7rem,5vw,2.5rem);line-height:1.12;margin-top:.34em;letter-spacing:.01em}
+
+  /* 行程 timeline */
+  .tl{position:relative;margin-left:6px;padding-left:clamp(26px,5vw,42px)}
+  .tl::before{content:"";position:absolute;left:0;top:.5em;bottom:.5em;width:1px;
+    background:linear-gradient(180deg,transparent,var(--gold) 14%,var(--gold) 86%,transparent)}
+  .day{position:relative;padding:clamp(13px,2vh,20px) 0}
+  .day+.day{border-top:1px solid var(--line-2)}
+  .day::before{content:"";position:absolute;left:calc(-1*clamp(26px,5vw,42px) - 4px);top:calc(clamp(13px,2vh,20px) + .7em);
+    width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px var(--deep)}
+  .day .d-no{font-family:"Fraunces",serif;font-style:italic;color:var(--gold-soft);
+    font-size:.95rem;letter-spacing:.06em;display:flex;gap:.7em;align-items:baseline}
+  .day .d-no .date{font-style:normal;color:var(--cream-dim);font-size:.8rem;letter-spacing:.12em}
+  .day .d-act{font-family:"Noto Serif TC",serif;font-weight:500;font-size:clamp(1.15rem,3.4vw,1.5rem);
+    margin-top:.12em;color:var(--cream)}
+  .tl-note{margin-top:1.6em;color:var(--cream-dim);font-size:.9rem}
+
+  /* 費用 */
+  .price{display:flex;align-items:flex-end;gap:.7rem;flex-wrap:wrap;margin-bottom:.4em}
+  .price .cur{font-family:"Fraunces",serif;font-size:1.1rem;color:var(--gold);letter-spacing:.05em;padding-bottom:.85em}
+  .price .num{font-family:"Fraunces",serif;font-weight:400;font-size:clamp(3.6rem,15vw,7rem);
+    line-height:.9;letter-spacing:-.01em;color:var(--cream)}
+  .price .per{color:var(--cream-dim);padding-bottom:.85em;font-size:1rem;letter-spacing:.06em}
+  .price-sub{color:var(--cream-dim);font-size:.95rem;letter-spacing:.03em}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(26px,5vw,56px);margin-top:clamp(34px,6vh,58px)}
+  @media(max-width:640px){.cols{grid-template-columns:1fr;gap:34px}}
+  .col h3{font-family:"Fraunces",serif;text-transform:uppercase;letter-spacing:.18em;
+    font-size:.78rem;font-weight:600;margin-bottom:1.2em;display:flex;align-items:center;gap:.6em}
+  .col.inc h3{color:var(--gold-soft)} .col.exc h3{color:var(--cream-dim)}
+  .col ul{list-style:none;display:flex;flex-direction:column;gap:.85em}
+  .col li{position:relative;padding-left:1.5em;font-size:.96rem;line-height:1.6}
+  .col li b{font-weight:500;color:var(--cream)}
+  .col.inc li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;border-radius:50%;background:var(--gold)}
+  .col.exc li{color:var(--cream-dim)}
+  .col.exc li::before{content:"";position:absolute;left:0;top:.78em;width:9px;height:1px;background:var(--cream-dim);opacity:.6}
+
+  /* 報名 */
+  .signup{background:linear-gradient(165deg,var(--teal-2),var(--teal));border:1px solid var(--line);
+    border-radius:18px;padding:clamp(28px,5vw,46px)}
+  .steps{display:flex;flex-direction:column;gap:1.15em;margin-bottom:1.8em}
+  .step{display:flex;gap:1em;align-items:flex-start}
+  .step .n{font-family:"Fraunces",serif;font-style:italic;color:var(--gold);font-size:1.5rem;line-height:1;flex:0 0 auto;width:1.3em}
+  .step .t b{color:var(--cream);font-weight:500}
+  .step .t{color:var(--cream-dim);font-size:.98rem}
+  .pay{border-top:1px solid var(--line);padding-top:1.5em;margin-bottom:1.9em;
+    display:grid;grid-template-columns:auto 1fr;gap:.55em 1.4em;font-size:.93rem;align-items:baseline}
+  .pay dt{color:var(--cream-dim);letter-spacing:.08em;font-size:.82rem}
+  .pay dd{color:var(--cream)}
+  .pay dd b{font-family:"Fraunces",serif;letter-spacing:.04em;color:var(--gold-soft);font-weight:500;font-size:1.05rem}
+  .cta{display:inline-flex;align-items:center;gap:.7em;background:var(--gold);color:#1b2f24;
+    font-weight:700;font-family:"Noto Sans TC";font-size:1rem;letter-spacing:.04em;
+    padding:.95em 1.8em;border-radius:999px;text-decoration:none;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 14px 34px -14px rgba(216,176,106,.7)}
+  .cta .arr{transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+  .cta:hover .arr{transform:translateX(4px)}
+
+  /* 注意事項 */
+  .notes{list-style:none;counter-reset:n;display:grid;grid-template-columns:1fr 1fr;gap:1.5em clamp(26px,5vw,56px)}
+  @media(max-width:640px){.notes{grid-template-columns:1fr}}
+  .notes li{counter-increment:n;position:relative;padding-left:2.6em;font-size:.93rem;color:var(--cream-dim);line-height:1.6}
+  .notes li::before{content:counter(n,decimal-leading-zero);position:absolute;left:0;top:.05em;
+    font-family:"Fraunces",serif;color:var(--gold);font-size:.95rem;letter-spacing:.05em}
+  .notes li b{color:var(--cream);font-weight:500}
+
+  /* footer */
+  footer{padding:clamp(46px,7vh,80px) 0 clamp(40px,6vh,64px);border-top:1px solid var(--line-2);color:var(--cream-dim)}
+  .foot-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1.4em;align-items:flex-end}
+  footer a{color:var(--gold-soft);text-decoration:none;border-bottom:1px solid rgba(230,201,140,.35);padding-bottom:1px}
+  footer a:hover{border-color:var(--gold-soft)}
+  .foot-brand{font-family:"Fraunces",serif;font-size:1.1rem;letter-spacing:.05em;color:var(--cream)}
+  .foot-brand span{display:block;font-size:.64rem;letter-spacing:.32em;text-transform:uppercase;color:var(--cream-dim);margin-top:.3em}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.cta,.cta .arr{transition:none}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-bg-lines"></div>
+  <div class="wrap">
+    <div class="brand rv">
+      <div class="mark"></div>
+      <div class="name"><b>TRISLANDER</b><span>Palau · Dive &amp; Freedive</span></div>
+    </div>
+    <p class="eyebrow rv">Group Expedition</p>
+    <h1 class="rv">帛琉潛旅 <span class="yr">2027</span></h1>
+    <p class="dates rv">04.03 — 04.08</p>
+    <p class="lede rv"><b>6 天 5 夜・自潛 ＋ 水肺混合團。</b>柯羅州出海，藍洞、鯊魚共游、軟珊瑚花園——一趟把兩種藍都潛遍的遠征。</p>
+    <div class="hero-meta rv">
+      <span class="chip gold">水肺須 AOW 以上</span>
+      <span class="chip">8 人成團</span>
+      <span class="chip">雙人房</span>
+      <span class="chip">住 Landmark Marina</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="itinerary">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="eyebrow">Itinerary</p>
+        <h2>六天行程</h2>
+      </div>
+      <div class="tl">
+        <div class="day rv"><div class="d-no">Day 1 <span class="date">4 / 3</span></div><div class="d-act">抵達帛琉・機場接機・入住</div></div>
+        <div class="day rv"><div class="d-no">Day 2 <span class="date">4 / 4</span></div><div class="d-act">自潛出海</div></div>
+        <div class="day rv"><div class="d-no">Day 3 <span class="date">4 / 5</span></div><div class="d-act">自潛出海</div></div>
+        <div class="day rv"><div class="d-no">Day 4 <span class="date">4 / 6</span></div><div class="d-act">水肺出海（三潛）</div></div>
+        <div class="day rv"><div class="d-no">Day 5 <span class="date">4 / 7</span></div><div class="d-act">水肺出海（三潛）</div></div>
+        <div class="day rv"><div class="d-no">Day 6 <span class="date">4 / 8</span></div><div class="d-act">機場送機・返台</div></div>
+      </div>
+      <p class="tl-note rv">實際潛點與行程順序視當日海況、潮汐及團員狀況彈性調整。</p>
+    </div>
+  </section>
+
+  <section id="price">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="eyebrow">Fee</p>
+        <h2>團費</h2>
+      </div>
+      <div class="price rv">
+        <span class="cur">NT$</span>
+        <span class="num">50,220</span>
+        <span class="per">/ 人</span>
+      </div>
+      <p class="price-sub rv">雙人房、8 人成團・住 Landmark Marina（附碼頭，可直接上船）</p>
+
+      <div class="cols">
+        <div class="col inc rv">
+          <h3>費用包含</h3>
+          <ul>
+            <li>機場接送（來回）</li>
+            <li><b>4 天出海</b>：2 天自潛 ＋ 2 天水肺三潛</li>
+            <li>潛導服務</li>
+            <li>柯羅州出海許可稅</li>
+            <li>水肺裝備全套（BCD・調節器・防寒衣・面鏡・蛙鞋）</li>
+            <li>住宿 5 晚 Landmark Marina 雙人房</li>
+            <li>海外旅遊綜合保險 6 天（保額 500 萬）</li>
+          </ul>
+        </div>
+        <div class="col exc rv">
+          <h3>費用不含</h3>
+          <ul>
+            <li><b>國際機票</b> TPE–ROR 來回（自理，約 NT$23,452）</li>
+            <li>自潛個人裝備（長蛙・面鏡・自潛防寒衣，請自備）</li>
+            <li>餐食（飯店早餐視房型；出海日午餐依潛店安排）</li>
+            <li>帛琉離境費／環境費（若航空未代收）</li>
+            <li>個人消費・小費・行程外自費</li>
+            <li>單人房差價</li>
+            <li><b>水母湖</b>機動加開，前往者另收 US$50 / 人</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="signup">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="eyebrow">Reserve</p>
+        <h2>報名與付款</h2>
+      </div>
+      <div class="signup rv">
+        <div class="steps">
+          <div class="step"><div class="n">1</div><div class="t"><b>先匯訂金 NT$5,000 / 人 佔位</b><br>名額有限，匯款即保留席位。</div></div>
+          <div class="step"><div class="n">2</div><div class="t"><b>填寫報名表單</b>（含匯款帳號後五碼），送出即完成報名，主辦會聯繫確認。</div></div>
+        </div>
+        <dl class="pay">
+          <dt>付款方式</dt><dd><b>822 中國信託</b>　554540512258</dd>
+          <dt>尾款</dt><dd>出發前一個月結清</dd>
+        </dl>
+        <a class="cta" href="https://pacific-quality-644.notion.site/9729a654213c46d59ec0b3c9434061f0" target="_blank" rel="noopener">填寫報名表單 <span class="arr">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="notes">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="eyebrow">Before you go</p>
+        <h2>重要注意事項</h2>
+      </div>
+      <ol class="notes">
+        <li class="rv"><b>護照效期</b>需離境日起 6 個月以上；台灣護照赴帛琉可落地取得 30 天停留許可。</li>
+        <li class="rv"><b>潛水資格</b>：本團自潛＋水肺皆參與，水肺須持 AOW（進階開放水域）以上證照，為報名必要條件。</li>
+        <li class="rv"><b>健康狀況</b>：有心肺、耳鼻、氣胸病史或孕婦，請出發前諮詢醫師並主動告知教練。</li>
+        <li class="rv"><b>環保防曬</b>：帛琉禁用含 oxybenzone 等成分之防曬乳，請改用礁石友善（reef-safe）防曬。</li>
+        <li class="rv">帛琉使用<b>美金</b>、電壓 110V 美規插座、時間比台灣<b>快 1 小時</b>。</li>
+        <li class="rv">含潛水活動，<b>最後一潛與搭機需間隔足夠</b>（建議 18–24 小時），Day 6 不安排潛水。</li>
+        <li class="rv">旅遊綜合險為基本保障，如需提高保額或加保，請自行向保險公司辦理。</li>
+        <li class="rv">因天候、海況或不可抗力導致行程調整或取消，將以團員<b>安全</b>為優先。</li>
+      </ol>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-row">
+      <div>
+        <div class="foot-brand">TRISLANDER PALAU<span>Dive · Freedive Expeditions</span></div>
+      </div>
+      <div style="text-align:right;font-size:.9rem">
+        住宿 Landmark Marina　·　<a href="https://www.google.com/maps/search/?api=1&query=Landmark+Marina+Hotel+Koror+Palau" target="_blank" rel="noopener">Google Map 位置</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const io=new IntersectionObserver((es)=>{es.forEach((e,i)=>{if(e.isIntersecting){
+    const el=e.target;const sibs=[...el.parentElement.querySelectorAll(':scope > .rv')];
+    el.style.transitionDelay=(Math.min(sibs.indexOf(el),6)*70)+'ms';
+    el.classList.add('in');io.unobserve(el);}});},{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
