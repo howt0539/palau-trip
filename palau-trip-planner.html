@@ -1019,7 +1019,7 @@ h1 em {
       <span id="today"></span>
     </div>
     <h1>Palau <em>itinerary</em><br>& cost planner</h1>
-    <p class="hero-sub">自由搭配每日自潛／水肺／浮潛／立槳／陸遊行程，自動計算出海稅、潛導服務費與 FOC 優惠</p>
+    <p class="hero-sub">自由搭配每日自潛／水肺／浮潛／立槳／陸遊行程，出海證獨立計算，自動計算潛導服務費與 FOC 優惠</p>
   </header>
 
   <!-- Mode -->
@@ -1051,14 +1051,39 @@ h1 em {
 
   <!-- Days -->
   <h2 class="section-title"><span class="num">01 /</span> 每日行程</h2>
-  <p class="section-desc">勾選當日活動，可自由搭配；每日獨立計算午餐、船資、潛導費與出海稅。</p>
+  <p class="section-desc">勾選當日活動，可自由搭配；每日獨立計算午餐、船資與潛導費。出海證請於下方「柯羅州出海證」區塊加購。</p>
 
   <div class="days" id="days"></div>
 
   <button class="add-day" onclick="addDay()">＋ 新增一天</button>
 
+  <!-- Koror Boat Permits -->
+  <h2 class="section-title" style="margin-top:48px"><span class="num">02 /</span> 柯羅州出海證</h2>
+  <p class="section-desc">按人計費；一張效期五天內無限次出海。進水母湖需購買含水母湖版本（已涵蓋一般出海證效力）。</p>
+
+  <div class="day-card" id="permitCard">
+    <div style="padding:18px 24px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line);background:linear-gradient(90deg, var(--foam) 0%, transparent 40%);flex-wrap:wrap">
+      <div style="flex:1;min-width:200px">
+        <div class="day-label">出海證 Boat Permits</div>
+        <div style="margin-top:6px;color:var(--muted);font-size:13px">效期五天共用一張；FOC 出海證需自付</div>
+      </div>
+      <div class="day-total" id="permitTotal"><span class="ccy">USD</span>0</div>
+    </div>
+
+    <div style="padding:14px 24px;background:rgba(255,107,91,0.06);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--coral);font-weight:600">快速選擇</span>
+      <button type="button" class="btn" style="padding:6px 14px;font-size:10px" onclick="permitPreset('standard')">全員一般 $50</button>
+      <button type="button" class="btn" style="padding:6px 14px;font-size:10px" onclick="permitPreset('jellyfish')">全員含水母湖 $100</button>
+      <button type="button" class="btn" style="padding:6px 14px;font-size:10px" onclick="permitPreset('clear')">清除</button>
+    </div>
+
+    <div class="day-body" id="permitItems">
+      <!-- Permit items rendered by JS -->
+    </div>
+  </div>
+
   <!-- Gear Rental -->
-  <h2 class="section-title" style="margin-top:48px"><span class="num">02 /</span> 水肺裝備租賃</h2>
+  <h2 class="section-title" style="margin-top:48px"><span class="num">03 /</span> 水肺裝備租賃</h2>
   <p class="section-desc">按人、按天計費；可選擇單項組合或整套租借。FOC 不計入租金。</p>
 
   <div class="day-card" id="gearCard">
@@ -1121,18 +1146,17 @@ h1 em {
   <div class="notes">
     <h3>報價備註</h3>
     <ul>
-      <li>柯羅州出海稅 $50／人，效期五天內無限次出海共用一張</li>
-      <li>柯羅州出海證（含水母湖）$100／人</li>
+      <li>柯羅州出海證 $50／人、含水母湖 $100／人；效期五天內無限次出海共用一張，含水母湖版本已涵蓋一般出海證效力</li>
       <li>各行程金額（一般客／同業）均可於勾選後直接修改單價，未修改則採表定價</li>
       <li>愛萊州出海稅 $25／人／天（僅 SUP 全日立槳日需購買）</li>
       <li>釣魚稅 $50／人／天（僅夜釣日計）</li>
       <li>潛導／導遊服務費 $10／人／天（行程每天皆計，不限出海日）</li>
       <li>出海行程提供面鏡＋呼吸管（自潛/浮潛用）、救生背心、浮板；水肺面鏡需另行租借</li>
-      <li>FOC：只需自付出海稅 $50 並協助照顧團員，含機場接送</li>
+      <li>FOC：只需自付出海證並協助照顧團員，含機場接送</li>
       <li>北島陸遊：安德貌（Ngardmau）大瀑布 → 海邊餐廳 → 總統府（小白宮）；含門票、稅金，不含午餐、導遊服務費</li>
       <li>市區觀光：傳統建築 BAI → 歷史博物館 → 私人博物館 → 精選紀念品店；含門票，不含導遊服務費</li>
-      <li>夕陽獨木舟：含簡易小點心、導遊服務費；不含出海稅；行程約 17:40–20:30</li>
-      <li>夜釣：含簡易晚餐、導遊服務費；不含出海稅、釣魚稅；行程約 17:40–20:30</li>
+      <li>夕陽獨木舟：含簡易小點心、導遊服務費；不含出海證；行程約 17:40–20:30</li>
+      <li>夜釣：含簡易晚餐、導遊服務費；不含出海證、釣魚稅；行程約 17:40–20:30</li>
       <li>水肺三潛特殊晨潛：一日三潛含日出／晨光潛；需具備相應潛水資格</li>
       <li>水肺體驗潛（兩潛）：無需證照，1V1 或 1V2（最多 2 人配 1 位教練）</li>
       <li>私人導潛：$150／天（不分人數），專屬導潛陪同</li>
@@ -1187,7 +1211,6 @@ const ACTIVITIES = {
   scubaTrial:   { name: '水肺出海（兩潛）· 無證照 1V1／1V2 體驗潛', retail: 280, trade: 280, tax: true,  guide: true,  category: '海上行程' },
   freedive:     { name: '自潛出海',                       retail: 180, trade: 150, tax: true,  guide: true,  category: '海上行程' },
   snorkel:      { name: '浮潛出海',                       retail: 140, trade: 120, tax: true,  guide: true,  category: '海上行程' },
-  jellyfishPermit: { name: '柯羅州出海證（含水母湖）',     retail: 100, trade: 100, tax: false, guide: false, category: '海上行程', note: '$100／人' },
   privateGuide: { name: '私人導潛',                       retail: 150, trade: 150, tax: false, guide: false, category: '海上行程', flat: true, note: '$150／天（不分人數）' },
   supFull:      { name: 'SUP 全日立槳（愛萊州）',         retail: 165, trade: 145, tax: false, airaiTax: true, guide: true, category: '立槳' },
   supHalf:      { name: 'SUP 半日立槳（柯羅州）',         retail: 110, trade: 90,  tax: true,  guide: true,  category: '立槳' },
@@ -1203,7 +1226,11 @@ const ACTIVITIES = {
 };
 
 const FOC_ELIGIBLE = ['scuba','scubaSpecial','scubaTrial','freedive','snorkel','supFull','supHalf','landN','cityTour'];
-const TAX_FEE = 50;          // per person, valid 5 days (Koror)
+// 柯羅州出海證：獨立區塊手動計算（不再自動計稅），效期五天共用一張
+const PERMITS = {
+  standard:  { name: '柯羅州出海證',             price: 50 },
+  jellyfish: { name: '柯羅州出海證（含水母湖）', price: 100 },
+};
 const AIRAI_TAX_FEE = 25;    // per person per day (Airai state, no permit sharing)
 const FISHING_TAX_FEE = 50;  // per person per night-fishing day
 const GUIDE_FEE = 10;        // per person per day (every day of the trip)
@@ -1232,6 +1259,7 @@ let state = {
     days: 0,
     items: {}  // { bcd: 2, reg: 3, ... } — qty per item (0 = not renting)
   },
+  permits: { standard: 0, jellyfish: 0 },  // 出海證張數（= 人數），兩種證分開計
   priceOverrides: {}  // { scuba: { retail: 260, trade: 220, solo: 320 }, ... } — 各活動自訂單價，未設定則用表定價
 };
 
@@ -1365,6 +1393,49 @@ function adjustTransferPax(dayId, dir, delta) {
   render();
 }
 
+// ----- Koror boat permits -----
+function adjustPermitQty(key, delta) {
+  const next = Math.max(0, (state.permits[key] || 0) + delta);
+  state.permits = { ...state.permits, [key]: next };
+  renderPermits();
+  render();
+}
+
+function permitPreset(preset) {
+  const pax = state.people + state.foc; // FOC 出海證需自付
+  if (preset === 'standard') {
+    state.permits = { standard: pax, jellyfish: 0 };
+  } else if (preset === 'jellyfish') {
+    state.permits = { standard: 0, jellyfish: pax };
+  } else {
+    state.permits = { standard: 0, jellyfish: 0 };
+  }
+  renderPermits();
+  render();
+}
+
+function renderPermits() {
+  const container = document.getElementById('permitItems');
+  if (!container) return;
+  container.innerHTML = Object.entries(PERMITS).map(([key, p]) => {
+    const qty = state.permits[key] || 0;
+    const klass = qty > 0 ? 'activity checked' : 'activity';
+    return `
+      <div class="${klass}" style="display:flex;align-items:center;justify-content:space-between;cursor:default">
+        <div class="act-info">
+          <div class="act-name">${p.name}</div>
+          <div class="act-price">$${p.price}/人 <span class="tax" style="color:var(--surface)">效期五天一張</span></div>
+        </div>
+        <div class="counter" style="height:28px;flex-shrink:0">
+          <button onclick="adjustPermitQty('${key}', -1)" style="width:28px;height:28px">−</button>
+          <span style="min-width:24px;text-align:center;font-size:14px;font-weight:600">${qty}</span>
+          <button onclick="adjustPermitQty('${key}', 1)" style="width:28px;height:28px">+</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 // ----- Gear rental -----
 function adjustGear(field, delta) {
   const el = document.getElementById('gearDays');
@@ -1446,11 +1517,13 @@ function resetAll() {
   state.foc = 0;
   state.days = [createDay(1), createDay(2), createDay(3)];
   state.gear = { days: 0, items: {} };
+  state.permits = { standard: 0, jellyfish: 0 };
   state.priceOverrides = {};
   document.getElementById('people').value = 6;
   document.getElementById('foc').value = 0;
   document.getElementById('gearDays').value = 0;
   renderDays();
+  renderPermits();
   renderGear();
   render();
 }
@@ -1501,7 +1574,7 @@ function escapeHtml(s) {
 }
 
 function buildPriceLabel(key, a, day, on) {
-  const taxBadge = a.tax ? ' <span class="tax">+稅</span>' : (a.airaiTax ? ' <span class="tax">+愛萊州稅</span>' : '');
+  const taxBadge = a.tax ? ' <span class="tax">需出海證</span>' : (a.airaiTax ? ' <span class="tax">+愛萊州稅</span>' : '');
   // 有自訂價時在原顯示之外標註表定原價
   const origBadge = (field) => unitPrice(key, field) !== a[field]
     ? ` <span class="tax" style="color:var(--surface)">原 $${a[field]}</span>`
@@ -1706,10 +1779,6 @@ function gearCostPerDay() {
   return { total, breakdown };
 }
 
-function dayHasTaxableActivity(day) {
-  return Object.entries(day.activities).some(([k, on]) => on && ACTIVITIES[k].tax);
-}
-
 function dayHasGuidedActivity(day) {
   return Object.entries(day.activities).some(([k, on]) => on && ACTIVITIES[k].guide);
 }
@@ -1777,30 +1846,21 @@ function render() {
     });
   }
 
-  // --- Tax (shared 5-day permit) ---
-  // Count unique 5-day windows needed: group taxable days into chunks of 5 consecutive days
-  // Simple approach: every taxable day consumes the pass; one tax = 5 consecutive days.
-  // We assume the trip is contiguous, so number of tax permits = ceil(span / 5) where span = max day index with tax activity.
-  const taxableDayIndexes = state.days
-    .map((d, i) => dayHasTaxableActivity(d) ? i : -1)
-    .filter(i => i >= 0);
-
-  if (taxableDayIndexes.length > 0) {
-    const firstTax = taxableDayIndexes[0];
-    const lastTax = taxableDayIndexes[taxableDayIndexes.length - 1];
-    const span = lastTax - firstTax + 1;
-    const permits = Math.ceil(span / 5);
-
-    const peopleWithTax = state.people + state.foc; // FOC pay tax
-    const taxTotal = TAX_FEE * peopleWithTax * permits;
-    grandTotal += taxTotal;
-
-    breakdown.push({ type: 'section', label: '柯羅州出海稅 Koror Tax' });
-    breakdown.push({
-      label: `出海稅 $${TAX_FEE}/人 × ${permits} 張`,
-      calc: `× ${peopleWithTax} 人`,
-      amt: taxTotal
-    });
+  // --- Koror boat permits (獨立區塊手動計，含水母湖與一般分列) ---
+  let permitTotalAmt = 0;
+  const permitRows = [];
+  Object.entries(PERMITS).forEach(([key, p]) => {
+    const qty = state.permits[key] || 0;
+    if (qty <= 0) return;
+    const cost = p.price * qty;
+    permitTotalAmt += cost;
+    permitRows.push({ label: `${p.name} $${p.price}/人`, calc: `× ${qty} 人`, amt: cost });
+  });
+  document.getElementById('permitTotal').innerHTML = `<span class="ccy">USD</span>${formatNum(permitTotalAmt)}`;
+  if (permitRows.length > 0) {
+    grandTotal += permitTotalAmt;
+    breakdown.push({ type: 'section', label: '柯羅州出海證 Koror Permit' });
+    permitRows.forEach(r => breakdown.push(r));
   }
 
   // --- Airai tax (per day, not a 5-day permit) ---
@@ -1863,11 +1923,7 @@ function render() {
   });
   const rtPax = Math.min(totalPickupPax, totalDropoffPax);
   const rtDiscountPerPerson = (TRANSFER_ONE * 2) - TRANSFER_RT; // 40 - 30 = 10
-  // 接送單價有自訂時視為議定價，不再套用來回優惠
-  const transferPriceOverridden =
-    unitPrice('airportPickup') !== ACTIVITIES.airportPickup[state.mode] ||
-    unitPrice('airportDropoff') !== ACTIVITIES.airportDropoff[state.mode];
-  if (rtPax > 0 && rtDiscountPerPerson > 0 && !transferPriceOverridden) {
+  if (rtPax > 0 && rtDiscountPerPerson > 0) {
     const discount = rtPax * rtDiscountPerPerson;
     grandTotal -= discount;
     breakdown.push({ type: 'section', label: '機場接送 Transfers' });
@@ -2038,6 +2094,7 @@ document.getElementById('today').textContent = today.toLocaleDateString('en-US',
 
 // Initial render
 renderDays();
+renderPermits();
 renderGear();
 render();
 </script>
