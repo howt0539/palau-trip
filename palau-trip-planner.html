@@ -1122,6 +1122,8 @@ h1 em {
     <h3>報價備註</h3>
     <ul>
       <li>柯羅州出海稅 $50／人，效期五天內無限次出海共用一張</li>
+      <li>柯羅州出海證（含水母湖）$100／人</li>
+      <li>各行程金額（一般客／同業）均可於勾選後直接修改單價，未修改則採表定價</li>
       <li>愛萊州出海稅 $25／人／天（僅 SUP 全日立槳日需購買）</li>
       <li>釣魚稅 $50／人／天（僅夜釣日計）</li>
       <li>潛導／導遊服務費 $10／人／天（行程每天皆計，不限出海日）</li>
@@ -1185,6 +1187,7 @@ const ACTIVITIES = {
   scubaTrial:   { name: '水肺出海（兩潛）· 無證照 1V1／1V2 體驗潛', retail: 280, trade: 280, tax: true,  guide: true,  category: '海上行程' },
   freedive:     { name: '自潛出海',                       retail: 180, trade: 150, tax: true,  guide: true,  category: '海上行程' },
   snorkel:      { name: '浮潛出海',                       retail: 140, trade: 120, tax: true,  guide: true,  category: '海上行程' },
+  jellyfishPermit: { name: '柯羅州出海證（含水母湖）',     retail: 100, trade: 100, tax: false, guide: false, category: '海上行程', note: '$100／人' },
   privateGuide: { name: '私人導潛',                       retail: 150, trade: 150, tax: false, guide: false, category: '海上行程', flat: true, note: '$150／天（不分人數）' },
   supFull:      { name: 'SUP 全日立槳（愛萊州）',         retail: 165, trade: 145, tax: false, airaiTax: true, guide: true, category: '立槳' },
   supHalf:      { name: 'SUP 半日立槳（柯羅州）',         retail: 110, trade: 90,  tax: true,  guide: true,  category: '立槳' },
@@ -1228,8 +1231,32 @@ let state = {
   gear: {
     days: 0,
     items: {}  // { bcd: 2, reg: 3, ... } — qty per item (0 = not renting)
-  }
+  },
+  priceOverrides: {}  // { scuba: { retail: 260, trade: 220, solo: 320 }, ... } — 各活動自訂單價，未設定則用表定價
 };
+
+// 取得活動目前生效單價：優先用自訂價，否則用表定價；field 預設為目前報價模式
+function unitPrice(key, field = state.mode) {
+  const o = state.priceOverrides[key];
+  if (o && typeof o[field] === 'number') return o[field];
+  return ACTIVITIES[key][field];
+}
+
+function setUnitPrice(key, field, val) {
+  const n = parseFloat(val);
+  const overrides = { ...state.priceOverrides };
+  const entry = { ...(overrides[key] || {}) };
+  if (isNaN(n) || n < 0 || n === ACTIVITIES[key][field]) {
+    delete entry[field];
+  } else {
+    entry[field] = n;
+  }
+  if (Object.keys(entry).length === 0) delete overrides[key];
+  else overrides[key] = entry;
+  state.priceOverrides = overrides;
+  renderDays();
+  render();
+}
 
 function createDay(n) {
   return {
@@ -1419,6 +1446,7 @@ function resetAll() {
   state.foc = 0;
   state.days = [createDay(1), createDay(2), createDay(3)];
   state.gear = { days: 0, items: {} };
+  state.priceOverrides = {};
   document.getElementById('people').value = 6;
   document.getElementById('foc').value = 0;
   document.getElementById('gearDays').value = 0;
@@ -1474,20 +1502,25 @@ function escapeHtml(s) {
 
 function buildPriceLabel(key, a, day, on) {
   const taxBadge = a.tax ? ' <span class="tax">+稅</span>' : (a.airaiTax ? ' <span class="tax">+愛萊州稅</span>' : '');
+  // 有自訂價時在原顯示之外標註表定原價
+  const origBadge = (field) => unitPrice(key, field) !== a[field]
+    ? ` <span class="tax" style="color:var(--surface)">原 $${a[field]}</span>`
+    : '';
   if (key === 'scenicFlight') {
     if (on) {
       const pax = day.flightPax || 2;
-      const unit = pax <= 1 ? a.solo : a[state.mode];
-      return `$${unit}/人 × ${pax} 人 <span class="tax" style="color:var(--surface)">${pax <= 1 ? '單人包機' : '2 人以上'}</span>`;
+      const solo = pax <= 1;
+      const unit = solo ? unitPrice(key, 'solo') : unitPrice(key);
+      return `$${unit}/人 × ${pax} 人 <span class="tax" style="color:var(--surface)">${solo ? '單人包機' : '2 人以上'}</span>${origBadge(solo ? 'solo' : state.mode)}`;
     }
-    return `$${a[state.mode]}/人 <span class="tax" style="color:var(--surface)">單人 $${a.solo}</span>`;
+    return `$${unitPrice(key)}/人 <span class="tax" style="color:var(--surface)">單人 $${unitPrice(key, 'solo')}</span>${origBadge(state.mode)}`;
   }
   if (a.transfer) {
     if (on) {
       const pax = a.transfer === 'pickup' ? (day.pickupPax || 1) : (day.dropoffPax || 1);
-      return `$${a[state.mode]}/人 × ${pax} 人`;
+      return `$${unitPrice(key)}/人 × ${pax} 人${origBadge(state.mode)}`;
     }
-    return `$${a[state.mode]}/人`;
+    return `$${unitPrice(key)}/人${origBadge(state.mode)}`;
   }
   if (a.custom) {
     if (on) {
@@ -1497,13 +1530,13 @@ function buildPriceLabel(key, a, day, on) {
     return `<span class="tax" style="color:var(--surface)">自填金額／天</span>`;
   }
   if (a.flat) {
-    return `$${a[state.mode]}/天 <span class="tax" style="color:var(--surface)">不分人數</span>`;
+    return `$${unitPrice(key)}/天 <span class="tax" style="color:var(--surface)">不分人數</span>${origBadge(state.mode)}`;
   }
   if (on) {
     const pax = day.activityPax[key] || Math.max(1, state.people + state.foc);
-    return `$${a[state.mode]}/人 × ${pax} 人${taxBadge}`;
+    return `$${unitPrice(key)}/人 × ${pax} 人${taxBadge}${origBadge(state.mode)}`;
   }
-  return `$${a[state.mode]}/人${taxBadge}`;
+  return `$${unitPrice(key)}/人${taxBadge}${origBadge(state.mode)}`;
 }
 
 function buildExtraControl(key, a, day) {
@@ -1511,8 +1544,22 @@ function buildExtraControl(key, a, day) {
   const btnStyle = `width:22px;height:22px;border:1px solid var(--line);background:white;cursor:pointer;border-radius:2px`;
   const valStyle = `min-width:18px;text-align:center;color:var(--abyss);font-size:13px;font-weight:600`;
   const stop = `event.preventDefault();event.stopPropagation();`;
+  const inputStyle = `width:72px;height:26px;padding:2px 6px;font-family:inherit;font-size:12px;color:var(--abyss);border:1px solid var(--line);border-radius:2px`;
+
+  // 自訂單價輸入框（自填金額項目除外）；離開輸入框或按 Enter 後生效
+  const priceControl = (field, suffix) => `
+    <div style="${counterStyle}">
+      <span>單價 USD</span>
+      <input type="number" min="0" step="5" value="${unitPrice(key, field)}"
+             onchange="setUnitPrice('${key}', '${field}', this.value)"
+             onclick="${stop}"
+             style="${inputStyle}">
+      <span>${suffix}</span>
+    </div>
+  `;
 
   if (key === 'scenicFlight') {
+    const solo = (day.flightPax || 2) <= 1;
     return `
       <div style="${counterStyle}">
         <span>搭乘</span>
@@ -1521,6 +1568,7 @@ function buildExtraControl(key, a, day) {
         <button type="button" onclick="${stop}adjustFlightPax(${day.id}, 1)" style="${btnStyle}">+</button>
         <span>人</span>
       </div>
+      ${priceControl(solo ? 'solo' : state.mode, solo ? '/人（單人包機）' : '/人')}
     `;
   }
   if (a.transfer) {
@@ -1533,6 +1581,7 @@ function buildExtraControl(key, a, day) {
         <button type="button" onclick="${stop}adjustTransferPax(${day.id}, '${a.transfer}', 1)" style="${btnStyle}">+</button>
         <span>人</span>
       </div>
+      ${priceControl(state.mode, '/人')}
     `;
   }
   if (a.custom) {
@@ -1547,7 +1596,7 @@ function buildExtraControl(key, a, day) {
       </div>
     `;
   }
-  if (a.flat) return '';
+  if (a.flat) return priceControl(state.mode, '/天');
   // 一般按人計項目
   const pax = day.activityPax[key] || Math.max(1, state.people + state.foc);
   return `
@@ -1558,6 +1607,7 @@ function buildExtraControl(key, a, day) {
       <button type="button" onclick="${stop}adjustActivityPax(${day.id}, '${key}', 1)" style="${btnStyle}">+</button>
       <span>人</span>
     </div>
+    ${priceControl(state.mode, '/人')}
   `;
 }
 
@@ -1572,7 +1622,7 @@ function dayActivityCost(day) {
 
     if (key === 'scenicFlight') {
       const pax = day.flightPax || 2;
-      const unit = pax <= 1 ? a.solo : a[state.mode];
+      const unit = pax <= 1 ? unitPrice(key, 'solo') : unitPrice(key);
       const cost = unit * pax;
       total += cost;
       items.push({ key, name: a.name, cost, calc: `$${unit} × ${pax} 人${pax <= 1 ? '（單人包機）' : ''}` });
@@ -1580,11 +1630,12 @@ function dayActivityCost(day) {
       const pax = a.transfer === 'pickup' ? (day.pickupPax || 0) : (day.dropoffPax || 0);
       const billable = Math.max(0, pax - state.foc);
       if (billable <= 0) return;
-      const cost = a[state.mode] * billable;
+      const unit = unitPrice(key);
+      const cost = unit * billable;
       total += cost;
       const calc = state.foc > 0
-        ? `$${a[state.mode]} × (${pax} − FOC ${state.foc}) 人`
-        : `$${a[state.mode]} × ${pax} 人`;
+        ? `$${unit} × (${pax} − FOC ${state.foc}) 人`
+        : `$${unit} × ${pax} 人`;
       items.push({ key, name: a.name, cost, calc });
     } else if (a.custom) {
       const amt = parseFloat(day.activityAmount[key]) || 0;
@@ -1592,7 +1643,7 @@ function dayActivityCost(day) {
       total += amt;
       items.push({ key, name: a.name, cost: amt, calc: '客製金額' });
     } else if (a.flat) {
-      const cost = a[state.mode];
+      const cost = unitPrice(key);
       total += cost;
       items.push({ key, name: a.name, cost, calc: `$${cost}/天` });
     } else {
@@ -1601,7 +1652,7 @@ function dayActivityCost(day) {
       const isFoc = FOC_ELIGIBLE.includes(key);
       const billable = isFoc ? Math.max(0, pax - state.foc) : pax;
       if (billable <= 0) return;
-      const unit = a[state.mode];
+      const unit = unitPrice(key);
       const cost = unit * billable;
       total += cost;
       const calc = (isFoc && state.foc > 0)
@@ -1812,7 +1863,11 @@ function render() {
   });
   const rtPax = Math.min(totalPickupPax, totalDropoffPax);
   const rtDiscountPerPerson = (TRANSFER_ONE * 2) - TRANSFER_RT; // 40 - 30 = 10
-  if (rtPax > 0 && rtDiscountPerPerson > 0) {
+  // 接送單價有自訂時視為議定價，不再套用來回優惠
+  const transferPriceOverridden =
+    unitPrice('airportPickup') !== ACTIVITIES.airportPickup[state.mode] ||
+    unitPrice('airportDropoff') !== ACTIVITIES.airportDropoff[state.mode];
+  if (rtPax > 0 && rtDiscountPerPerson > 0 && !transferPriceOverridden) {
     const discount = rtPax * rtDiscountPerPerson;
     grandTotal -= discount;
     breakdown.push({ type: 'section', label: '機場接送 Transfers' });
