@@ -23,11 +23,16 @@
   --sunset: #bfa55a;       /* deep gold */
   --paper: #f5efe3;        /* warm off-white page bg */
   --ink: #1f4755;
-  --muted: #7b8f96;
+  --muted: #526f78;
   --line: rgba(31,71,85,0.14);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
+:where(button, a, input):focus-visible {
+  outline: 3px solid #8a6e29;
+  outline-offset: 3px;
+}
 
 html, body {
   background: var(--paper);
@@ -66,14 +71,18 @@ body::before {
 
 /* Header */
 .hero {
+  display: grid;
+  grid-template-columns: minmax(300px, 440px) minmax(0, 1fr);
+  align-items: center;
+  gap: 36px;
   border-bottom: 1px solid var(--line);
-  padding-bottom: 32px;
-  margin-bottom: 48px;
+  padding-bottom: 28px;
+  margin-bottom: 28px;
   position: relative;
 }
 
 .brand-banner {
-  margin-bottom: 28px;
+  margin-bottom: 0;
   border-radius: 6px;
   overflow: hidden;
   box-shadow: 0 12px 40px rgba(31,71,85,0.18);
@@ -90,10 +99,6 @@ body::before {
   object-position: center;
 }
 
-@media (max-width: 640px) {
-  .brand-banner { aspect-ratio: 4 / 3; }
-}
-
 .hero-top {
   display: flex;
   justify-content: space-between;
@@ -103,7 +108,7 @@ body::before {
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 28px;
+  margin-bottom: 16px;
 }
 
 .hero-top .dot {
@@ -124,7 +129,7 @@ body::before {
 h1 {
   font-family: 'Fraunces', serif;
   font-weight: 300;
-  font-size: clamp(42px, 7vw, 88px);
+  font-size: clamp(42px, 5.5vw, 68px);
   line-height: 0.95;
   letter-spacing: -0.03em;
   color: var(--abyss);
@@ -148,7 +153,7 @@ h1 em {
 .mode-bar {
   display: flex;
   gap: 0;
-  margin: 32px 0 48px;
+  margin: 20px 0 28px;
   border: 1px solid var(--line);
   border-radius: 2px;
   overflow: hidden;
@@ -157,6 +162,7 @@ h1 em {
 }
 
 .mode-bar button {
+  min-height: 44px;
   padding: 12px 24px;
   background: transparent;
   border: none;
@@ -188,8 +194,8 @@ h1 em {
   gap: 24px;
   align-items: flex-end;
   flex-wrap: wrap;
-  margin-bottom: 40px;
-  padding-bottom: 32px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -216,8 +222,8 @@ h1 em {
 }
 
 .counter button {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   background: transparent;
   border: none;
   font-size: 18px;
@@ -230,7 +236,7 @@ h1 em {
 
 .counter input {
   width: 50px;
-  height: 38px;
+  height: 44px;
   text-align: center;
   border: none;
   background: transparent;
@@ -238,7 +244,6 @@ h1 em {
   font-size: 20px;
   font-weight: 500;
   color: var(--abyss);
-  outline: none;
 }
 
 .counter input::-webkit-outer-spin-button,
@@ -249,9 +254,28 @@ h1 em {
 
 .foc-hint {
   font-size: 13px;
-  color: var(--surface);
+  color: var(--muted);
   font-style: italic;
   padding-bottom: 8px;
+}
+
+.draft-status {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.draft-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8a6e29;
 }
 
 /* Section headings */
@@ -301,6 +325,21 @@ h1 em {
   box-shadow: 0 4px 20px rgba(10,30,46,0.06);
 }
 
+.day-card.is-collapsed .day-header { border-bottom: none; }
+.day-card.is-collapsed .day-body { display: none; }
+
+.day-selection-summary {
+  margin-top: 4px;
+  max-width: 620px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.day-card:not(.is-collapsed) .day-selection-summary { display: none; }
+
 .day-header {
   display: flex;
   align-items: center;
@@ -338,6 +377,7 @@ h1 em {
   font-size: 18px;
   color: var(--abyss);
   width: 100%;
+  min-height: 44px;
   outline: none;
   padding: 2px 0;
   border-bottom: 1px dashed transparent;
@@ -364,8 +404,8 @@ h1 em {
 .day-remove {
   background: transparent;
   border: 1px solid var(--line);
-  width: 30px;
-  height: 30px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   cursor: pointer;
   color: var(--muted);
@@ -377,6 +417,26 @@ h1 em {
   background: var(--abyss);
   color: var(--coral);
   border-color: var(--abyss);
+}
+
+.day-toggle {
+  min-width: 88px;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: rgba(255,255,255,0.72);
+  color: var(--abyss);
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.day-toggle:hover {
+  background: white;
+  border-color: var(--surface);
 }
 
 .day-body {
@@ -402,6 +462,11 @@ h1 em {
 .activity:hover {
   border-color: var(--surface);
   background: white;
+}
+
+.activity:has(input:focus-visible) {
+  outline: 3px solid #8a6e29;
+  outline-offset: 2px;
 }
 
 .activity input[type="checkbox"] {
@@ -467,7 +532,7 @@ h1 em {
 }
 
 .act-price .tax {
-  color: var(--coral);
+  color: #725b24;
   font-size: 10px;
 }
 
@@ -741,6 +806,7 @@ h1 em {
 }
 
 .btn {
+  min-height: 44px;
   padding: 12px 20px;
   background: transparent;
   border: 1px solid var(--line);
@@ -809,12 +875,125 @@ h1 em {
   border-color: var(--coral);
 }
 
+.floating-total {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 230px;
+  padding: 12px 16px;
+  border: 1px solid rgba(241,229,198,0.3);
+  border-radius: 3px;
+  background: var(--abyss);
+  box-shadow: 0 12px 32px rgba(31,71,85,0.28);
+  color: var(--sand);
+  text-decoration: none;
+}
+
+.floating-total:hover { background: var(--deep); }
+
+.floating-total-label {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--shallow);
+}
+
+.floating-total-amount {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.floating-total-amount .ccy {
+  margin-right: 3px;
+  color: var(--shallow);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+}
+
+.action-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 92px;
+  z-index: 95;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: min(460px, calc(100% - 32px));
+  padding: 14px 16px;
+  border: 1px solid rgba(241,229,198,0.34);
+  border-radius: 3px;
+  background: var(--abyss);
+  box-shadow: 0 12px 32px rgba(31,71,85,0.3);
+  color: var(--sand);
+  transform: translateX(-50%);
+  font-size: 13px;
+}
+
+.action-toast[hidden] { display: none; }
+
+.action-toast span { flex: 1; }
+
+.action-toast button {
+  min-width: 64px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--coral);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--coral);
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+}
+
 @media (max-width: 640px) {
-  .wrap { padding: 32px 20px 80px; }
+  .wrap { padding: 20px 20px 128px; }
+  .hero { grid-template-columns: 1fr; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; }
+  .brand-banner { height: 108px; aspect-ratio: auto; }
+  .hero-top { margin-bottom: 10px; font-size: 9px; }
+  h1 { font-size: clamp(34px, 11vw, 42px); margin-bottom: 0; }
+  .hero-sub { display: none; }
+  .mode-bar { width: 100%; margin: 16px 0 22px; }
+  .mode-bar button { flex: 1; padding: 10px 12px; }
+  .people-row { gap: 16px; margin-bottom: 26px; padding-bottom: 20px; }
+  .foc-hint { flex-basis: 100%; padding-bottom: 0; }
+  .section-title { font-size: 25px; }
   .day-body { grid-template-columns: 1fr; }
   .day-header { flex-wrap: wrap; }
   .summary { padding: 28px 20px; }
+  .summary-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .breakdown-row { grid-template-columns: 1fr; gap: 4px; align-items: start; padding: 10px 0; }
+  .breakdown-row .calc { text-align: left; }
+  .breakdown-row .amt { min-width: 0; text-align: left; font-size: 18px; }
+  .total-row { align-items: flex-start; flex-wrap: wrap; gap: 16px; }
   .total-amt { font-size: 38px; }
+  .day-label-group { min-width: calc(100% - 88px); }
+  .day-selection-summary { max-width: 240px; }
+  .day-toggle { margin-left: auto; }
+  .floating-total {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    min-width: 0;
+    padding: 12px 16px;
+  }
+  .action-toast { bottom: 82px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+}
+
+@media print {
+  .floating-total, .action-toast { display: none !important; }
 }
 
 /* Quote card (for image export) */
@@ -828,8 +1007,8 @@ h1 em {
 
 .quote-card {
   width: 720px;
-  background: #5f8f9a;
-  color: #f1e5c6;
+  background: #1f4755;
+  color: #294f5c;
   font-family: 'Noto Serif TC', 'Fraunces', serif;
   padding: 0;
   position: relative;
@@ -845,11 +1024,14 @@ h1 em {
   background-size: 340px auto;
   background-position: center;
   background-repeat: no-repeat;
+  border-bottom: 4px solid #d9c47a;
 }
 
 .quote-card .qc-body {
-  padding: 40px 48px 48px;
+  margin: 0 12px 12px;
+  padding: 38px 36px 32px;
   position: relative;
+  background: #f6f0e4;
 }
 
 .quote-card .qc-title-row {
@@ -861,7 +1043,7 @@ h1 em {
   font-size: 11px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: rgba(241,229,198,0.7);
+  color: #52717b;
 }
 
 .quote-card .qc-title {
@@ -870,13 +1052,13 @@ h1 em {
   font-weight: 300;
   letter-spacing: -0.02em;
   margin: 4px 0 8px;
-  color: #ffffff;
+  color: #1f4755;
   line-height: 1.05;
 }
 
 .quote-card .qc-title em {
   font-style: italic;
-  color: #d9c47a;
+  color: #8a6e29;
   font-weight: 400;
 }
 
@@ -887,16 +1069,16 @@ h1 em {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   letter-spacing: 0.08em;
-  color: rgba(241,229,198,0.78);
+  color: #52717b;
   padding-bottom: 18px;
-  border-bottom: 1px solid rgba(241,229,198,0.2);
+  border-bottom: 1px solid rgba(31,71,85,0.18);
   margin-bottom: 20px;
 }
 
 .quote-card .qc-meta span + span::before {
   content: '·';
   margin-right: 14px;
-  color: rgba(241,229,198,0.4);
+  color: #a2afb1;
 }
 
 .quote-card .qc-section {
@@ -904,10 +1086,10 @@ h1 em {
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #d9c47a;
+  color: #7a6127;
   margin: 18px 0 8px;
   padding-top: 14px;
-  border-top: 1px solid rgba(241,229,198,0.12);
+  border-top: 1px solid rgba(31,71,85,0.12);
 }
 
 .quote-card .qc-section:first-child { margin-top: 0; padding-top: 0; border-top: none; }
@@ -919,13 +1101,13 @@ h1 em {
   align-items: baseline;
   padding: 6px 0;
   font-size: 14px;
-  color: rgba(241,229,198,0.95);
+  color: #294f5c;
 }
 
 .quote-card .qc-row .calc {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: rgba(217,232,235,0.85);
+  color: #52717b;
   text-align: right;
   white-space: nowrap;
 }
@@ -936,15 +1118,16 @@ h1 em {
   font-variant-numeric: tabular-nums;
   text-align: right;
   min-width: 90px;
-  color: #f1e5c6;
+  color: #1f4755;
 }
 
-.quote-card .qc-row.disc .amt { color: #a7c5cc; }
+.quote-card .qc-row.disc .amt { color: #527f8c; }
 
 .quote-card .qc-total {
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 2px solid #d9c47a;
+  margin: 28px -20px 0;
+  padding: 22px 20px 20px;
+  border-left: 4px solid #d9c47a;
+  background: #1f4755;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -954,7 +1137,7 @@ h1 em {
   font-family: 'Fraunces', serif;
   font-style: italic;
   font-size: 22px;
-  color: #f1e5c6;
+  color: #f6f0e4;
 }
 
 .quote-card .qc-total-amt {
@@ -979,17 +1162,17 @@ h1 em {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   letter-spacing: 0.08em;
-  color: rgba(241,229,198,0.85);
+  color: #c7d8da;
 }
 
 .quote-card .qc-footer {
   margin-top: 28px;
   padding-top: 16px;
-  border-top: 1px solid rgba(241,229,198,0.15);
+  border-top: 1px solid rgba(31,71,85,0.14);
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.1em;
-  color: rgba(241,229,198,0.65);
+  color: #52717b;
   text-transform: uppercase;
   display: flex;
   justify-content: space-between;
@@ -1001,7 +1184,7 @@ h1 em {
 .quote-card .qc-tagline {
   margin: 14px 0 0;
   font-size: 12px;
-  color: rgba(241,229,198,0.68);
+  color: #52717b;
   font-style: italic;
   line-height: 1.6;
 }
@@ -1014,12 +1197,14 @@ h1 em {
     <div class="brand-banner">
       <img src="brand-logo.jpg" alt="Trislander Palau">
     </div>
-    <div class="hero-top">
-      <span><span class="dot"></span>Trislander Palau · 行程計算機</span>
-      <span id="today"></span>
+    <div class="hero-copy">
+      <div class="hero-top">
+        <span><span class="dot"></span>Trislander Palau · 行程計算機</span>
+        <span id="today"></span>
+      </div>
+      <h1>Palau <em>itinerary</em><br>& cost planner</h1>
+      <p class="hero-sub">依團員人數自由搭配帛琉每日行程，獨立計算活動、出海證、裝備與導遊服務費，快速完成完整報價。</p>
     </div>
-    <h1>Palau <em>itinerary</em><br>& cost planner</h1>
-    <p class="hero-sub">自由搭配每日自潛／水肺／浮潛／立槳／陸遊行程，出海證獨立計算，自動計算潛導服務費與 FOC 優惠</p>
   </header>
 
   <!-- Mode -->
@@ -1031,34 +1216,62 @@ h1 em {
   <!-- People -->
   <div class="people-row">
     <div class="people-group">
-      <label>一般團員 Participants</label>
+      <label for="people">一般團員 Participants</label>
       <div class="counter">
-        <button onclick="adjust('people', -1)">−</button>
-        <input type="number" id="people" value="6" min="0" oninput="render()">
-        <button onclick="adjust('people', 1)">+</button>
+        <button type="button" aria-label="減少一般團員人數" onclick="adjust('people', -1)">−</button>
+        <input type="number" id="people" value="6" min="0" aria-describedby="focHint" oninput="render()">
+        <button type="button" aria-label="增加一般團員人數" onclick="adjust('people', 1)">+</button>
       </div>
     </div>
     <div class="people-group">
-      <label>FOC 教練／攝影師</label>
+      <label for="foc">FOC 教練／攝影師</label>
       <div class="counter">
-        <button onclick="adjust('foc', -1)">−</button>
-        <input type="number" id="foc" value="0" min="0" oninput="render()">
-        <button onclick="adjust('foc', 1)">+</button>
+        <button type="button" aria-label="減少 FOC 人數" onclick="adjust('foc', -1)">−</button>
+        <input type="number" id="foc" value="0" min="0" aria-describedby="focHint" oninput="render()">
+        <button type="button" aria-label="增加 FOC 人數" onclick="adjust('foc', 1)">+</button>
       </div>
     </div>
     <div class="foc-hint" id="focHint">※ 6 人成行；滿 8 人開團，教練／攝影師出海享 FOC (8+1)</div>
+    <div class="draft-status" id="draftStatus" role="status" aria-live="polite">自動儲存已開啟</div>
   </div>
 
   <!-- Days -->
   <h2 class="section-title"><span class="num">01 /</span> 每日行程</h2>
-  <p class="section-desc">勾選當日活動，可自由搭配；每日獨立計算午餐、船資與潛導費。出海證請於下方「柯羅州出海證」區塊加購。</p>
+  <p class="section-desc">勾選當日活動，可自由搭配；每日獨立計算午餐與船資。潛導／導遊服務費及出海證請於下方獨立設定。</p>
 
   <div class="days" id="days"></div>
 
   <button class="add-day" onclick="addDay()">＋ 新增一天</button>
 
+  <!-- Guide Service -->
+  <h2 class="section-title" style="margin-top:48px"><span class="num">02 /</span> 潛導／導遊服務</h2>
+  <p class="section-desc">每人每天 US$10；預設只計一般團員，FOC 不收服務費。計費人數可依實際安排獨立調整。</p>
+
+  <div class="day-card" id="guideCard">
+    <div style="padding:18px 24px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line);background:linear-gradient(90deg, var(--foam) 0%, transparent 40%);flex-wrap:wrap">
+      <div style="flex:1;min-width:200px">
+        <div class="day-label">Guide Service Fee</div>
+        <div style="margin-top:6px;color:var(--muted);font-size:13px">US$10／人／天 × <span id="guideDays">3</span> 個行程日</div>
+      </div>
+      <div class="day-total" id="guideTotal"><span class="ccy">USD</span>0</div>
+    </div>
+
+    <div style="padding:18px 24px;display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+      <div class="people-group">
+        <label for="guidePax">服務費計費人數（FOC 不計）</label>
+        <div class="counter">
+          <button type="button" aria-label="減少服務費計費人數" onclick="adjustGuidePax(-1)">−</button>
+          <input type="number" id="guidePax" value="6" min="0" oninput="setGuidePax(this.value)">
+          <button type="button" aria-label="增加服務費計費人數" onclick="adjustGuidePax(1)">+</button>
+        </div>
+      </div>
+      <button type="button" class="btn" style="padding:10px 14px;font-size:10px" onclick="resetGuidePax()">套用一般團員人數</button>
+      <span style="color:var(--muted);font-size:13px;padding-bottom:8px">FOC 人數請在頁面上方獨立調整，不會加入此費用。</span>
+    </div>
+  </div>
+
   <!-- Koror Boat Permits -->
-  <h2 class="section-title" style="margin-top:48px"><span class="num">02 /</span> 柯羅州出海證</h2>
+  <h2 class="section-title" style="margin-top:48px"><span class="num">03 /</span> 柯羅州出海證</h2>
   <p class="section-desc">按人計費；一張效期五天內無限次出海。進水母湖需購買含水母湖版本（已涵蓋一般出海證效力）。</p>
 
   <div class="day-card" id="permitCard">
@@ -1083,18 +1296,18 @@ h1 em {
   </div>
 
   <!-- Gear Rental -->
-  <h2 class="section-title" style="margin-top:48px"><span class="num">03 /</span> 水肺裝備租賃</h2>
+  <h2 class="section-title" style="margin-top:48px"><span class="num">04 /</span> 水肺裝備租賃</h2>
   <p class="section-desc">按人、按天計費；可選擇單項組合或整套租借。FOC 不計入租金。</p>
 
   <div class="day-card" id="gearCard">
     <div style="padding:18px 24px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line);background:linear-gradient(90deg, var(--foam) 0%, transparent 40%);flex-wrap:wrap">
       <div style="flex:1;min-width:200px">
-        <div class="day-label">租用天數</div>
+        <label for="gearDays" class="day-label">租用天數</label>
         <div style="display:flex;align-items:center;gap:12px;margin-top:6px">
-          <div class="counter" style="height:34px">
-            <button onclick="adjustGear('days', -1)" style="width:32px;height:32px">−</button>
-            <input type="number" id="gearDays" value="0" min="0" oninput="render()" style="width:42px;height:32px;font-size:16px">
-            <button onclick="adjustGear('days', 1)" style="width:32px;height:32px">+</button>
+          <div class="counter">
+            <button type="button" aria-label="減少裝備租用天數" onclick="adjustGear('days', -1)">−</button>
+            <input type="number" id="gearDays" value="0" min="0" oninput="render()" style="width:50px;font-size:16px">
+            <button type="button" aria-label="增加裝備租用天數" onclick="adjustGear('days', 1)">+</button>
           </div>
           <span style="color:var(--muted);font-size:13px">天</span>
         </div>
@@ -1115,7 +1328,7 @@ h1 em {
   </div>
 
 
-  <div class="summary" style="margin-top:48px">
+  <div class="summary" id="summary" style="margin-top:48px">
     <div class="summary-header">
       <div>
         <div class="summary-title">總計 <em>summary</em></div>
@@ -1150,7 +1363,7 @@ h1 em {
       <li>各行程金額（一般客／同業）均可於勾選後直接修改單價，未修改則採表定價</li>
       <li>愛萊州出海稅 $25／人／天（僅 SUP 全日立槳日需購買）</li>
       <li>釣魚稅 $50／人／天（僅夜釣日計）</li>
-      <li>潛導／導遊服務費 $10／人／天（行程每天皆計，不限出海日）</li>
+      <li>潛導／導遊服務費 $10／人／天（行程每天皆計，不限出海日；FOC 不收服務費，計費人數可獨立調整）</li>
       <li>出海行程提供面鏡＋呼吸管（自潛/浮潛用）、救生背心、浮板；水肺面鏡需另行租借</li>
       <li>FOC：只需自付出海證並協助照顧團員，含機場接送</li>
       <li>北島陸遊：安德貌（Ngardmau）大瀑布 → 海邊餐廳 → 總統府（小白宮）；含門票、稅金，不含午餐、導遊服務費</li>
@@ -1173,8 +1386,13 @@ h1 em {
 
 </div>
 
+<a class="floating-total" id="floatingTotal" href="#summary" aria-label="查看報價總計">
+  <span class="floating-total-label">查看總計</span>
+  <span class="floating-total-amount"><span class="ccy">USD</span><span id="floatingGrandTotal">0</span></span>
+</a>
+
 <!-- Hidden quote card stage for image export -->
-<div class="quote-stage">
+<div class="quote-stage" aria-hidden="true" inert hidden>
   <div class="quote-card" id="quoteCard">
     <div class="qc-banner"></div>
     <div class="qc-body">
@@ -1201,6 +1419,11 @@ h1 em {
       </div>
     </div>
   </div>
+</div>
+
+<div class="action-toast" id="actionToast" role="status" aria-live="polite" hidden>
+  <span id="actionToastMessage"></span>
+  <button type="button" id="actionToastAction" hidden></button>
 </div>
 
 <script>
@@ -1249,19 +1472,29 @@ const GEAR = {
 const FULL_SET_PRICE = 60;
 const FULL_SET_KEYS = ['bcd','reg','wetsuit','mask','fins'];
 
+const STORAGE_KEY = 'trislander-palau-quote-v1';
+const DRAFT_VERSION = 1;
+
 // -------- State --------
-let state = {
-  mode: 'retail',
-  people: 6,
-  foc: 0,
-  days: [],
-  gear: {
-    days: 0,
-    items: {}  // { bcd: 2, reg: 3, ... } — qty per item (0 = not renting)
-  },
-  permits: { standard: 0, jellyfish: 0 },  // 出海證張數（= 人數），兩種證分開計
-  priceOverrides: {}  // { scuba: { retail: 260, trade: 220, solo: 320 }, ... } — 各活動自訂單價，未設定則用表定價
-};
+function createInitialState() {
+  return {
+    mode: 'retail',
+    people: 6,
+    foc: 0,
+    guidePaxOverride: null,
+    days: [createDay(1), createDay(2), createDay(3)],
+    gear: { days: 0, items: {} },
+    permits: { standard: 0, jellyfish: 0 },
+    priceOverrides: {}
+  };
+}
+
+let state = createInitialState();
+let draftSaveEnabled = false;
+let restoredDraftAt = null;
+let lastDeletedDay = null;
+let toastActionHandler = null;
+let toastHideTimer = null;
 
 // 取得活動目前生效單價：優先用自訂價，否則用表定價；field 預設為目前報價模式
 function unitPrice(key, field = state.mode) {
@@ -1286,10 +1519,11 @@ function setUnitPrice(key, field, val) {
   render();
 }
 
-function createDay(n) {
+function createDay(n, expanded = n === 1) {
   return {
     id: Date.now() + Math.random(),
     label: `Day ${n}`,
+    expanded,
     activities: {},
     activityPax: {},     // 各活動獨立人數（含 FOC）
     activityAmount: {},  // 自填金額項目（專業攝影 / 客製包船）
@@ -1299,16 +1533,35 @@ function createDay(n) {
   };
 }
 
-// Initialize with 3 sample days
-state.days.push(createDay(1));
-state.days.push(createDay(2));
-state.days.push(createDay(3));
-
 // -------- Controls --------
 function adjust(field, delta) {
   const el = document.getElementById(field);
   const v = Math.max(0, (parseInt(el.value) || 0) + delta);
   el.value = v;
+  render();
+}
+
+function effectiveGuidePax(participants, override) {
+  const raw = override === null ? participants : override;
+  return Math.max(0, Number(raw) || 0);
+}
+
+function calculateGuideFee(pax, days) {
+  return GUIDE_FEE * Math.max(0, Number(pax) || 0) * Math.max(0, Number(days) || 0);
+}
+
+function setGuidePax(value) {
+  state.guidePaxOverride = Math.max(0, parseInt(value) || 0);
+  render();
+}
+
+function adjustGuidePax(delta) {
+  state.guidePaxOverride = Math.max(0, effectiveGuidePax(state.people, state.guidePaxOverride) + delta);
+  render();
+}
+
+function resetGuidePax() {
+  state.guidePaxOverride = null;
   render();
 }
 
@@ -1323,19 +1576,58 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
 });
 
 function addDay() {
-  state.days.push(createDay(state.days.length + 1));
+  state.days.push(createDay(state.days.length + 1, true));
   renderDays();
   render();
 }
 
-function removeDay(id) {
-  state.days = state.days.filter(d => d.id !== id);
-  // relabel defaults
-  state.days.forEach((d, i) => {
-    if (/^Day \d+$/.test(d.label)) d.label = `Day ${i+1}`;
-  });
+function toggleDay(id) {
+  const day = state.days.find(d => d.id === id);
+  if (!day) return;
+  day.expanded = !day.expanded;
   renderDays();
   render();
+}
+
+function initializeActivity(day, key) {
+  const a = ACTIVITIES[key];
+  if (!a) return;
+  const total = Math.max(1, state.people + state.foc);
+  if (key === 'airportPickup') day.pickupPax = total;
+  else if (key === 'airportDropoff') day.dropoffPax = total;
+  else if (key === 'scenicFlight') day.flightPax = total;
+  else if (a.custom) {
+    if (!(key in day.activityAmount)) day.activityAmount[key] = 0;
+  } else if (!a.flat && !a.transfer) {
+    day.activityPax[key] = total;
+  }
+}
+
+function relabelDays() {
+  state.days.forEach((day, index) => {
+    if (/^Day \d+$/.test(day.label)) day.label = `Day ${index + 1}`;
+  });
+}
+
+function removeDay(id) {
+  const index = state.days.findIndex(d => d.id === id);
+  if (index < 0) return;
+  lastDeletedDay = { day: state.days[index], index };
+  state.days.splice(index, 1);
+  relabelDays();
+  renderDays();
+  render();
+  showActionToast(`已刪除 ${lastDeletedDay.day.label}`, '復原', undoRemoveDay);
+}
+
+function undoRemoveDay() {
+  if (!lastDeletedDay) return;
+  state.days.splice(Math.min(lastDeletedDay.index, state.days.length), 0, lastDeletedDay.day);
+  lastDeletedDay = null;
+  relabelDays();
+  renderDays();
+  render();
+  showActionToast('行程已復原');
 }
 
 function toggleActivity(dayId, key) {
@@ -1343,18 +1635,7 @@ function toggleActivity(dayId, key) {
   if (!day) return;
   const turningOn = !day.activities[key];
   day.activities[key] = turningOn;
-  const a = ACTIVITIES[key];
-  if (turningOn && a) {
-    const total = Math.max(1, state.people + state.foc);
-    if (key === 'airportPickup') day.pickupPax = total;
-    else if (key === 'airportDropoff') day.dropoffPax = total;
-    else if (key === 'scenicFlight') day.flightPax = total;
-    else if (a.custom) {
-      if (!(key in day.activityAmount)) day.activityAmount[key] = 0;
-    } else if (!a.flat && !a.transfer) {
-      day.activityPax[key] = total;
-    }
-  }
+  if (turningOn) initializeActivity(day, key);
   renderDays();
   render();
 }
@@ -1426,10 +1707,10 @@ function renderPermits() {
           <div class="act-name">${p.name}</div>
           <div class="act-price">$${p.price}/人 <span class="tax" style="color:var(--surface)">效期五天一張</span></div>
         </div>
-        <div class="counter" style="height:28px;flex-shrink:0">
-          <button onclick="adjustPermitQty('${key}', -1)" style="width:28px;height:28px">−</button>
-          <span style="min-width:24px;text-align:center;font-size:14px;font-weight:600">${qty}</span>
-          <button onclick="adjustPermitQty('${key}', 1)" style="width:28px;height:28px">+</button>
+        <div class="counter" style="flex-shrink:0">
+          <button type="button" aria-label="減少${p.name}數量" onclick="adjustPermitQty('${key}', -1)">−</button>
+          <output aria-label="${p.name}數量" style="min-width:32px;text-align:center;font-size:14px;font-weight:600">${qty}</output>
+          <button type="button" aria-label="增加${p.name}數量" onclick="adjustPermitQty('${key}', 1)">+</button>
         </div>
       </div>
     `;
@@ -1496,36 +1777,194 @@ function renderGear() {
             ${inFullSet ? ' <span class="tax" style="color:var(--surface)">全套</span>' : ''}
           </div>
         </div>
-        <div class="counter" style="height:28px;flex-shrink:0">
-          <button onclick="adjustGearQty('${key}', -1)" style="width:28px;height:28px">−</button>
-          <span style="min-width:24px;text-align:center;font-size:14px;font-weight:600">${qty}</span>
-          <button onclick="adjustGearQty('${key}', 1)" style="width:28px;height:28px">+</button>
+        <div class="counter" style="flex-shrink:0">
+          <button type="button" aria-label="減少${g.name}數量" onclick="adjustGearQty('${key}', -1)">−</button>
+          <output aria-label="${g.name}數量" style="min-width:32px;text-align:center;font-size:14px;font-weight:600">${qty}</output>
+          <button type="button" aria-label="增加${g.name}數量" onclick="adjustGearQty('${key}', 1)">+</button>
         </div>
       </div>
     `;
   }).join('');
 }
 
-function updateLabel(dayId, val) {
-  const day = state.days.find(d => d.id === dayId);
-  if (day) day.label = val;
+function isDraftUsable(payload) {
+  return Boolean(payload && payload.version === DRAFT_VERSION && payload.state && Array.isArray(payload.state.days));
 }
 
-function resetAll() {
-  if (!confirm('確定要重置所有行程設定嗎？此動作無法復原。')) return;
-  state.people = 6;
-  state.foc = 0;
-  state.days = [createDay(1), createDay(2), createDay(3)];
-  state.gear = { days: 0, items: {} };
-  state.permits = { standard: 0, jellyfish: 0 };
-  state.priceOverrides = {};
-  document.getElementById('people').value = 6;
-  document.getElementById('foc').value = 0;
-  document.getElementById('gearDays').value = 0;
+function safeNumber(value, min = 0, max = 999) {
+  const number = Number(value);
+  return Number.isFinite(number) ? Math.min(max, Math.max(min, number)) : min;
+}
+
+function sanitizeNumberMap(raw, allowedKeys, min = 0, max = 9999999) {
+  const clean = {};
+  if (!raw || typeof raw !== 'object') return clean;
+  allowedKeys.forEach(key => {
+    if (raw[key] !== undefined) clean[key] = safeNumber(raw[key], min, max);
+  });
+  return clean;
+}
+
+function normalizeDraftState(raw) {
+  if (!raw || typeof raw !== 'object' || !Array.isArray(raw.days)) return null;
+  const fallback = createInitialState();
+  const activityKeys = Object.keys(ACTIVITIES);
+  fallback.mode = raw.mode === 'trade' ? 'trade' : 'retail';
+  fallback.people = safeNumber(raw.people ?? fallback.people, 0, 999);
+  fallback.foc = safeNumber(raw.foc ?? fallback.foc, 0, 999);
+  fallback.guidePaxOverride = raw.guidePaxOverride === null || raw.guidePaxOverride === undefined
+    ? null
+    : safeNumber(raw.guidePaxOverride, 0, 999);
+  fallback.days = raw.days.slice(0, 30).map((savedDay, index) => {
+    const day = createDay(index + 1, index === 0);
+    const sourceDay = savedDay && typeof savedDay === 'object' ? savedDay : {};
+    day.id = Number.isFinite(Number(sourceDay.id)) ? Number(sourceDay.id) : day.id;
+    day.label = typeof sourceDay.label === 'string' ? sourceDay.label.slice(0, 80) : day.label;
+    day.expanded = typeof sourceDay.expanded === 'boolean' ? sourceDay.expanded : index === 0;
+    day.activities = {};
+    activityKeys.forEach(key => {
+      if (sourceDay.activities && sourceDay.activities[key]) day.activities[key] = true;
+    });
+    day.activityPax = sanitizeNumberMap(sourceDay.activityPax, activityKeys, 1, 999);
+    day.activityAmount = sanitizeNumberMap(sourceDay.activityAmount, activityKeys, 0, 9999999);
+    day.flightPax = safeNumber(sourceDay.flightPax ?? day.flightPax, 1, 999);
+    day.pickupPax = safeNumber(sourceDay.pickupPax ?? day.pickupPax, 1, 999);
+    day.dropoffPax = safeNumber(sourceDay.dropoffPax ?? day.dropoffPax, 1, 999);
+    return day;
+  });
+  fallback.gear = {
+    days: safeNumber(raw.gear && raw.gear.days, 0, 365),
+    items: sanitizeNumberMap(raw.gear && raw.gear.items, Object.keys(GEAR), 0, 999)
+  };
+  fallback.permits = sanitizeNumberMap(raw.permits, Object.keys(PERMITS), 0, 999);
+  fallback.priceOverrides = {};
+  if (raw.priceOverrides && typeof raw.priceOverrides === 'object') {
+    activityKeys.forEach(key => {
+      const entry = raw.priceOverrides[key];
+      if (!entry || typeof entry !== 'object') return;
+      const clean = {};
+      ['retail','trade','solo'].forEach(field => {
+        if (Number.isFinite(Number(entry[field]))) clean[field] = safeNumber(entry[field], 0, 9999999);
+      });
+      if (Object.keys(clean).length) fallback.priceOverrides[key] = clean;
+    });
+  }
+  return fallback;
+}
+
+function syncControlsFromState() {
+  document.getElementById('people').value = state.people;
+  document.getElementById('foc').value = state.foc;
+  document.getElementById('gearDays').value = state.gear.days || 0;
+  document.querySelectorAll('.mode-btn').forEach(button => {
+    button.classList.toggle('active', button.dataset.mode === state.mode);
+  });
+}
+
+function updateDraftStatus(savedAt = null) {
+  const status = document.getElementById('draftStatus');
+  if (!status) return;
+  if (!savedAt) {
+    status.textContent = '自動儲存已開啟';
+    return;
+  }
+  const date = new Date(savedAt);
+  if (Number.isNaN(date.getTime())) {
+    status.textContent = '草稿已恢復';
+    return;
+  }
+  const time = date.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+  status.textContent = `已自動儲存 · ${time}`;
+}
+
+function saveDraft() {
+  if (!draftSaveEnabled) return;
+  try {
+    const savedAt = new Date().toISOString();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: DRAFT_VERSION, savedAt, state }));
+    updateDraftStatus(savedAt);
+  } catch (error) {
+    const status = document.getElementById('draftStatus');
+    if (status) status.textContent = '此瀏覽器無法儲存草稿';
+  }
+}
+
+function restoreDraft() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const payload = JSON.parse(raw);
+    if (!isDraftUsable(payload)) return null;
+    const normalized = normalizeDraftState(payload.state);
+    if (!normalized) return null;
+    state = normalized;
+    return payload.savedAt || null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function showActionToast(message, actionLabel = '', actionHandler = null) {
+  const toast = document.getElementById('actionToast');
+  const messageEl = document.getElementById('actionToastMessage');
+  const actionButton = document.getElementById('actionToastAction');
+  if (!toast || !messageEl || !actionButton) return;
+  if (toastHideTimer) clearTimeout(toastHideTimer);
+  messageEl.textContent = message;
+  toastActionHandler = actionHandler;
+  actionButton.textContent = actionLabel;
+  actionButton.hidden = !actionLabel;
+  actionButton.onclick = () => {
+    if (toastHideTimer) clearTimeout(toastHideTimer);
+    const handler = toastActionHandler;
+    toast.hidden = true;
+    toastActionHandler = null;
+    if (handler) handler();
+  };
+  toast.hidden = false;
+  toastHideTimer = setTimeout(() => {
+    toast.hidden = true;
+    toastActionHandler = null;
+  }, actionLabel ? 8000 : 3000);
+}
+
+function discardRestoredDraft() {
+  draftSaveEnabled = false;
+  try { localStorage.removeItem(STORAGE_KEY); } catch (error) {}
+  state = createInitialState();
+  restoredDraftAt = null;
+  syncControlsFromState();
   renderDays();
   renderPermits();
   renderGear();
   render();
+  draftSaveEnabled = true;
+  updateDraftStatus();
+  showActionToast('已開始新的報價');
+}
+
+function updateLabel(dayId, val) {
+  const day = state.days.find(d => d.id === dayId);
+  if (day) {
+    day.label = val.slice(0, 80);
+    render();
+  }
+}
+
+function resetAll() {
+  if (!confirm('確定要重置所有行程設定嗎？此動作無法復原。')) return;
+  draftSaveEnabled = false;
+  state = createInitialState();
+  restoredDraftAt = null;
+  try { localStorage.removeItem(STORAGE_KEY); } catch (error) {}
+  syncControlsFromState();
+  renderDays();
+  renderPermits();
+  renderGear();
+  render();
+  draftSaveEnabled = true;
+  updateDraftStatus();
+  showActionToast('報價已重置');
 }
 
 // -------- Render --------
@@ -1534,18 +1973,26 @@ function renderDays() {
   container.innerHTML = '';
   state.days.forEach((day, idx) => {
     const card = document.createElement('div');
-    card.className = 'day-card';
+    const selectedNames = Object.entries(day.activities)
+      .filter(([key, on]) => on && ACTIVITIES[key])
+      .map(([key]) => ACTIVITIES[key].name);
+    const selectionSummary = selectedNames.length
+      ? selectedNames.join(' · ')
+      : '尚未選擇行程';
+    card.className = day.expanded ? 'day-card' : 'day-card is-collapsed';
     card.innerHTML = `
       <div class="day-header">
         <div class="day-num">${String(idx+1).padStart(2,'0')}</div>
         <div class="day-label-group">
-          <div class="day-label">Day · 標籤</div>
-          <input class="day-input" value="${escapeHtml(day.label)}" onchange="updateLabel(${day.id}, this.value)" placeholder="例：Day 1 · Blue Corner">
+          <label class="day-label" for="dayLabel-${day.id}">Day · 標籤</label>
+          <input class="day-input" id="dayLabel-${day.id}" value="${escapeHtml(day.label)}" onchange="updateLabel(${day.id}, this.value)" placeholder="例：Day 1 · Blue Corner">
+          <div class="day-selection-summary">${escapeHtml(selectionSummary)}</div>
         </div>
         <div class="day-total" id="dayTotal-${day.id}"><span class="ccy">USD</span>0</div>
-        <button class="day-remove" onclick="removeDay(${day.id})" title="刪除此日">✕</button>
+        <button type="button" class="day-toggle" aria-expanded="${day.expanded}" aria-controls="dayPanel-${day.id}" onclick="toggleDay(${day.id})">${day.expanded ? '收合 ↑' : '編輯行程 ↓'}</button>
+        <button type="button" class="day-remove" aria-label="刪除 ${escapeHtml(day.label)}" onclick="removeDay(${day.id})" title="刪除此日">✕</button>
       </div>
-      <div class="day-body">
+      <div class="day-body" id="dayPanel-${day.id}">
         ${Object.entries(ACTIVITIES).map(([key, a]) => {
           const on = !!day.activities[key];
           const checked = on ? 'checked' : '';
@@ -1613,17 +2060,17 @@ function buildPriceLabel(key, a, day, on) {
 }
 
 function buildExtraControl(key, a, day) {
-  const counterStyle = `margin-top:8px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:0.05em`;
-  const btnStyle = `width:22px;height:22px;border:1px solid var(--line);background:white;cursor:pointer;border-radius:2px`;
+  const counterStyle = `margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:0.05em`;
+  const btnStyle = `width:44px;height:44px;border:1px solid var(--line);background:white;cursor:pointer;border-radius:2px`;
   const valStyle = `min-width:18px;text-align:center;color:var(--abyss);font-size:13px;font-weight:600`;
   const stop = `event.preventDefault();event.stopPropagation();`;
-  const inputStyle = `width:72px;height:26px;padding:2px 6px;font-family:inherit;font-size:12px;color:var(--abyss);border:1px solid var(--line);border-radius:2px`;
+  const inputStyle = `width:82px;height:44px;padding:2px 6px;font-family:inherit;font-size:12px;color:var(--abyss);border:1px solid var(--line);border-radius:2px`;
 
   // 自訂單價輸入框（自填金額項目除外）；離開輸入框或按 Enter 後生效
   const priceControl = (field, suffix) => `
     <div style="${counterStyle}">
       <span>單價 USD</span>
-      <input type="number" min="0" step="5" value="${unitPrice(key, field)}"
+      <input type="number" min="0" step="5" value="${unitPrice(key, field)}" aria-label="${a.name}單價"
              onchange="setUnitPrice('${key}', '${field}', this.value)"
              onclick="${stop}"
              style="${inputStyle}">
@@ -1636,9 +2083,9 @@ function buildExtraControl(key, a, day) {
     return `
       <div style="${counterStyle}">
         <span>搭乘</span>
-        <button type="button" onclick="${stop}adjustFlightPax(${day.id}, -1)" style="${btnStyle}">−</button>
+        <button type="button" aria-label="減少${a.name}搭乘人數" onclick="${stop}adjustFlightPax(${day.id}, -1)" style="${btnStyle}">−</button>
         <span style="${valStyle}">${day.flightPax || 2}</span>
-        <button type="button" onclick="${stop}adjustFlightPax(${day.id}, 1)" style="${btnStyle}">+</button>
+        <button type="button" aria-label="增加${a.name}搭乘人數" onclick="${stop}adjustFlightPax(${day.id}, 1)" style="${btnStyle}">+</button>
         <span>人</span>
       </div>
       ${priceControl(solo ? 'solo' : state.mode, solo ? '/人（單人包機）' : '/人')}
@@ -1649,9 +2096,9 @@ function buildExtraControl(key, a, day) {
     return `
       <div style="${counterStyle}">
         <span>人數</span>
-        <button type="button" onclick="${stop}adjustTransferPax(${day.id}, '${a.transfer}', -1)" style="${btnStyle}">−</button>
+        <button type="button" aria-label="減少${a.name}人數" onclick="${stop}adjustTransferPax(${day.id}, '${a.transfer}', -1)" style="${btnStyle}">−</button>
         <span style="${valStyle}">${pax}</span>
-        <button type="button" onclick="${stop}adjustTransferPax(${day.id}, '${a.transfer}', 1)" style="${btnStyle}">+</button>
+        <button type="button" aria-label="增加${a.name}人數" onclick="${stop}adjustTransferPax(${day.id}, '${a.transfer}', 1)" style="${btnStyle}">+</button>
         <span>人</span>
       </div>
       ${priceControl(state.mode, '/人')}
@@ -1662,10 +2109,10 @@ function buildExtraControl(key, a, day) {
     return `
       <div style="${counterStyle}">
         <span>金額 USD</span>
-        <input type="number" min="0" step="10" value="${amt}"
+        <input type="number" min="0" step="10" value="${amt}" aria-label="${a.name}金額"
                oninput="updateActivityAmount(${day.id}, '${key}', this.value)"
                onclick="${stop}"
-               style="width:90px;height:26px;padding:2px 6px;font-family:inherit;font-size:12px;color:var(--abyss);border:1px solid var(--line);border-radius:2px">
+               style="width:100px;height:44px;padding:2px 6px;font-family:inherit;font-size:12px;color:var(--abyss);border:1px solid var(--line);border-radius:2px">
       </div>
     `;
   }
@@ -1675,9 +2122,9 @@ function buildExtraControl(key, a, day) {
   return `
     <div style="${counterStyle}">
       <span>人數</span>
-      <button type="button" onclick="${stop}adjustActivityPax(${day.id}, '${key}', -1)" style="${btnStyle}">−</button>
+      <button type="button" aria-label="減少${a.name}人數" onclick="${stop}adjustActivityPax(${day.id}, '${key}', -1)" style="${btnStyle}">−</button>
       <span style="${valStyle}">${pax}</span>
-      <button type="button" onclick="${stop}adjustActivityPax(${day.id}, '${key}', 1)" style="${btnStyle}">+</button>
+      <button type="button" aria-label="增加${a.name}人數" onclick="${stop}adjustActivityPax(${day.id}, '${key}', 1)" style="${btnStyle}">+</button>
       <span>人</span>
     </div>
     ${priceControl(state.mode, '/人')}
@@ -1795,13 +2242,13 @@ function render() {
   const focHint = document.getElementById('focHint');
   if (totalParticipants >= 8 && state.foc === 0) {
     focHint.textContent = `※ 已達 ${totalParticipants} 人，教練／攝影師可享 FOC（建議 foc = 1）`;
-    focHint.style.color = 'var(--coral)';
+    focHint.style.color = '#7a6127';
   } else if (state.foc > 0 && totalParticipants < 8) {
     focHint.textContent = `※ FOC 需滿 8 人開團；目前僅 ${totalParticipants} 人`;
-    focHint.style.color = 'var(--coral)';
+    focHint.style.color = '#7a6127';
   } else {
     focHint.textContent = '※ 6 人成行；滿 8 人開團，教練／攝影師出海享 FOC (8+1)';
-    focHint.style.color = 'var(--surface)';
+    focHint.style.color = 'var(--muted)';
   }
 
   // 注意：活動項目的價格顯示由 renderDays() 控制，切換模式時會重新渲染
@@ -1833,15 +2280,19 @@ function render() {
     });
   }
 
-  // --- Guide / service fees (charged for every day of the trip) ---
+  // --- Guide / service fees (independent billable pax; FOC excluded) ---
   const tripDays = state.days.length;
-  if (tripDays > 0 && state.people > 0) {
-    const guideTotal = GUIDE_FEE * state.people * tripDays;
+  const guidePax = effectiveGuidePax(state.people, state.guidePaxOverride);
+  const guideTotal = calculateGuideFee(guidePax, tripDays);
+  document.getElementById('guidePax').value = guidePax;
+  document.getElementById('guideDays').textContent = tripDays;
+  document.getElementById('guideTotal').innerHTML = `<span class="ccy">USD</span>${formatNum(guideTotal)}`;
+  if (guideTotal > 0) {
     grandTotal += guideTotal;
     breakdown.push({ type: 'section', label: '潛導／導遊服務費 Guide Fee' });
     breakdown.push({
       label: `服務費 $${GUIDE_FEE}/人/天`,
-      calc: `× ${state.people} 人 × ${tripDays} 天`,
+      calc: `× ${guidePax} 人 × ${tripDays} 天（FOC 不計）`,
       amt: guideTotal
     });
   }
@@ -1957,6 +2408,7 @@ function render() {
   }
 
   document.getElementById('grandTotal').textContent = formatNum(grandTotal);
+  document.getElementById('floatingGrandTotal').textContent = formatNum(grandTotal);
 
   // Per person (excluding FOC from divisor)
   const perPersonEl = document.getElementById('perPerson');
@@ -1969,6 +2421,7 @@ function render() {
   }
 
   lastQuote = { breakdown, grandTotal, perPerson };
+  saveDraft();
 }
 
 function formatNum(n) {
@@ -2028,6 +2481,8 @@ async function generateQuoteImage(ev) {
   const originalText = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.textContent = '生成中…'; }
 
+  const stage = document.querySelector('.quote-stage');
+  stage.hidden = false;
   populateQuoteCard();
   const card = document.getElementById('quoteCard');
 
@@ -2042,7 +2497,7 @@ async function generateQuoteImage(ev) {
 
     const canvas = await html2canvas(card, {
       scale: 2,
-      backgroundColor: '#5f8f9a',
+      backgroundColor: '#f6f0e4',
       useCORS: true,
       logging: false,
       width: card.offsetWidth,
@@ -2083,6 +2538,7 @@ async function generateQuoteImage(ev) {
     console.error(err);
     alert('生成失敗：' + (err && err.message || err));
   } finally {
+    stage.hidden = true;
     if (btn) { btn.disabled = false; btn.textContent = originalText; }
   }
 }
@@ -2093,10 +2549,17 @@ const today = new Date();
 document.getElementById('today').textContent = today.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
 
 // Initial render
+restoredDraftAt = restoreDraft();
+syncControlsFromState();
 renderDays();
 renderPermits();
 renderGear();
 render();
+draftSaveEnabled = true;
+if (restoredDraftAt) {
+  updateDraftStatus(restoredDraftAt);
+  showActionToast('已恢復上次未完成的報價', '重新開始', discardRestoredDraft);
+}
 </script>
 </body>
 </html>
