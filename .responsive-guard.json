@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "root": ".",
+  "routes": [
+    "/",
+    "/palau-trip-planner.html",
+    "/trislander-palau-2027.html"
+  ]
+}
